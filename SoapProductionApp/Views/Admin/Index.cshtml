@@ -1,0 +1,29 @@
+﻿@model List<SoapProductionApp.Models.UserViewModel>
+
+<h2>Správa uživatelů</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    @foreach (var role in user.Roles)
+                    {
+                        <span class="badge bg-info">@role</span>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", "Admin", new { id = user.Id })" class="btn btn-primary">Upravit role</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

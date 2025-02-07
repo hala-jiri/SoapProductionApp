@@ -20,7 +20,20 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.ToList();
-            return View(users);
+            var userList = new List<UserViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userList.Add(new UserViewModel
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Roles = roles.ToList()
+                });
+            }
+
+            return View(userList);
         }
 
         public async Task<IActionResult> Edit(string id)

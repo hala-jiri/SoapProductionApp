@@ -1,0 +1,15 @@
+﻿@model SoapProductionApp.Models.UserEditViewModel
+
+<h2>Upravit role uživatele</h2>
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+    <label>Email: @Model.Email</label>
+    <div>
+        @foreach (var role in Model.AllRoles)
+        {
+            <input type="checkbox" name="SelectedRoles" value="@role"
+            @(Model.Roles.Contains(role) ? "checked" : "") /> @role <br />
+        }
+    </div>
+    <button type="submit" class="btn btn-success">Uložit</button>
+</form>
