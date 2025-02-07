@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
 
@@ -18,6 +19,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
