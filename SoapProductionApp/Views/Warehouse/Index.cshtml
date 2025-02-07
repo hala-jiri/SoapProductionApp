@@ -1,0 +1,30 @@
+﻿@model List<SoapProductionApp.Models.WarehouseItem>
+
+<h2>Skladové zásoby</h2>
+<a href="@Url.Action("Create")" class="btn btn-success">Přidat novou položku</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Název</th>
+            <th>Kategorie</th>
+            <th>Množství</th>
+            <th>Cena za jednotku (s DPH)</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Category</td>
+                <td>@item.Quantity @item.Unit</td>
+                <td>@item.PriceWithTax.ToString("0.00") Kč</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info">Detaily</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

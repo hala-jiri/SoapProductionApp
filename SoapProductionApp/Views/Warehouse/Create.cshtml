@@ -1,0 +1,31 @@
+﻿@model SoapProductionApp.Models.WarehouseItem
+
+<h2>Přidat novou položku</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label>Název</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Kategorie</label>
+        <input asp-for="Category" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Jednotka</label>
+        <input asp-for="Unit" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Cena za jednotku</label>
+        <input asp-for="PricePerUnit" class="form-control" type="number" step="0.01" />
+    </div>
+    <div class="form-group">
+        <label>DPH (%)</label>
+        <input asp-for="TaxPercentage" class="form-control" type="number" step="0.1" />
+    </div>
+    <div class="form-group">
+        <label>Minimální množství pro upozornění</label>
+        <input asp-for="MinQuantity" class="form-control" type="number" step="0.01" />
+    </div>
+    <button type="submit" class="btn btn-primary">Uložit</button>
+</form>
