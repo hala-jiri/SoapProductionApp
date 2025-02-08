@@ -5,6 +5,8 @@ namespace SoapProductionApp.Models.Warehouse
 {
     public class WarehouseItemCreateViewModel
     {
+        public int Id { get; set; }  // Přidejte tuto vlastnost pro identifikaci položky při úpravách
+
         [Required]
         public string Name { get; set; }
 
