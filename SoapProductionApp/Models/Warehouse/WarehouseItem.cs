@@ -24,9 +24,9 @@ namespace SoapProductionApp.Models.Warehouse
 
         public string Notes { get; set; } // Poznámky
 
-        // Relace na jednotku (každá položka má jednu jednotku)
-        public int UnitId { get; set; } // mozna nastavit jako "[Required]"
-        public virtual Unit Unit { get; set; }
+        [Required]
+        public int UnitId { get; set; }  // Povinný odkaz na Unit
+        public virtual Unit Unit { get; set; }  // Relace na Unit
 
         // Relace na kategorie (položka může mít více kategorií)
         public virtual List<Category> Categories { get; set; }

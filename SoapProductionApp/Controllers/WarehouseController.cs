@@ -21,7 +21,10 @@ namespace SoapProductionApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var items = await _context.WarehouseItems.Include(i => i.Batches).ToListAsync();
+            var items = await _context.WarehouseItems
+                .Include(i => i.Batches)
+                .Include(i => i.Categories)
+                .Include(i => i.Unit).ToListAsync();
             return View(items);
         }
 

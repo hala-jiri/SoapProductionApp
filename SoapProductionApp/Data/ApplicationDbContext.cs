@@ -22,8 +22,8 @@ namespace SoapProductionApp.Data
 
             // Konfigurace M:N vztahu mezi WarehouseItem a Category
             modelBuilder.Entity<WarehouseItem>()
-                .HasMany(w => w.Categories)
-                .WithMany(c => c.WarehouseItems);
+                .HasMany(w => w.Categories);
+                //.WithMany(c => c.WarehouseItems);
         }
     }
 }

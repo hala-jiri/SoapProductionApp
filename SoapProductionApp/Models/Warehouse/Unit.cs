@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoapProductionApp.Models.Warehouse
 {
@@ -10,6 +11,7 @@ namespace SoapProductionApp.Models.Warehouse
         public string Name { get; set; }
 
         // Relace k WarehouseItem (každý item má jednu jednotku)
-        public virtual List<WarehouseItem> WarehouseItems { get; set; }
+        //[NotMapped]
+        //public virtual List<WarehouseItem> WarehouseItems { get; set; }
     }
 }

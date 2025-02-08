@@ -10,6 +10,6 @@ namespace SoapProductionApp.Models.Warehouse
         public string Name { get; set; }
 
         // Relace k WarehouseItem (může mít více kategorií)
-        public virtual List<WarehouseItem> WarehouseItems { get; set; }
+        //public virtual List<WarehouseItem> WarehouseItems { get; set; }
     }
 }

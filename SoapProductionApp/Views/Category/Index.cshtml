@@ -1,0 +1,25 @@
+﻿@model List<SoapProductionApp.Models.Warehouse.Category>
+
+<h2>Správa kategorií</h2>
+<a href="@Url.Action("Create")" class="btn btn-success">Přidat novou kategorii</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Název</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning">Upravit</a>
+                    <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger">Smazat</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

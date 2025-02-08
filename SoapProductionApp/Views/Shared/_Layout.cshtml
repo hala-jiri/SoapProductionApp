@@ -23,9 +23,6 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Warehouse" asp-action="Index">Sklad</a>
                         </li>
                         <li class="nav-item">
@@ -33,6 +30,12 @@
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Unit" asp-action="Index">Jednotky</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Category" asp-action="Index">Kategorie</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Admin" asp-action="Index">Správa uživatelů</a>
                             </li>

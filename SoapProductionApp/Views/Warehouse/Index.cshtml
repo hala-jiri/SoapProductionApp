@@ -6,10 +6,11 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Název</th>
-            <th>Kategorie</th>
-            <th>Množství</th>
-            <th>Cena za jednotku (s DPH)</th>
+            <th>Name</th>
+            <th>Stock Level</th>
+            <th>Min level</th>
+            <th>Unit cost (include VAT)</th>
+            <th>Category</th>
             <th>Akce</th>
         </tr>
     </thead>
@@ -18,11 +19,22 @@
         {
             <tr>
                 <td>@item.Name</td>
+                <td>@item.Quantity @(item.Unit != null ? item.Unit.Name : "")</td>
+                <td>@item.MinQuantity @(item.Unit != null ? item.Unit.Name : "")</td>
+                <td>@item.PriceWithTax.ToString("0.00") €/@(item.Unit != null ? item.Unit.Name : "-")</td>
                 <td>
-                    @string.Join(", ", item.Categories.Select(c => c.Name))
+                    @if (item.Categories != null && item.Categories.Any())
+                    {
+                        @foreach (var category in item.Categories)
+                        {
+                            <span class="badge category-@category.Name.ToLower().Replace(" ", "-")">@category.Name</span>
+                        }
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
                 </td>
-                <td>@item.Quantity @item.Unit</td>
-                <td>@item.PriceWithTax.ToString("0.00") Kč</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detail</a>
                 </td>
@@ -30,3 +42,17 @@
         }
     </tbody>
 </table>
+
+<style>
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 5px;
+        margin-right: 5px;
+    }
+    .category-packaging { background-color: #f8d7da; color: #721c24; } /* Červená */
+    .category-oils { background-color: #f5deb3; color: #6b4226; } /* Béžová */
+    .category-essential-oils { background-color: #fff3cd; color: #856404; } /* Žlutá */
+</style>
