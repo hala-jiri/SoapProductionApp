@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SoapProductionApp.Models.Warehouse
 {
@@ -8,12 +9,6 @@ namespace SoapProductionApp.Models.Warehouse
 
         [Required]
         public string Name { get; set; } // Název položky (např. olivový olej)
-
-        [Required]
-        public string Category { get; set; } // Např. "fragrance oils", "packaging"
-
-        [Required]
-        public string Unit { get; set; } // Např. "kg", "L", "ks"
 
         public decimal PricePerUnit { get; set; } // Cena za jednotku bez DPH
 
@@ -29,26 +24,13 @@ namespace SoapProductionApp.Models.Warehouse
 
         public string Notes { get; set; } // Poznámky
 
+        // Relace na jednotku (každá položka má jednu jednotku)
+        public int UnitId { get; set; } // mozna nastavit jako "[Required]"
+        public virtual Unit Unit { get; set; }
+
+        // Relace na kategorie (položka může mít více kategorií)
+        public virtual List<Category> Categories { get; set; }
+
         public virtual List<WarehouseItemBatch> Batches { get; set; } // Historie nákupů a expirace
-    }
-
-    public class WarehouseItemBatch
-    {
-        public int Id { get; set; }
-
-        [Required]
-        public int WarehouseItemId { get; set; }
-        public virtual WarehouseItem WarehouseItem { get; set; }
-
-        [Required]
-        public decimal Quantity { get; set; } // Kolik bylo zakoupeno
-
-        [Required]
-        public decimal PricePerUnit { get; set; } // Cena v této objednávce
-
-        public DateTime? ExpirationDate { get; set; } // Expirace (nepovinná)
-
-        [Required]
-        public DateTime PurchaseDate { get; set; } = DateTime.Now; // Datum nákupu
     }
 }

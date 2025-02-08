@@ -6,12 +6,24 @@ namespace SoapProductionApp.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public DbSet<WarehouseItem> WarehouseItems { get; set; }
-        public DbSet<WarehouseItemBatch> WarehouseItemBatches { get; set; }
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+        }
+
+        public DbSet<WarehouseItem> WarehouseItems { get; set; }
+        public DbSet<WarehouseItemBatch> WarehouseItemBatches { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Unit> Units { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Konfigurace M:N vztahu mezi WarehouseItem a Category
+            modelBuilder.Entity<WarehouseItem>()
+                .HasMany(w => w.Categories)
+                .WithMany(c => c.WarehouseItems);
         }
     }
 }

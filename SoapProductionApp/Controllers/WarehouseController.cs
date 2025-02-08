@@ -25,31 +25,60 @@ namespace SoapProductionApp.Controllers
             return View(items);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var viewModel = new WarehouseItemCreateViewModel
+            {
+                AvailableUnits = _context.Units.ToList(),
+                AvailableCategories = _context.Categories.ToList()
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(WarehouseItem item)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(WarehouseItemCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.WarehouseItems.Add(item);
+                var warehouseItem = new WarehouseItem
+                {
+                    Name = viewModel.Name,
+                    Quantity = viewModel.Quantity,
+                    UnitId = viewModel.SelectedUnitId,
+                    PricePerUnit = viewModel.PricePerUnit,
+                    TaxPercentage = viewModel.TaxPercentage,
+                    MinQuantity = viewModel.MinQuantity,
+                    Supplier = viewModel.Supplier,
+                    Notes = viewModel.Notes,
+                    Categories = _context.Categories.Where(c => viewModel.SelectedCategoryIds.Contains(c.Id)).ToList()
+                };
+
+                _context.WarehouseItems.Add(warehouseItem);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(item);
+
+            // Pokud jsou chyby, znovu naplníme seznamy
+            viewModel.AvailableUnits = _context.Units.ToList();
+            viewModel.AvailableCategories = _context.Categories.ToList();
+
+            return View(viewModel);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var item = await _context.WarehouseItems
-                .Include(i => i.Batches)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            if (id == null) return NotFound();
 
-            if (item == null)
-                return NotFound();
+            var item = await _context.WarehouseItems
+                .Include(w => w.Unit) // Načíst jednotku
+                .Include(w => w.Categories) // Načíst kategorie
+                .Include(w => w.Batches) // Načíst batch historie
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (item == null) return NotFound();
 
             return View(item);
         }

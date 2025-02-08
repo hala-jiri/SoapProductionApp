@@ -1,4 +1,4 @@
-﻿@model List<SoapProductionApp.Models.WarehouseItem>
+﻿@model List<SoapProductionApp.Models.Warehouse.WarehouseItem>
 
 <h2>Skladové zásoby</h2>
 <a href="@Url.Action("Create")" class="btn btn-success">Přidat novou položku</a>
@@ -18,11 +18,13 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.Category</td>
+                <td>
+                    @string.Join(", ", item.Categories.Select(c => c.Name))
+                </td>
                 <td>@item.Quantity @item.Unit</td>
                 <td>@item.PriceWithTax.ToString("0.00") Kč</td>
                 <td>
-                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info">Detaily</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detail</a>
                 </td>
             </tr>
         }
