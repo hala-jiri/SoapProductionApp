@@ -10,12 +10,12 @@
     }
 </p>
 <p><strong>Dodavatel:</strong> @Model.Supplier</p>
-<p><strong>Jednotka:</strong> @Model.Unit.Name</p>
-<p><strong>Cena za jednotku:</strong> @Model.PricePerUnit Kč</p>
+<p><strong>Jednotka:</strong> @Model.Unit.Name (@Model.Unit.Abbreviation)</p>
+<p><strong>Cena za jednotku:</strong> @Model.PricePerUnit Eur</p>
 <p><strong>DPH:</strong> @Model.TaxPercentage %</p>
 <p><strong>Cena s DPH:</strong> @Model.PriceWithTax Kč</p>
-<p><strong>Celkové množství na skladě:</strong> @Model.Quantity @Model.Unit.Name</p>
-<p><strong>Minimální množství před upozorněním:</strong> @Model.MinQuantity @Model.Unit.Name</p>
+<p><strong>Celkové množství na skladě:</strong> @Model.Quantity @Model.Unit.Name (@Model.Unit.Abbreviation)</p>
+<p><strong>Minimální množství před upozorněním:</strong> @Model.MinQuantity @Model.Unit.Name (@Model.Unit.Abbreviation)</p>
 <p><strong>Poznámky:</strong> @Model.Notes</p>
 
 <h3>Historie nákupů:</h3>
@@ -34,7 +34,7 @@
         {
             <tr>
                 <td>@batch.PurchaseDate.ToShortDateString()</td>
-                <td>@batch.Quantity @Model.Unit.Name</td>
+                <td>@batch.Quantity @Model.Unit.Abbreviation</td>
                 <td>@batch.PricePerUnit Kč</td>
                 <td>@(batch.ExpirationDate?.ToShortDateString() ?? "N/A")</td>
             </tr>

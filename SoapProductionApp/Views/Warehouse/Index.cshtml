@@ -19,15 +19,17 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.Quantity @(item.Unit != null ? item.Unit.Name : "")</td>
-                <td>@item.MinQuantity @(item.Unit != null ? item.Unit.Name : "")</td>
-                <td>@item.PriceWithTax.ToString("0.00") €/@(item.Unit != null ? item.Unit.Name : "-")</td>
+                <td>@item.Quantity @(item.Unit != null ? item.Unit.Abbreviation : "")</td>
+                <td>@item.MinQuantity @(item.Unit != null ? item.Unit.Abbreviation : "")</td>
+                <td>@item.PriceWithTax.ToString("0.00") €/@(item.Unit != null ? item.Unit.Abbreviation : "-")</td>
                 <td>
                     @if (item.Categories != null && item.Categories.Any())
                     {
-                        @foreach (var category in item.Categories)
+                        foreach (var category in item.Categories)
                         {
-                            <span class="badge category-@category.Name.ToLower().Replace(" ", "-")">@category.Name</span>
+                            <span class="badge" style="background-color: @category.ColorBackground; color: @category.ColorText;">
+                                @category.Name
+                            </span>
                         }
                     }
                     else
@@ -52,7 +54,4 @@
         border-radius: 5px;
         margin-right: 5px;
     }
-    .category-packaging { background-color: #f8d7da; color: #721c24; } /* Červená */
-    .category-oils { background-color: #f5deb3; color: #6b4226; } /* Béžová */
-    .category-essential-oils { background-color: #fff3cd; color: #856404; } /* Žlutá */
 </style>
