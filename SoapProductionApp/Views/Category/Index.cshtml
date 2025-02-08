@@ -6,8 +6,9 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Název</th>
-            <th>Akce</th>
+            <th>Name</th>
+            <th>Colors</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -16,8 +17,13 @@
             <tr>
                 <td>@category.Name</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning">Upravit</a>
-                    <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger">Smazat</a>
+                    <div style="width: 100px; height: 50px; background-color: @category.ColorBackground; color: @category.ColorText; display: flex; align-items: center; justify-content: center;">
+                        Text example
+                    </div>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

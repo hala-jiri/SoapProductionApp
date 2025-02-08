@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models.Warehouse;
 
@@ -36,21 +37,45 @@ namespace SoapProductionApp.Controllers
             return View(category);
         }
 
-        public IActionResult Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            var category = _context.Categories.Find(id);
-            if (category == null) return NotFound();
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
             return View(category);
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ColorBackground,ColorText")] Category category)
         {
+            if (id != category.Id)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Categories.Update(category);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    _context.Update(category);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Categories.Any(e => e.Id == category.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
             return View(category);
         }

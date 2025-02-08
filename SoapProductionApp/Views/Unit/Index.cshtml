@@ -1,13 +1,14 @@
 ﻿@model List<SoapProductionApp.Models.Warehouse.Unit>
 
-<h2>Správa jednotek</h2>
-<a href="@Url.Action("Create")" class="btn btn-success">Přidat novou jednotku</a>
+<h2>Unit management</h2>
+<a href="@Url.Action("Create")" class="btn btn-success">Add new Unit</a>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Název</th>
-            <th>Akce</th>
+            <th>Name</th>
+            <th>Abbreviation</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +16,7 @@
         {
             <tr>
                 <td>@unit.Name</td>
+                <td>@unit.Abbreviation</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@unit.Id" class="btn btn-warning">Upravit</a>
                     <a asp-action="Delete" asp-route-id="@unit.Id" class="btn btn-danger">Smazat</a>

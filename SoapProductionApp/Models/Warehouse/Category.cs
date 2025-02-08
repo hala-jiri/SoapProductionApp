@@ -9,6 +9,10 @@ namespace SoapProductionApp.Models.Warehouse
         [Required]
         public string Name { get; set; }
 
+        public string ColorBackground { get; set; } = "#ffffff"; // Výchozí barva pozadí (bílá)
+        public string ColorText { get; set; } = "#000000"; // Výchozí barva textu (černá)
+
+
         // Relace k WarehouseItem (může mít více kategorií)
         //public virtual List<WarehouseItem> WarehouseItems { get; set; }
     }

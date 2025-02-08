@@ -4,8 +4,17 @@
 
 <form method="post">
     <div class="form-group">
-        <label>Název kategorie</label>
+        <label>Category name</label>
         <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ColorBackground">Background Color</label>
+        <input asp-for="ColorBackground" type="color" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ColorText">Text Color</label>
+        <input asp-for="ColorText" type="color" class="form-control" />
     </div>
     <button type="submit" class="btn btn-primary">Uložit</button>
 </form>

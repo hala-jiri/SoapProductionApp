@@ -10,6 +10,9 @@ namespace SoapProductionApp.Models.Warehouse
         [Required]
         public string Name { get; set; }
 
+        [Required]
+        public string Abbreviation { get; set; }
+
         // Relace k WarehouseItem (každý item má jednu jednotku)
         //[NotMapped]
         //public virtual List<WarehouseItem> WarehouseItems { get; set; }
