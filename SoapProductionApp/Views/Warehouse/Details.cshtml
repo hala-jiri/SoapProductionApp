@@ -1,42 +1,35 @@
 ﻿@model SoapProductionApp.Models.Warehouse.WarehouseItem
 
-<h2>Detail produktu: @Model.Name</h2>
+<h2>@Model.Name</h2>
 
-<p>
-    <strong>Kategorie:</strong>
-    @foreach (var category in Model.Categories)
-    {
-        <span>@category.Name </span>
-    }
-</p>
-<p><strong>Dodavatel:</strong> @Model.Supplier</p>
-<p><strong>Jednotka:</strong> @Model.Unit.Name (@Model.Unit.Abbreviation)</p>
-<p><strong>Cena za jednotku:</strong> @Model.PricePerUnit Eur</p>
+<p><strong>Celkové množství:</strong> @Model.Quantity @Model.Unit.Name</p>
+<p><strong>Průměrná cena za jednotku:</strong> @Model.PricePerUnit.ToString("0.00") €</p>
 <p><strong>DPH:</strong> @Model.TaxPercentage %</p>
-<p><strong>Cena s DPH:</strong> @Model.PriceWithTax Kč</p>
-<p><strong>Celkové množství na skladě:</strong> @Model.Quantity @Model.Unit.Name (@Model.Unit.Abbreviation)</p>
-<p><strong>Minimální množství před upozorněním:</strong> @Model.MinQuantity @Model.Unit.Name (@Model.Unit.Abbreviation)</p>
+<p><strong>Cena s DPH:</strong> @Model.PriceWithTax.ToString("0.00") €</p>
+<p><strong>Minimální množství:</strong> @Model.MinQuantity</p>
+<p><strong>Dodavatel:</strong> @Model.Supplier</p>
 <p><strong>Poznámky:</strong> @Model.Notes</p>
 
-<h3>Historie nákupů:</h3>
-
+<h3>Šarže</h3>
 <table class="table">
     <thead>
         <tr>
             <th>Datum nákupu</th>
+            <th>Expirace</th>
             <th>Množství</th>
             <th>Cena za jednotku</th>
-            <th>Expirace</th>
+            <th>Zbývá</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var batch in Model.Batches) @* Opraveno z WarehouseItemBatches na Batches *@
+        @foreach (var batch in Model.Batches.OrderBy(b => b.ExpirationDate))
         {
             <tr>
                 <td>@batch.PurchaseDate.ToShortDateString()</td>
-                <td>@batch.Quantity @Model.Unit.Abbreviation</td>
-                <td>@batch.PricePerUnit Kč</td>
-                <td>@(batch.ExpirationDate?.ToShortDateString() ?? "N/A")</td>
+                <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToShortDateString() : "Neomezená")</td>
+                <td>@batch.Quantity @Model.Unit.Name</td>
+                <td>@batch.PricePerUnit.ToString("0.00") €</td>
+                <td>@batch.Quantity</td>
             </tr>
         }
     </tbody>

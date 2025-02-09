@@ -8,29 +8,35 @@ namespace SoapProductionApp.Models.Warehouse
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; } // Název položky (např. olivový olej)
+        public string Name { get; set; }
 
-        public decimal PricePerUnit { get; set; } // Cena za jednotku bez DPH
+        public decimal Quantity => Batches?.Sum(b => b.Quantity) ?? 0; // Celkové množství 
 
-        public decimal TaxPercentage { get; set; } // DPH v %
+        public decimal PricePerUnit
+        {
+            get
+            {
+                if (Batches == null || !Batches.Any()) return 0;
+                return Batches.Sum(b => b.Quantity * b.PricePerUnit) / (Batches.Sum(b => b.Quantity) == 0 ? 1 : Batches.Sum(b => b.Quantity));
+            }
+        }
 
-        public decimal PriceWithTax => PricePerUnit * (1 + TaxPercentage / 100); // Cena s DPH
+        public decimal TaxPercentage { get; set; }
 
-        public decimal Quantity { get; set; } // Celkové množství na skladě
+        public decimal PriceWithTax => PricePerUnit * (1 + TaxPercentage / 100);
 
-        public decimal MinQuantity { get; set; } // Minimální množství před upozorněním
+        public decimal MinQuantity { get; set; }
 
-        public string Supplier { get; set; } // Odkud bylo nakoupeno
+        public string Supplier { get; set; }
 
-        public string Notes { get; set; } // Poznámky
+        public string Notes { get; set; }
 
         [Required]
-        public int UnitId { get; set; }  // Povinný odkaz na Unit
-        public virtual Unit Unit { get; set; }  // Relace na Unit
+        public int UnitId { get; set; }
+        public virtual Unit Unit { get; set; }
 
-        // Relace na kategorie (položka může mít více kategorií)
         public virtual List<Category> Categories { get; set; }
 
-        public virtual List<WarehouseItemBatch> Batches { get; set; } // Historie nákupů a expirace
+        public virtual List<WarehouseItemBatch> Batches { get; set; } = new List<WarehouseItemBatch>();
     }
 }

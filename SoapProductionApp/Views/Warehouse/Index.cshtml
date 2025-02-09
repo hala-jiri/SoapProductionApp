@@ -9,7 +9,9 @@
             <th>Name</th>
             <th>Stock Level</th>
             <th>Min level</th>
+            <th>Unit cost (exclude VAT)</th>
             <th>Unit cost (include VAT)</th>
+            <th>Total value (include VAT)</th>
             <th>Category</th>
             <th>Akce</th>
         </tr>
@@ -19,9 +21,16 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.Quantity @(item.Unit != null ? item.Unit.Abbreviation : "")</td>
+                <td>@item.Quantity @(item.Unit != null ? item.Unit.Abbreviation : "")
+                    @if (item.Quantity <= item.MinQuantity)
+                    {
+                        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
+                    }
+                </td>
                 <td>@item.MinQuantity @(item.Unit != null ? item.Unit.Abbreviation : "")</td>
+                <td>@item.PricePerUnit.ToString("0.00") €/@(item.Unit != null ? item.Unit.Abbreviation : "-")</td>
                 <td>@item.PriceWithTax.ToString("0.00") €/@(item.Unit != null ? item.Unit.Abbreviation : "-")</td>
+
                 <td>
                     @if (item.Categories != null && item.Categories.Any())
                     {
@@ -53,5 +62,12 @@
         font-weight: bold;
         border-radius: 5px;
         margin-right: 5px;
+    }
+
+    .low-stock-indicator {
+        color: red;
+        font-weight: bold;
+        margin-left: 5px;
+        font-size: 18px;
     }
 </style>

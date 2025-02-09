@@ -48,9 +48,8 @@ namespace SoapProductionApp.Controllers
                 var warehouseItem = new WarehouseItem
                 {
                     Name = viewModel.Name,
-                    Quantity = viewModel.Quantity,
                     UnitId = viewModel.SelectedUnitId,
-                    PricePerUnit = viewModel.PricePerUnit,
+                    //PricePerUnit = viewModel.PricePerUnit,
                     TaxPercentage = viewModel.TaxPercentage,
                     MinQuantity = viewModel.MinQuantity,
                     Supplier = viewModel.Supplier,
@@ -76,9 +75,9 @@ namespace SoapProductionApp.Controllers
             if (id == null) return NotFound();
 
             var item = await _context.WarehouseItems
-                .Include(w => w.Unit) // Načíst jednotku
-                .Include(w => w.Categories) // Načíst kategorie
-                .Include(w => w.Batches) // Načíst batch historie
+                .Include(w => w.Unit)
+                .Include(w => w.Categories)
+                .Include(w => w.Batches)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (item == null) return NotFound();
@@ -160,9 +159,9 @@ namespace SoapProductionApp.Controllers
 
                 // Aktualizujeme položku podle nových hodnot
                 warehouseItem.Name = viewModel.Name;
-                warehouseItem.Quantity = viewModel.Quantity;
+                //warehouseItem.Quantity = viewModel.Quantity;
                 warehouseItem.UnitId = viewModel.SelectedUnitId;
-                warehouseItem.PricePerUnit = viewModel.PricePerUnit;
+                //warehouseItem.PricePerUnit = viewModel.PricePerUnit;
                 warehouseItem.TaxPercentage = viewModel.TaxPercentage;
                 warehouseItem.MinQuantity = viewModel.MinQuantity;
                 warehouseItem.Supplier = viewModel.Supplier;
