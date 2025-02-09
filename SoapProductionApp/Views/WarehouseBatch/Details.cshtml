@@ -1,0 +1,32 @@
+﻿@model SoapProductionApp.Models.Warehouse.WarehouseItemBatch
+
+<h2>Detail šarže - @Model.WarehouseItem.Name</h2>
+
+<table class="table">
+    <tr>
+        <th>Produkt:</th>
+        <td>@Model.WarehouseItem.Name</td>
+    </tr>
+    <tr>
+        <th>Množství:</th>
+        <td>@Model.Quantity @Model.WarehouseItem.Unit.Abbreviation</td>
+    </tr>
+    <tr>
+        <th>Cena za jednotku:</th>
+        <td>@Model.PricePerUnit Eur</td>
+    </tr>
+    <tr>
+        <th>Celková cena:</th>
+        <td>@(Model.PricePerUnit * Model.Quantity) Eur</td>
+    </tr>
+    <tr>
+        <th>Datum nákupu:</th>
+        <td>@Model.PurchaseDate.ToShortDateString()</td>
+    </tr>
+    <tr>
+        <th>Expirace:</th>
+        <td>@(Model.ExpirationDate?.ToShortDateString() ?? "N/A")</td>
+    </tr>
+</table>
+
+<a asp-controller="Warehouse" asp-action="Details" asp-route-id="@Model.WarehouseItemId" class="btn btn-secondary">Zpět na produkt</a>

@@ -1,8 +1,9 @@
 ﻿@model SoapProductionApp.Models.Warehouse.WarehouseItemBatch
 
-<h2>Přidat novou šarži</h2>
+<h2>Upravit šarži</h2>
 
 <form method="post">
+    <input type="hidden" asp-for="Id" />
     <div class="form-group">
         <label>Položka</label>
         <select asp-for="WarehouseItemId" class="form-control">
@@ -28,5 +29,5 @@
         <label>Expirace</label>
         <input asp-for="ExpirationDate" type="date" class="form-control">
     </div>
-    <button type="submit" class="btn btn-primary">Uložit</button>
+    <button type="submit" class="btn btn-primary">Uložit změny</button>
 </form>
