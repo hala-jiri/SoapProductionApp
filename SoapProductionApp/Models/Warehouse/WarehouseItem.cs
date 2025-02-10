@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoapProductionApp.Models.Warehouse
 {
@@ -10,14 +11,20 @@ namespace SoapProductionApp.Models.Warehouse
         [Required]
         public string Name { get; set; }
 
-        public decimal Quantity => Batches?.Sum(b => b.Quantity) ?? 0; // Celkové množství 
+        public decimal Quantity => (decimal)(Batches?.Sum(b => b.Quantity) ?? 0); // Celkové množství 
 
+        // Průměrná cena za jednotku = celková hodnota všech batchů děleno celkovým množstvím
+        [NotMapped]
         public decimal PricePerUnit
         {
             get
             {
                 if (Batches == null || !Batches.Any()) return 0;
-                return Batches.Sum(b => b.Quantity * b.PricePerUnit) / (Batches.Sum(b => b.Quantity) == 0 ? 1 : Batches.Sum(b => b.Quantity));
+
+                decimal totalQuantity = (decimal)Batches.Sum(b => b.Quantity);
+                decimal totalPrice = (decimal)Batches.Sum(b => (decimal)b.Quantity * b.PricePerUnit);
+
+                return totalQuantity > 0 ? totalPrice / totalQuantity : 0;
             }
         }
 
@@ -32,11 +39,12 @@ namespace SoapProductionApp.Models.Warehouse
         public string Notes { get; set; }
 
         [Required]
+        [ForeignKey("Unit")]
         public int UnitId { get; set; }
         public virtual Unit Unit { get; set; }
 
-        public virtual List<Category> Categories { get; set; }
+        public virtual List<Category> Categories { get; set; } = new List<Category>();
 
-        public virtual List<WarehouseItemBatch> Batches { get; set; } = new List<WarehouseItemBatch>();
+        public virtual List<Batch> Batches { get; set; } = new List<Batch>();
     }
 }

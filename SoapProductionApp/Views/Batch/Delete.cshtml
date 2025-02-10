@@ -1,0 +1,20 @@
+﻿@model SoapProductionApp.Models.Warehouse.Batch
+
+<h2>Odstranit šarži</h2>
+
+<p>Opravdu chcete odstranit tuto šarži?</p>
+
+<ul>
+    <li><strong>Datum nákupu:</strong> @Model.PurchaseDate.ToShortDateString()</li>
+    <li><strong>Expirace:</strong> @(Model.ExpirationDate?.ToShortDateString() ?? "Neomezená")</li>
+    <li><strong>Množství:</strong> @Model.Quantity</li>
+    <li><strong>Cena za jednotku:</strong> @Model.PricePerUnit €</li>
+</ul>
+
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="WarehouseItemId" />
+
+    <button type="submit" class="btn btn-danger">Smazat</button>
+    <a asp-action="Details" asp-controller="Warehouse" asp-route-id="@Model.WarehouseItemId" class="btn btn-secondary">Zpět</a>
+</form>

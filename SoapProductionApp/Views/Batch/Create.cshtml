@@ -1,0 +1,40 @@
+﻿@model SoapProductionApp.Models.Warehouse.Batch
+
+
+<h2>Přidat novou šarži</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="WarehouseItemId" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" required />
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="Supplier"></label>
+        <input asp-for="Supplier" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label>Datum nákupu</label>
+        <input asp-for="PurchaseDate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Expirace</label>
+        <input asp-for="ExpirationDate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Množství</label>
+        <input asp-for="Quantity" type="number" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Cena za jednotku</label>
+        <input asp-for="PricePerUnit" type="number" step="0.01" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Uložit</button>
+</form>
