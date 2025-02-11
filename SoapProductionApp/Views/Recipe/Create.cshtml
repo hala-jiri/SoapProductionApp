@@ -40,22 +40,28 @@
     let ingredients = @Html.Raw(Json.Serialize(ViewBag.WarehouseItems));
     let counter = 0;
 
-    document.getElementById('addIngredient').addEventListener('click', function() {
+    document.getElementById('addIngredient').addEventListener('click', function () {
         let table = document.getElementById('ingredientsTable').getElementsByTagName('tbody')[0];
         let row = table.insertRow();
 
+        // Ingredience (Dropdown)
         let cell1 = row.insertCell(0);
         let select = document.createElement('select');
         select.name = `Ingredients[${counter}].WarehouseItemId`;
         select.classList.add('form-control');
+
+        // Naplníme dropdown a uložíme i jednotku do datasetu
         ingredients.forEach(item => {
             let option = document.createElement('option');
             option.value = item.id;
             option.textContent = item.name;
+            option.setAttribute("data-unit", item.unitName); // Ukládáme jednotku do atributu
             select.appendChild(option);
         });
+
         cell1.appendChild(select);
 
+        // Množství
         let cell2 = row.insertCell(1);
         let input = document.createElement('input');
         input.type = 'number';
@@ -63,20 +69,33 @@
         input.classList.add('form-control');
         cell2.appendChild(input);
 
+        // Jednotka (automaticky doplněná)
         let cell3 = row.insertCell(2);
-        cell3.textContent = '-';
+        let unitSpan = document.createElement('span');
+        unitSpan.textContent = select.options[select.selectedIndex].getAttribute("data-unit") || "-"; // Výchozí jednotka
+        cell3.appendChild(unitSpan);
 
+        // Cena
         let cell4 = row.insertCell(3);
         cell4.textContent = '0.00 €';
 
+        // Odstranění řádku
         let cell5 = row.insertCell(4);
         let removeButton = document.createElement('button');
         removeButton.textContent = '❌';
         removeButton.classList.add('btn', 'btn-danger');
-        removeButton.addEventListener('click', function() {
+        removeButton.type = 'button';
+        removeButton.addEventListener('click', function () {
             row.remove();
         });
         cell5.appendChild(removeButton);
+
+        // Při změně dropdownu se automaticky upraví jednotka
+        select.addEventListener('change', function () {
+            let selectedOption = this.options[this.selectedIndex];
+            let unitName = selectedOption.getAttribute("data-unit");
+            unitSpan.textContent = unitName || "-";
+        });
 
         counter++;
     });

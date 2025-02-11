@@ -54,15 +54,16 @@ namespace SoapProductionApp.Controllers
         {
             if (id != batch.Id) return NotFound();
 
+            ModelState.Remove("WarehouseItem"); // Odstraníme WarehouseItem z validace TODO: vyresit
             if (ModelState.IsValid)
             {
                 _context.Batches.Update(batch);
                 await _context.SaveChangesAsync();
                 // Načteme WarehouseItem znovu, aby se správně zobrazila Quantity a PricePerUnit
 
-                var warehouseItem = await _context.WarehouseItems
+                /*var warehouseItem = await _context.WarehouseItems
                     .Include(w => w.Batches) // Důležité: načíst i Batches
-                    .FirstOrDefaultAsync(w => w.Id == batch.WarehouseItemId);
+                    .FirstOrDefaultAsync(w => w.Id == batch.WarehouseItemId);*/
 
                 return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
             }

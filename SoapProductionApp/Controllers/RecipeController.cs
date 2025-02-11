@@ -36,15 +36,25 @@ namespace SoapProductionApp.Controllers
             return View(recipeList);
         }
 
-        // Zobrazení formuláře pro nový recept
+        // GET: Recipe/Create
         public IActionResult Create()
         {
-            ViewBag.WarehouseItems = _context.WarehouseItems.ToList();
+            ViewBag.WarehouseItems = _context.WarehouseItems
+                .Select(w => new
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    UnitName = w.Unit.Name,
+                    PricePerUnit = w.PricePerUnit
+                })
+                .ToList();
+
             return View(new Recipe());
         }
 
-        // Uložení nového receptu
+        // POST: Recipe/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Recipe recipe)
         {
             if (ModelState.IsValid)
@@ -53,7 +63,18 @@ namespace SoapProductionApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.WarehouseItems = _context.WarehouseItems.ToList();
+
+            // Opětovné naplnění ViewBag při chybě ve formuláři
+            ViewBag.WarehouseItems = _context.WarehouseItems
+                .Select(w => new
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    UnitName = w.Unit.Name,
+                    PricePerUnit = w.PricePerUnit
+                })
+                .ToList();
+
             return View(recipe);
         }
 
