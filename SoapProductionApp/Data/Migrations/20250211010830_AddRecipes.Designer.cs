@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoapProductionApp.Data;
 
@@ -11,9 +12,11 @@ using SoapProductionApp.Data;
 namespace SoapProductionApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250211010830_AddRecipes")]
+    partial class AddRecipes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,7 +223,7 @@ namespace SoapProductionApp.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.Recipe", b =>
+            modelBuilder.Entity("SoapProductionApp.Models.Recipe.Recipe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -232,6 +235,7 @@ namespace SoapProductionApp.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImagePath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -243,7 +247,7 @@ namespace SoapProductionApp.Data.Migrations
                     b.ToTable("Recipes");
                 });
 
-            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.RecipeIngredient", b =>
+            modelBuilder.Entity("SoapProductionApp.Models.Recipe.RecipeIngredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -475,9 +479,9 @@ namespace SoapProductionApp.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.RecipeIngredient", b =>
+            modelBuilder.Entity("SoapProductionApp.Models.Recipe.RecipeIngredient", b =>
                 {
-                    b.HasOne("SoapProductionApp.Models.RecipeModels.Recipe", "Recipe")
+                    b.HasOne("SoapProductionApp.Models.Recipe.Recipe", "Recipe")
                         .WithMany("Ingredients")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -532,7 +536,7 @@ namespace SoapProductionApp.Data.Migrations
                     b.Navigation("WarehouseItem");
                 });
 
-            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.Recipe", b =>
+            modelBuilder.Entity("SoapProductionApp.Models.Recipe.Recipe", b =>
                 {
                     b.Navigation("Ingredients");
                 });

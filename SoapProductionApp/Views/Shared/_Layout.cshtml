@@ -26,6 +26,9 @@
                             <a class="nav-link text-dark" asp-controller="Warehouse" asp-action="Index">Sklad</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Recipe" asp-action="Index">📜 Recepty</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Warehouse" asp-action="Consumption">Spotřeba</a>
                         </li>
                         @if (User.IsInRole("Admin"))

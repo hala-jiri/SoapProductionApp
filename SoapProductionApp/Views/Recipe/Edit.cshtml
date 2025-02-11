@@ -1,0 +1,44 @@
+﻿@model SoapProductionApp.Models.RecipeModels.Recipe
+
+@{
+    ViewData["Title"] = "Edit Recipe";
+}
+
+<h2>Edit Recipe</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BatchSize"></label>
+        <input asp-for="BatchSize" type="number" class="form-control" required />
+        <span asp-validation-for="BatchSize" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImagePath"></label>
+        <input asp-for="ImagePath" type="url" class="form-control" placeholder="https://example.com/image.jpg" />
+        <span asp-validation-for="ImagePath" class="text-danger"></span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <div class="form-group">
+            <label>Current Image</label><br />
+            <img src="@Model.ImagePath" alt="Recipe Image" class="img-thumbnail" style="max-width: 200px;" />
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

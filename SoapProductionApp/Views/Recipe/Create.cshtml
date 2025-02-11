@@ -1,0 +1,83 @@
+﻿@model SoapProductionApp.Models.RecipeModels.Recipe
+
+<h2>Vytvořit nový recept</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BatchSize"></label>
+        <input asp-for="BatchSize" type="number" class="form-control" min="1" required />
+    </div>
+
+    <h3>Ingredience</h3>
+    <table id="ingredientsTable" class="table">
+        <thead>
+            <tr>
+                <th>Ingredience</th>
+                <th>Množství</th>
+                <th>Jednotka</th>
+                <th>Cena</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamicky přidávané ingredience -->
+        </tbody>
+    </table>
+
+    <button type="button" id="addIngredient" class="btn btn-success">Přidat ingredienci</button>
+
+    <h3>Celkové náklady na kus: <span id="totalCost">0.00</span> €</h3>
+
+    <button type="submit" class="btn btn-primary">Uložit recept</button>
+</form>
+
+<script>
+    let ingredients = @Html.Raw(Json.Serialize(ViewBag.WarehouseItems));
+    let counter = 0;
+
+    document.getElementById('addIngredient').addEventListener('click', function() {
+        let table = document.getElementById('ingredientsTable').getElementsByTagName('tbody')[0];
+        let row = table.insertRow();
+
+        let cell1 = row.insertCell(0);
+        let select = document.createElement('select');
+        select.name = `Ingredients[${counter}].WarehouseItemId`;
+        select.classList.add('form-control');
+        ingredients.forEach(item => {
+            let option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            select.appendChild(option);
+        });
+        cell1.appendChild(select);
+
+        let cell2 = row.insertCell(1);
+        let input = document.createElement('input');
+        input.type = 'number';
+        input.name = `Ingredients[${counter}].Quantity`;
+        input.classList.add('form-control');
+        cell2.appendChild(input);
+
+        let cell3 = row.insertCell(2);
+        cell3.textContent = '-';
+
+        let cell4 = row.insertCell(3);
+        cell4.textContent = '0.00 €';
+
+        let cell5 = row.insertCell(4);
+        let removeButton = document.createElement('button');
+        removeButton.textContent = '❌';
+        removeButton.classList.add('btn', 'btn-danger');
+        removeButton.addEventListener('click', function() {
+            row.remove();
+        });
+        cell5.appendChild(removeButton);
+
+        counter++;
+    });
+</script>

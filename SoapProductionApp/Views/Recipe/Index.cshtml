@@ -1,0 +1,43 @@
+﻿@model List<SoapProductionApp.Models.RecipeModels.RecipeOverviewViewModel>
+
+<h2>📜 Seznam receptů</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Název</th>
+            <th>Batch Size</th>
+            <th>Cena za batch</th>
+            <th>Cena za kus</th>
+            <th>Dostupnost surovin</th>
+            <th>Akce</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var recipe in Model)
+        {
+            <tr>
+                <td>@recipe.Name</td>
+                <td>@recipe.BatchSize ks</td>
+                <td>@recipe.TotalCost.ToString("0.00") €</td>
+                <td>@recipe.CostPerPiece.ToString("0.00") €</td>
+                <td>
+                    @if (recipe.HasEnoughStock)
+                    {
+                        <span class="text-success">✔️</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">❌</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info">Detail</a>
+                    <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning">Editovat</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-success">Přidat nový recept</a>
