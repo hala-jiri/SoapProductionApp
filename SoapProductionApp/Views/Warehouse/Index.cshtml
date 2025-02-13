@@ -1,19 +1,15 @@
-﻿@model List<SoapProductionApp.Models.Warehouse.WarehouseItem>
+﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.WarehouseItem>
 
-<h2>Skladové zásoby</h2>
-<a href="@Url.Action("Create")" class="btn btn-success">Přidat novou položku</a>
-
-<table class="table">
+<h2>Warehouse Items</h2>
+<table>
     <thead>
         <tr>
             <th>Name</th>
-            <th>Stock Level</th>
-            <th>Min level</th>
-            <th>Unit cost (exclude VAT)</th>
-            <th>Unit cost (include VAT)</th>
-            <th>Total value (include VAT)</th>
-            <th>Category</th>
-            <th>Akce</th>
+            <th>Total Quantity</th>
+            <th>Price Per Unit</th>
+            <th>Total Material Cost</th>
+            <th>Categories</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -21,33 +17,14 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.Quantity @(item.Unit != null ? item.Unit.Abbreviation : "")
-                    @if (item.Quantity <= item.MinQuantity)
-                    {
-                        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
-                    }
-                </td>
-                <td>@item.MinQuantity @(item.Unit != null ? item.Unit.Abbreviation : "")</td>
-                <td>@item.PricePerUnit.ToString("0.00") €/@(item.Unit != null ? item.Unit.Abbreviation : "-")</td>
-                <td>@item.PriceWithTax.ToString("0.00") €/@(item.Unit != null ? item.Unit.Abbreviation : "-")</td>
-
+                <td>@item.TotalQuantityInBaseUnit @item.DefaultUnit</td>
+                <td>@item.AveragePricePerBaseUnit</td>
+                <td>@item.TotalMaterialCost</td>
+                <td>@string.Join(", ", item.Categories.Select(c => c.Name))</td>
                 <td>
-                    @if (item.Categories != null && item.Categories.Any())
-                    {
-                        foreach (var category in item.Categories)
-                        {
-                            <span class="badge" style="background-color: @category.ColorBackground; color: @category.ColorText;">
-                                @category.Name
-                            </span>
-                        }
-                    }
-                    else
-                    {
-                        <span>-</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detail</a>
+                    <a href="@Url.Action("Details", "Warehouse", new { id = item.Id })">Details</a> |
+                    <a href="@Url.Action("Edit", "Warehouse", new { id = item.Id })">Edit</a> |
+                    <a href="@Url.Action("Delete", "Warehouse", new { id = item.Id })">Delete</a>
                 </td>
             </tr>
         }
@@ -55,6 +32,13 @@
 </table>
 
 <style>
+    .low-stock-indicator {
+        color: red;
+        font-weight: bold;
+        margin-left: 5px;
+        font-size: 18px;
+    }
+
     .badge {
         display: inline-block;
         padding: 5px 10px;
@@ -62,12 +46,5 @@
         font-weight: bold;
         border-radius: 5px;
         margin-right: 5px;
-    }
-
-    .low-stock-indicator {
-        color: red;
-        font-weight: bold;
-        margin-left: 5px;
-        font-size: 18px;
     }
 </style>

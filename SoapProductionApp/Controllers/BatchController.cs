@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
+using SoapProductionApp.Models;
 using SoapProductionApp.Models.Warehouse;
 
 namespace SoapProductionApp.Controllers
@@ -14,25 +15,33 @@ namespace SoapProductionApp.Controllers
             _context = context;
         }
 
-        // Vytvoření nové šarže
+        // GET: Batch/Create
         public IActionResult Create(int warehouseItemId)
         {
-            var model = new Batch
+            var warehouseItem = _context.WarehouseItems.Find(warehouseItemId);
+            if (warehouseItem == null) return NotFound();
+
+            var batch = new Batch
             {
                 WarehouseItemId = warehouseItemId,
-                PurchaseDate = DateTime.Now
+                WarehouseItem = warehouseItem
             };
-            return View(model);
+
+            return View(batch);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Batch batch)
         {
-            ModelState.Remove("WarehouseItem"); // Odstraníme WarehouseItem z validace TODO: vyresit
-
             if (ModelState.IsValid)
             {
+                // Přepočet na základní jednotky před uložením
+                batch.QuantityInBaseUnit = UnitMeasurement.ConvertToBaseUnit(batch.Unit, (decimal)batch.QuantityOfPackage);
+                batch.PricePerBaseUnit = batch.PriceOfPackage / batch.QuantityInBaseUnit;
+
+                batch.AvailableQuantity = batch.QuantityInBaseUnit;
+
                 _context.Batches.Add(batch);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
@@ -40,7 +49,7 @@ namespace SoapProductionApp.Controllers
             return View(batch);
         }
 
-        // Editace šarže
+        // GET: Batch/Edit
         public async Task<IActionResult> Edit(int id)
         {
             var batch = await _context.Batches.FindAsync(id);
@@ -54,31 +63,27 @@ namespace SoapProductionApp.Controllers
         {
             if (id != batch.Id) return NotFound();
 
-            ModelState.Remove("WarehouseItem"); // Odstraníme WarehouseItem z validace TODO: vyresit
             if (ModelState.IsValid)
             {
+                // Přepočet na základní jednotky před uložením
+                batch.QuantityInBaseUnit = UnitMeasurement.ConvertToBaseUnit(batch.Unit, (decimal)batch.QuantityOfPackage);
+                batch.PricePerBaseUnit = batch.PriceOfPackage / batch.QuantityInBaseUnit;
+
                 _context.Batches.Update(batch);
                 await _context.SaveChangesAsync();
-                // Načteme WarehouseItem znovu, aby se správně zobrazila Quantity a PricePerUnit
-
-                /*var warehouseItem = await _context.WarehouseItems
-                    .Include(w => w.Batches) // Důležité: načíst i Batches
-                    .FirstOrDefaultAsync(w => w.Id == batch.WarehouseItemId);*/
 
                 return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
             }
             return View(batch);
         }
 
-        // Smazání šarže
+        // GET: Batch/Delete
         public async Task<IActionResult> Delete(int id)
         {
             var batch = await _context.Batches.FindAsync(id);
             if (batch == null) return NotFound();
 
-            _context.Batches.Remove(batch);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
+            return View(batch);
         }
 
         [HttpPost, ActionName("Delete")]

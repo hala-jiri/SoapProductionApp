@@ -15,9 +15,9 @@ namespace SoapProductionApp.Data
         public DbSet<WarehouseItem> WarehouseItems { get; set; }
         public DbSet<WarehouseItemBatch> WarehouseItemBatches { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Unit> Units { get; set; }
+        //public DbSet<Unit> Units { get; set; }
         public DbSet<Batch> Batches { get; set; }
-        public DbSet<Recipe> Recipes { get; set; }
+        //public DbSet<Recipe> Recipes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

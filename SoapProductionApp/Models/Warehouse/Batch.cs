@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoapProductionApp.Models.Warehouse
 {
@@ -8,7 +9,6 @@ namespace SoapProductionApp.Models.Warehouse
         public int Id { get; set; }
 
         public string Name { get; set; }
-
         public string Supplier { get; set; }
 
         [Required]
@@ -18,16 +18,40 @@ namespace SoapProductionApp.Models.Warehouse
 
         [Required]
         [Range(0, double.MaxValue)]
-        public double Quantity { get; set; }
+        public double QuantityOfPackage { get; set; }
 
         [Required]
         [Range(0, double.MaxValue)]
-        public decimal PricePerUnit { get; set; }
+        public decimal PriceOfPackage { get; set; }
+
+        [Required]
+        public UnitMeasurement.UnitType Unit { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public decimal QuantityInBaseUnit { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public decimal PricePerBaseUnit { get; set; }
+
+        [Required]
+        public decimal TaxPercentage { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal AvailableQuantity { get; set; }
+
+        [NotMapped]
+        public decimal PricePerBaseUnitWithTax => PricePerBaseUnit * (1 + TaxPercentage / 100);
 
         [ForeignKey("WarehouseItem")]
         public int WarehouseItemId { get; set; }
 
-        [NotMapped] // ⬅ Tohle říká EF, že nemá být součástí databáze ani validace
         public WarehouseItem WarehouseItem { get; set; }
+
+        public Batch()
+        {
+            AvailableQuantity = QuantityInBaseUnit;
+        }
     }
 }

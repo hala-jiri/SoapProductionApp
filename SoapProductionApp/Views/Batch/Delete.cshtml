@@ -1,20 +1,24 @@
 ﻿@model SoapProductionApp.Models.Warehouse.Batch
 
-<h2>Odstranit šarži</h2>
+<h2>Delete Batch</h2>
 
-<p>Opravdu chcete odstranit tuto šarži?</p>
+<p>Are you sure you want to delete this batch?</p>
 
 <ul>
-    <li><strong>Datum nákupu:</strong> @Model.PurchaseDate.ToShortDateString()</li>
-    <li><strong>Expirace:</strong> @(Model.ExpirationDate?.ToShortDateString() ?? "Neomezená")</li>
-    <li><strong>Množství:</strong> @Model.Quantity</li>
-    <li><strong>Cena za jednotku:</strong> @Model.PricePerUnit €</li>
+    <li><strong>Batch Name:</strong> @Model.Name</li>
+    <li><strong>Supplier:</strong> @Model.Supplier</li>
+    <li><strong>Purchase Date:</strong> @Model.PurchaseDate.ToShortDateString()</li>
+    <li><strong>Expiration Date:</strong> @(Model.ExpirationDate?.ToShortDateString() ?? "No Expiration")</li>
+    <li><strong>Package Quantity:</strong> @Model.QuantityOfPackage @Model.Unit</li>
+    <li><strong>Base Quantity:</strong> @Model.QuantityInBaseUnit (Base Unit)</li>
+    <li><strong>Available Quantity:</strong> @Model.AvailableQuantity</li>
+    <li><strong>Price Per Unit:</strong> @Model.PricePerBaseUnit €</li>
+    <li><strong>Price Per Unit with Tax:</strong> @Model.PricePerBaseUnitWithTax €</li>
+    <li><strong>Tax Percentage:</strong> @Model.TaxPercentage%</li>
 </ul>
 
-<form method="post">
+<form asp-action="DeleteConfirmed" method="post">
     <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="WarehouseItemId" />
-
-    <button type="submit" class="btn btn-danger">Smazat</button>
-    <a asp-action="Details" asp-controller="Warehouse" asp-route-id="@Model.WarehouseItemId" class="btn btn-secondary">Zpět</a>
+    <button type="submit">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>

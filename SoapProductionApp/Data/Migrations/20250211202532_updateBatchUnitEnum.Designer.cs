@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoapProductionApp.Data;
 
@@ -11,9 +12,11 @@ using SoapProductionApp.Data;
 namespace SoapProductionApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250211202532_updateBatchUnitEnum")]
+    partial class updateBatchUnitEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,6 +223,58 @@ namespace SoapProductionApp.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.Recipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BatchSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.RecipeIngredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("WarehouseItemId");
+
+                    b.ToTable("RecipeIngredient");
+                });
+
             modelBuilder.Entity("SoapProductionApp.Models.Warehouse.Batch", b =>
                 {
                     b.Property<int>("Id")
@@ -228,9 +283,6 @@ namespace SoapProductionApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("AvailableQuantity")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("datetime2");
 
@@ -238,27 +290,18 @@ namespace SoapProductionApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("PriceOfPackage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PricePerBaseUnit")
+                    b.Property<decimal>("PricePerUnit")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("QuantityInBaseUnit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<double>("QuantityOfPackage")
+                    b.Property<double>("Quantity")
                         .HasColumnType("float");
 
                     b.Property<string>("Supplier")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TaxPercentage")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Unit")
                         .HasColumnType("int");
@@ -310,9 +353,6 @@ namespace SoapProductionApp.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DefaultUnit")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("MinQuantity")
                         .HasColumnType("decimal(18,2)");
@@ -421,15 +461,32 @@ namespace SoapProductionApp.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SoapProductionApp.Models.Warehouse.Batch", b =>
+            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.RecipeIngredient", b =>
                 {
+                    b.HasOne("SoapProductionApp.Models.RecipeModels.Recipe", "Recipe")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SoapProductionApp.Models.Warehouse.WarehouseItem", "WarehouseItem")
-                        .WithMany("Batches")
+                        .WithMany()
                         .HasForeignKey("WarehouseItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Recipe");
+
                     b.Navigation("WarehouseItem");
+                });
+
+            modelBuilder.Entity("SoapProductionApp.Models.Warehouse.Batch", b =>
+                {
+                    b.HasOne("SoapProductionApp.Models.Warehouse.WarehouseItem", null)
+                        .WithMany("Batches")
+                        .HasForeignKey("WarehouseItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SoapProductionApp.Models.Warehouse.Category", b =>
@@ -448,6 +505,11 @@ namespace SoapProductionApp.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("WarehouseItem");
+                });
+
+            modelBuilder.Entity("SoapProductionApp.Models.RecipeModels.Recipe", b =>
+                {
+                    b.Navigation("Ingredients");
                 });
 
             modelBuilder.Entity("SoapProductionApp.Models.Warehouse.WarehouseItem", b =>

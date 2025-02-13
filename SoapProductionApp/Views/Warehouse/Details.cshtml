@@ -2,32 +2,30 @@
 
 <h2>@Model.Name</h2>
 
-<p><strong>Celkové množství:</strong> @Model.Quantity @Model.Unit.Name
-    @if (@Model.Quantity <= @Model.MinQuantity)
+<p>
+    <strong>Celkové množství:</strong> @Model.TotalQuantityInBaseUnit @Model.Unit.ToString()
+    @if (@Model.TotalQuantityInBaseUnit <= @Model.MinQuantity)
     {
         <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
     }
 </p>
-<p><strong>Průměrná cena za jednotku:</strong> @Model.PricePerUnit.ToString("0.00") €</p>
+<p><strong>Průměrná cena za základní jednotku:</strong> @Model.AveragePricePerBaseUnit.ToString("0.00") €</p>
 <p><strong>DPH:</strong> @Model.TaxPercentage %</p>
 <p><strong>Cena s DPH:</strong> @Model.PriceWithTax.ToString("0.00") €</p>
-<p><strong>Minimální množství:</strong> @Model.MinQuantity</p>
+<p><strong>Minimální množství:</strong> @Model.MinQuantity @Model.Unit.ToString()</p>
 <p><strong>Dodavatel:</strong> @Model.Supplier</p>
 <p><strong>Poznámky:</strong> @Model.Notes</p>
 
-<!-- Přidáme tlačítko pro přidání nové šarže -->
+<h3>Šarže</h3>
 <a asp-controller="Batch" asp-action="Create" asp-route-warehouseItemId="@Model.Id" class="btn btn-success">Přidat šarži</a>
 
-
-<h3>Šarže</h3>
 <table class="table">
     <thead>
         <tr>
             <th>Datum nákupu</th>
             <th>Expirace</th>
-            <th>Množství</th>
+            <th>Množství (v základní jednotce)</th>
             <th>Cena za jednotku</th>
-            <th>Zbývá</th>
             <th>Akce</th>
         </tr>
     </thead>
@@ -37,9 +35,8 @@
             <tr>
                 <td>@batch.PurchaseDate.ToShortDateString()</td>
                 <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToShortDateString() : "Neomezená")</td>
-                <td>@batch.Quantity @Model.Unit.Name</td>
-                <td>@batch.PricePerUnit.ToString("0.00") €</td>
-                <td>@batch.Quantity</td>
+                <td>@batch.QuantityInBaseUnit</td>
+                <td>@batch.PricePerBaseUnit.ToString("0.00") €</td>
                 <td>
                     <a asp-controller="Batch" asp-action="Edit" asp-route-id="@batch.Id" class="btn btn-warning">Upravit</a>
                     <a asp-controller="Batch" asp-action="Delete" asp-route-id="@batch.Id" class="btn btn-danger">Smazat</a>
@@ -49,20 +46,10 @@
     </tbody>
 </table>
 
-<a asp-action="Index" class="btn btn-secondary">Back</a>
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-
+<a asp-action="Index" class="btn btn-secondary">Zpět</a>
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Upravit</a>
 
 <style>
-    .badge {
-        display: inline-block;
-        padding: 5px 10px;
-        font-size: 14px;
-        font-weight: bold;
-        border-radius: 5px;
-        margin-right: 5px;
-    }
-
     .low-stock-indicator {
         color: red;
         font-weight: bold;

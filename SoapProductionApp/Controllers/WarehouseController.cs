@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace SoapProductionApp.Controllers
 {
-    [Authorize]
     public class WarehouseController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,7 +22,7 @@ namespace SoapProductionApp.Controllers
             var items = await _context.WarehouseItems
                 .Include(i => i.Batches)
                 .Include(i => i.Categories)
-                .Include(i => i.Unit).ToListAsync();
+                .ToListAsync();
             return View(items);
         }
 
@@ -32,8 +30,8 @@ namespace SoapProductionApp.Controllers
         {
             var viewModel = new WarehouseItemCreateViewModel
             {
-                AvailableUnits = _context.Units.ToList(),
-                AvailableCategories = _context.Categories.ToList()
+                AvailableCategories = _context.Categories.ToList(),
+                AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList()
             };
 
             return View(viewModel);
@@ -48,8 +46,8 @@ namespace SoapProductionApp.Controllers
                 var warehouseItem = new WarehouseItem
                 {
                     Name = viewModel.Name,
-                    UnitId = viewModel.SelectedUnitId,
-                    //PricePerUnit = viewModel.PricePerUnit,
+                    Unit = viewModel.Unit,
+                    DefaultUnit = viewModel.DefaultUnit,
                     TaxPercentage = viewModel.TaxPercentage,
                     MinQuantity = viewModel.MinQuantity,
                     Supplier = viewModel.Supplier,
@@ -63,82 +61,24 @@ namespace SoapProductionApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Pokud jsou chyby, znovu naplníme seznamy
-            viewModel.AvailableUnits = _context.Units.ToList();
-            viewModel.AvailableCategories = _context.Categories.ToList();
+            viewModel.AvailableCategories = await _context.Categories.ToListAsync();
+            viewModel.AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList();
 
             return View(viewModel);
-        }
-
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var item = await _context.WarehouseItems
-                .Include(w => w.Unit)
-                .Include(w => w.Categories)
-                .Include(w => w.Batches)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (item == null) return NotFound();
-
-            return View(item);
-        }
-
-        public async Task<bool> ConsumeMaterial(int itemId, decimal quantity)
-        {
-            var batches = await _context.WarehouseItemBatches
-                .Where(b => b.WarehouseItemId == itemId && b.Quantity > 0)
-                .OrderBy(b => b.ExpirationDate)
-                .ToListAsync();
-
-            foreach (var batch in batches)
-            {
-                if (quantity <= 0) break;
-
-                if (batch.Quantity >= quantity)
-                {
-                    batch.Quantity -= quantity;
-                    quantity = 0;
-                }
-                else
-                {
-                    quantity -= batch.Quantity;
-                    batch.Quantity = 0;
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            return quantity == 0; // Vrátí true, pokud bylo vše pokryto
         }
 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            // Načteme položku ze skladu podle ID
             var warehouseItem = await _context.WarehouseItems
-                .Include(w => w.Unit)
                 .Include(w => w.Categories)
+                .Include(w => w.Batches)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (warehouseItem == null) return NotFound();
 
-            // Vytvoříme viewModel s hodnotami pro formulář
-            var viewModel = new WarehouseItemCreateViewModel
-            {
-                Name = warehouseItem.Name,
-                Quantity = warehouseItem.Quantity,
-                SelectedUnitId = warehouseItem.UnitId,
-                PricePerUnit = warehouseItem.PricePerUnit,
-                TaxPercentage = warehouseItem.TaxPercentage,
-                MinQuantity = warehouseItem.MinQuantity,
-                Supplier = warehouseItem.Supplier,
-                Notes = warehouseItem.Notes,
-                SelectedCategoryIds = warehouseItem.Categories.Select(c => c.Id).ToList(),
-                AvailableUnits = await _context.Units.ToListAsync(),
-                AvailableCategories = await _context.Categories.ToListAsync()
-            };
+            var viewModel = new WarehouseItemCreateViewModel(warehouseItem);
 
             return View(viewModel);
         }
@@ -157,32 +97,27 @@ namespace SoapProductionApp.Controllers
 
                 if (warehouseItem == null) return NotFound();
 
-                // Aktualizujeme položku podle nových hodnot
                 warehouseItem.Name = viewModel.Name;
-                //warehouseItem.Quantity = viewModel.Quantity;
-                warehouseItem.UnitId = viewModel.SelectedUnitId;
-                //warehouseItem.PricePerUnit = viewModel.PricePerUnit;
+                warehouseItem.Unit = viewModel.Unit;
+                warehouseItem.DefaultUnit = viewModel.DefaultUnit;
                 warehouseItem.TaxPercentage = viewModel.TaxPercentage;
                 warehouseItem.MinQuantity = viewModel.MinQuantity;
                 warehouseItem.Supplier = viewModel.Supplier;
                 warehouseItem.Notes = viewModel.Notes;
-
-                // Aktualizujeme kategorie (vybereme pouze ty, které uživatel vybral)
                 warehouseItem.Categories = _context.Categories
                     .Where(c => viewModel.SelectedCategoryIds.Contains(c.Id))
                     .ToList();
 
-                _context.Update(warehouseItem); // Aktualizace položky
-                await _context.SaveChangesAsync(); // Uložení změn
+                _context.Update(warehouseItem);
+                await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index)); // Po úspěšné úpravě přejdeme zpět na seznam položek
+                return RedirectToAction(nameof(Index));
             }
 
-            // Pokud jsou nějaké chyby, znovu naplníme dostupné kategorie a jednotky
-            viewModel.AvailableUnits = await _context.Units.ToListAsync();
             viewModel.AvailableCategories = await _context.Categories.ToListAsync();
+            viewModel.AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList();
 
-            return View(viewModel); // Pokud model není validní, vrátíme uživatele zpět na stránku pro editaci
+            return View(viewModel);
         }
     }
 }

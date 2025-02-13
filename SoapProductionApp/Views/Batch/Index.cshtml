@@ -1,0 +1,37 @@
+﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.Batch>
+
+<h2>Batches</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Batch Name</th>
+            <th>Supplier</th>
+            <th>Purchase Date</th>
+            <th>Expiration Date</th>
+            <th>Quantity (Base Unit)</th>
+            <th>Available Quantity</th>
+            <th>Price Per Base Unit</th>
+            <th>Price Per Base Unit With Tax</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var batch in Model)
+        {
+            <tr>
+                <td>@batch.Name</td>
+                <td>@batch.Supplier</td>
+                <td>@batch.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
+                <td>@batch.QuantityInBaseUnit</td>
+                <td>@batch.AvailableQuantity</td>
+                <td>@batch.PricePerBaseUnit</td>
+                <td>@batch.PricePerBaseUnitWithTax</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Batch", new { id = batch.Id })">Edit</a> |
+                    <a href="@Url.Action("Delete", "Batch", new { id = batch.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
