@@ -28,10 +28,14 @@ namespace SoapProductionApp.Controllers
 
         public async Task<IActionResult> Create()
         {
+            // Načteme všechny dostupné kategorie
+            var availableCategories = await _context.Categories.ToListAsync();
+
+            // Vytvoříme ViewModel
             var viewModel = new WarehouseItemCreateViewModel
             {
-                AvailableCategories = _context.Categories.ToList(),
-                AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList()
+                AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList(),
+                AvailableCategories = availableCategories // Všechny kategorie
             };
 
             return View(viewModel);
@@ -67,18 +71,18 @@ namespace SoapProductionApp.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null) return NotFound();
-
             var warehouseItem = await _context.WarehouseItems
-                .Include(w => w.Categories)
-                .Include(w => w.Batches)
+                .Include(w => w.Categories) // Načteme existující kategorie přiřazené k WarehouseItem
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (warehouseItem == null) return NotFound();
 
-            var viewModel = new WarehouseItemCreateViewModel(warehouseItem);
+            // Načteme všechny dostupné kategorie
+            var availableCategories = await _context.Categories.ToListAsync();
+
+            var viewModel = new WarehouseItemCreateViewModel(warehouseItem, availableCategories);
 
             return View(viewModel);
         }
@@ -118,6 +122,51 @@ namespace SoapProductionApp.Controllers
             viewModel.AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList();
 
             return View(viewModel);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var warehouseItem = await _context.WarehouseItems
+                .Include(w => w.Batches)
+                .Include(w => w.Categories)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouseItem == null) return NotFound();
+
+            return View(warehouseItem);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var warehouseItem = await _context.WarehouseItems
+                .Include(w => w.Categories) // Načteme přiřazené kategorie (pro případné zobrazení)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouseItem == null) return NotFound();
+
+            return View(warehouseItem);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var warehouseItem = await _context.WarehouseItems
+                .Include(w => w.Categories)
+                .Include(w => w.Batches)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouseItem == null) return NotFound();
+
+            // Odstraníme kategorie a šarže
+            warehouseItem.Categories.Clear();
+            _context.Batches.RemoveRange(warehouseItem.Batches);
+
+            // Odstraníme WarehouseItem
+            _context.WarehouseItems.Remove(warehouseItem);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

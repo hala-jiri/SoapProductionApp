@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoapProductionApp.Data;
 
@@ -11,9 +12,11 @@ using SoapProductionApp.Data;
 namespace SoapProductionApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250213172753_ChangeModelWarehouseItemPercentageAndMinimumQuantity")]
+    partial class ChangeModelWarehouseItemPercentageAndMinimumQuantity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace SoapProductionApp.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CategoryWarehouseItem", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseItemsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "WarehouseItemsId");
-
-                    b.HasIndex("WarehouseItemsId");
-
-                    b.ToTable("CategoryWarehouseItem");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -308,7 +296,12 @@ namespace SoapProductionApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WarehouseItemId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WarehouseItemId");
 
                     b.ToTable("Categories");
                 });
@@ -380,21 +373,6 @@ namespace SoapProductionApp.Data.Migrations
                     b.ToTable("WarehouseItemBatches");
                 });
 
-            modelBuilder.Entity("CategoryWarehouseItem", b =>
-                {
-                    b.HasOne("SoapProductionApp.Models.Warehouse.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SoapProductionApp.Models.Warehouse.WarehouseItem", null)
-                        .WithMany()
-                        .HasForeignKey("WarehouseItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -457,6 +435,13 @@ namespace SoapProductionApp.Data.Migrations
                     b.Navigation("WarehouseItem");
                 });
 
+            modelBuilder.Entity("SoapProductionApp.Models.Warehouse.Category", b =>
+                {
+                    b.HasOne("SoapProductionApp.Models.Warehouse.WarehouseItem", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("WarehouseItemId");
+                });
+
             modelBuilder.Entity("SoapProductionApp.Models.Warehouse.WarehouseItemBatch", b =>
                 {
                     b.HasOne("SoapProductionApp.Models.Warehouse.WarehouseItem", "WarehouseItem")
@@ -471,6 +456,8 @@ namespace SoapProductionApp.Data.Migrations
             modelBuilder.Entity("SoapProductionApp.Models.Warehouse.WarehouseItem", b =>
                 {
                     b.Navigation("Batches");
+
+                    b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,11 @@
 ﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.WarehouseItem>
 
 <h2>Warehouse Items</h2>
-<table>
+
+<!-- Tlačítko pro přidání nové skladové položky -->
+<a asp-action="Create" class="btn btn-success mb-3">Add New Warehouse Item</a>
+
+<table class="table">
     <thead>
         <tr>
             <th>Name</th>
@@ -17,14 +21,39 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.TotalQuantityInBaseUnit @item.DefaultUnit</td>
-                <td>@item.AveragePricePerBaseUnit</td>
-                <td>@item.TotalMaterialCost</td>
-                <td>@string.Join(", ", item.Categories.Select(c => c.Name))</td>
                 <td>
-                    <a href="@Url.Action("Details", "Warehouse", new { id = item.Id })">Details</a> |
-                    <a href="@Url.Action("Edit", "Warehouse", new { id = item.Id })">Edit</a> |
-                    <a href="@Url.Action("Delete", "Warehouse", new { id = item.Id })">Delete</a>
+                    @item.TotalQuantityInBaseUnit @item.DefaultUnit
+                    @if (item.TotalQuantityInBaseUnit <= item.MinQuantity)
+                    {
+                        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
+                    }
+                </td>
+                <td>@item.AveragePricePerBaseUnit.ToString("0.00") €</td>
+                <td>@item.TotalMaterialCost.ToString("0.00") €</td>
+                <td>
+                    @if (item.Categories != null && item.Categories.Any())
+                    {
+                        foreach (var category in item.Categories)
+                        {
+                            <span class="badge" style="background-color: @category.ColorBackground; color: @category.ColorText;">
+                                @category.Name
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+                <td>
+                    <!-- Odkaz na detail skladové položky -->
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+
+                    <!-- Odkaz na editaci skladové položky -->
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+
+                    <!-- Odkaz na smazání skladové položky -->
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

@@ -45,7 +45,7 @@ namespace SoapProductionApp.Models.Warehouse
         [NotMapped]
         public decimal TotalMaterialCost => TotalQuantityInBaseUnit * AveragePricePerBaseUnit;
 
-        public decimal TaxPercentage { get; set; }
+        public int TaxPercentage { get; set; }
         public decimal MinQuantity { get; set; }
         public string Supplier { get; set; }
         public string Notes { get; set; }
@@ -56,7 +56,7 @@ namespace SoapProductionApp.Models.Warehouse
         [NotMapped]
         public UnitMeasurement.MeasurementCategory MeasurementCategory => UnitMeasurement.GetCategory(Unit);
 
-        public virtual List<Category> Categories { get; set; } = new List<Category>();
+        public virtual List<Category> Categories { get; set; }
 
         public virtual List<Batch> Batches { get; set; } = new List<Batch>();
 

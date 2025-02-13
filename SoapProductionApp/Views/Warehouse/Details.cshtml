@@ -3,7 +3,7 @@
 <h2>@Model.Name</h2>
 
 <p>
-    <strong>Celkové množství:</strong> @Model.TotalQuantityInBaseUnit @Model.Unit.ToString()
+    <strong>Celkové množství:</strong> @Model.TotalQuantityInBaseUnit @Model.DefaultUnit
     @if (@Model.TotalQuantityInBaseUnit <= @Model.MinQuantity)
     {
         <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
@@ -12,7 +12,7 @@
 <p><strong>Průměrná cena za základní jednotku:</strong> @Model.AveragePricePerBaseUnit.ToString("0.00") €</p>
 <p><strong>DPH:</strong> @Model.TaxPercentage %</p>
 <p><strong>Cena s DPH:</strong> @Model.PriceWithTax.ToString("0.00") €</p>
-<p><strong>Minimální množství:</strong> @Model.MinQuantity @Model.Unit.ToString()</p>
+<p><strong>Minimální množství:</strong> @Model.MinQuantity @Model.DefaultUnit</p>
 <p><strong>Dodavatel:</strong> @Model.Supplier</p>
 <p><strong>Poznámky:</strong> @Model.Notes</p>
 
