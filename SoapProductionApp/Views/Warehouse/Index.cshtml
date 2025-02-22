@@ -1,64 +1,82 @@
 ﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.WarehouseItem>
 
-<h2>Warehouse Items</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-11 col-lg-11">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Warehouse Items</h3>
+                    <a asp-action="Create" class="btn btn-light btn-lg">
+                        ➕ Add New Warehouse Item
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped wide-table">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 20%;">Name</th>
+                                    <th style="width: 10%;" class="text-center">Total Quantity</th>
+                                    <th style="width: 15%;" class="text-center">Price (without Tax)</th>
+                                    <th style="width: 10%;" class="text-center">Total Value</th>
+                                    <th style="width: 25%;">Categories</th>
+                                    <th style="width: 20%;" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="align-middle">@item.Name</td>
+                                        <td class="align-middle text-end">
+                                            @item.TotalAvailableQuantity @item.Unit
+                                            @if (item.TotalAvailableQuantity <= item.MinimumQuantityAlarm)
+                                            {
+                                                <span class="low-stock-indicator" title="Low Stock!">⚠️</span>
+                                            }
+                                        </td>
+                                        <td class="align-middle text-end">@item.AveragePricePerUnitWithoutTax.ToString("0.000") € / @item.Unit</td>
+                                        <td class="align-middle text-end">@item.TotalMaterialValueWithoutTax.ToString("0.000") €</td>
+                                        <td class="align-middle">
+                                            @if (item.Categories != null && item.Categories.Any())
+                                            {
+                                                @foreach (var category in item.Categories)
+                                                {
+                                                    <span class="badge" style="background-color: @category.ColorBackground; color: @category.ColorText;">
+                                                        @category.Name
+                                                    </span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No Categories</span>
+                                            }
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-md d-flex align-items-center">
+                                                    <i class="bi bi-eye-fill me-1"></i> View
+                                                </a>
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-md d-flex align-items-center">
+                                                    <i class="bi bi-pencil-fill me-1"></i> Edit
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-md d-flex align-items-center">
+                                                    <i class="bi bi-trash-fill me-1"></i> Delete
+                                                </a>
+                                            </div>
+                                        </td>
 
-<!-- Tlačítko pro přidání nové skladové položky -->
-<a asp-action="Create" class="btn btn-success mb-3">Add New Warehouse Item</a>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Total Quantity</th>
-            <th>Price Per Unit (with Tax)</th>
-            <th>Total Value</th>
-            <th>Categories</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>
-                    @item.TotalAvailableQuantity @item.Unit
-                    @if (item.TotalAvailableQuantity <= item.MinimumQuantityAlarm)
-                    {
-                        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
-                    }
-                </td>
-                <td>@item.AveragePricePerUnitWithoutTax.ToString("0.000") € / @item.Unit</td>
-                <td>@item.TotalMaterialValueWithoutTax.ToString("0.000") €</td>
-                <td>
-                    @if (item.Categories != null && item.Categories.Any())
-                    {
-                        foreach (var category in item.Categories)
-                        {
-                            <span class="badge" style="background-color: @category.ColorBackground; color: @category.ColorText;">
-                                @category.Name
-                            </span>
-                        }
-                    }
-                    else
-                    {
-                        <span>-</span>
-                    }
-                </td>
-                <td>
-                    <!-- Odkaz na detail skladové položky -->
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
-
-                    <!-- Odkaz na editaci skladové položky -->
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-
-                    <!-- Odkaz na smazání skladové položky -->
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .low-stock-indicator {
@@ -75,5 +93,15 @@
         font-weight: bold;
         border-radius: 5px;
         margin-right: 5px;
+    }
+
+    .wide-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .btn-lg {
+        font-size: 1rem;
+        padding: 10px 15px;
     }
 </style>

@@ -1,97 +1,143 @@
 ﻿@model SoapProductionApp.Models.Warehouse.WarehouseItem
 
-<h2>@Model.Name</h2>
+<div class="container mt-5">
+    <!-- Detailní tabulka (menší než Shipment) -->
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">@Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Dodavatel:</strong> @Model.Suppliers</p>
 
-<!-- Dodavatel a poznámky -->
-<p><strong>Dodavatel:</strong> @Model.Suppliers</p>
+                    <!-- Tabulka pro přehlednost hodnot -->
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><strong>Available quantity:</strong></td>
+                                <td class="text-end">@Model.TotalAvailableQuantity.ToString("0.000") @Model.Unit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Alarm on low stock:</strong></td>
+                                <td class="text-end">
+                                    @Model.MinimumQuantityAlarm.ToString("0.00") @Model.Unit
+                                    @if (Model.TotalAvailableQuantity <= Model.MinimumQuantityAlarm)
+                                    {
+                                        <span class="low-stock-indicator">⚠️ Low Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-success">✅ Sufficient Stock</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Average price:</strong></td>
+                                <td class="text-end">@Model.AveragePricePerUnitWithoutTax.ToString("0.00") €/ @Model.Unit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Average price (with tax):</strong></td>
+                                <td class="text-end">@Model.AveragePricePerUnitWithTax.ToString("0.00") €/ @Model.Unit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total value on stock:</strong></td>
+                                <td class="text-end">@Model.TotalMaterialValueWithoutTax.ToString("0.00") €</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total value on stock (with tax):</strong></td>
+                                <td class="text-end">@Model.TotalMaterialValueWithTax.ToString("0.00") €</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-<!-- Celkové množství ve výchozí jednotce -->
-<p>
-    <strong>Available quantity:</strong>
-    @Model.TotalAvailableQuantity.ToString("0.000") @Model.Unit
-</p>
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="alert alert-info">
+                            <strong>Poznámky:</strong> @Model.Notes
+                        </div>
+                    }
 
-<!-- Nízká zásoba indikátor -->
-<p>
-    <strong>Alarm on low stock:</strong>
-    @Model.MinimumQuantityAlarm.ToString("0.00") @Model.Unit
-    @if (Model.TotalAvailableQuantity <= Model.MinimumQuantityAlarm)
-    {
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Upravit</a>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Zpět</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️ Nízká zásoba</span>
-    }
-    else
-    {
-        <span class="text-success">✅ Dostatečné zásoby</span>
-    }
-</p>
+    <!-- 🚀 Shipment tabulka je TEĎ VĚTŠÍ než detail -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-12 col-lg-11">
+            <!-- Větší než detailní tabulka -->
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Shipment (Packages)</h4>
+                    <a asp-controller="Batch" asp-action="Create" asp-route-warehouseItemId="@Model.Id" class="btn btn-success btn-sm">
+                        ➕ Add Shipment
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped wide-table">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 38%;">Name</th>
+                                    <th style="width: 14%;">Date of Purchase</th>
+                                    <th style="width: 14%;">Expiration</th>
+                                    <th style="width: 10%;">Amount</th>
+                                    <th style="width: 10%;">Unit Price</th>
+                                    <th style="width: 14%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var batch in Model.Batches.OrderBy(b => b.ExpirationDate))
+                                {
+                                    <tr>
+                                        <td class="align-middle">@batch.Name</td>
+                                        <td class="align-middle nowrap">@batch.PurchaseDate.ToShortDateString()</td>
+                                        <td class="align-middle nowrap">
+                                            @(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToShortDateString() : "No Expiry")
+                                        </td>
+                                        <td class="align-middle nowrap">@batch.AvailableQuantity.ToString("0.000") @batch.Unit</td>
+                                        <td class="align-middle nowrap">@batch.UnitPriceWithoutTax.ToString("0.000") € / @batch.Unit</td>
+                                        <td class="align-middle">
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <a asp-controller="Batch" asp-action="Edit" asp-route-id="@batch.Id" class="btn btn-warning btn-sm">Edit</a>
+                                                <a asp-controller="Batch" asp-action="Delete" asp-route-id="@batch.Id" class="btn btn-danger btn-sm">Delete</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- Průměrné ceny -->
-<p>
-    <strong>Average price:</strong>
-    @Model.AveragePricePerUnitWithoutTax.ToString("0.00") €/ @Model.Unit
-</p>
-<p>
-    <strong>Average price (with tax):</strong>
-    @Model.AveragePricePerUnitWithTax.ToString("0.00") €/ @Model.Unit
-</p>
-<p>
-    <strong>Total value on stock:</strong>
-    @Model.TotalMaterialValueWithoutTax.ToString("0.00") €
-</p>
-<p>
-    <strong>Total value on stock (with tax):</strong>
-    @Model.TotalMaterialValueWithTax.ToString("0.00") €
-</p>
-
-
-<p><strong>Poznámky:</strong> @Model.Notes</p>
-
-<h3>Šarže</h3>
-<a asp-controller="Batch" asp-action="Create" asp-route-warehouseItemId="@Model.Id" class="btn btn-success">Přidat šarži</a>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Datum nákupu</th>
-            <th>Expirace</th>
-            <th>Množství</th>
-            <th>Cena za jednotku</th>
-            <th>Akce</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var batch in Model.Batches.OrderBy(b => b.ExpirationDate))
-        {
-            <tr>
-                <td>@batch.Name</td>
-                <td>@batch.PurchaseDate.ToShortDateString()</td>
-                <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToShortDateString() : "Neomezená")</td>
-                <td>@batch.AvailableQuantity.ToString("0.000") @batch.Unit</td>
-                <td>@batch.UnitPriceWithoutTax.ToString("0.000") € /@batch.Unit</td>
-                <td>
-                    <a asp-controller="Batch" asp-action="Edit" asp-route-id="@batch.Id" class="btn btn-warning">Upravit</a>
-                    <a asp-controller="Batch" asp-action="Delete" asp-route-id="@batch.Id" class="btn btn-danger">Smazat</a>
-                </td>
-            </tr>
+    <style>
+        .nowrap {
+            white-space: nowrap;
         }
-    </tbody>
-</table>
 
-<a asp-action="Index" class="btn btn-secondary">Zpět</a>
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Upravit</a>
+        .wide-table {
+            table-layout: fixed;
+            width: 100%;
+        }
 
-<style>
-    .low-stock-indicator {
-        color: red;
-        font-weight: bold;
-        margin-left: 5px;
-        font-size: 18px;
-    }
+        .low-stock-indicator {
+            color: red;
+            font-weight: bold;
+            margin-left: 5px;
+            font-size: 16px;
+        }
 
-    .text-success {
-        color: green;
-        font-weight: bold;
-    }
-</style>
+        .text-success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</div>
