@@ -22,6 +22,7 @@
                                 <td><strong>Alarm on low stock:</strong></td>
                                 <td class="text-end">
                                     @Model.MinimumQuantityAlarm.ToString("0.00") @Model.Unit
+                                    <br>
                                     @if (Model.TotalAvailableQuantity <= Model.MinimumQuantityAlarm)
                                     {
                                         <span class="low-stock-indicator">⚠️ Low Stock</span>
