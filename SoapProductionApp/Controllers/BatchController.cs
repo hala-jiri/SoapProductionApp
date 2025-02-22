@@ -28,6 +28,7 @@ namespace SoapProductionApp.Controllers
 
             ViewBag.Unit = warehouseItem.Unit;
             ViewBag.WarehouseItemName = warehouseItem.Name;
+            ViewBag.WarehouseItemId = warehouseItem.Id;
 
             var batchCreateViewModel = new BatchCreateViewModel() { };
             return View(batchCreateViewModel);
