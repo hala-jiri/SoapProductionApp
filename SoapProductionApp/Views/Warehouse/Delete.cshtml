@@ -6,10 +6,10 @@
 
 <ul>
     <li><strong>Name:</strong> @Model.Name</li>
-    <li><strong>Default Unit:</strong> @Model.DefaultUnit</li>
+    <li><strong>Unit:</strong> @Model.Unit</li>
     <li><strong>Tax Percentage:</strong> @Model.TaxPercentage %</li>
-    <li><strong>Minimum Quantity:</strong> @Model.MinQuantity @Model.DefaultUnit</li>
-    <li><strong>Supplier:</strong> @Model.Supplier</li>
+    <li><strong>Minimum Quantity:</strong> @Model.MinimumQuantityAlarm @Model.Unit</li>
+    <li><strong>Supplier:</strong> @Model.Suppliers</li>
     <li><strong>Notes:</strong> @Model.Notes</li>
     @if (Model.Categories.Any())
     {

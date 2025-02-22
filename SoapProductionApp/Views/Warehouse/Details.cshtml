@@ -2,18 +2,49 @@
 
 <h2>@Model.Name</h2>
 
+<!-- Dodavatel a poznámky -->
+<p><strong>Dodavatel:</strong> @Model.Suppliers</p>
+
+<!-- Celkové množství ve výchozí jednotce -->
 <p>
-    <strong>Celkové množství:</strong> @Model.TotalQuantityInBaseUnit @Model.DefaultUnit
-    @if (@Model.TotalQuantityInBaseUnit <= @Model.MinQuantity)
+    <strong>Available quantity:</strong>
+    @Model.TotalAvailableQuantity.ToString("0.000") @Model.Unit
+</p>
+
+<!-- Nízká zásoba indikátor -->
+<p>
+    <strong>Alarm on low stock:</strong>
+    @Model.MinimumQuantityAlarm.ToString("0.00") @Model.Unit
+    @if (Model.TotalAvailableQuantity <= Model.MinimumQuantityAlarm)
     {
-        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
+
+        <span class="low-stock-indicator" title="Nízká zásoba!">⚠️ Nízká zásoba</span>
+    }
+    else
+    {
+        <span class="text-success">✅ Dostatečné zásoby</span>
     }
 </p>
-<p><strong>Průměrná cena za základní jednotku:</strong> @Model.AveragePricePerBaseUnit.ToString("0.00") €</p>
-<p><strong>DPH:</strong> @Model.TaxPercentage %</p>
-<p><strong>Cena s DPH:</strong> @Model.PriceWithTax.ToString("0.00") €</p>
-<p><strong>Minimální množství:</strong> @Model.MinQuantity @Model.DefaultUnit</p>
-<p><strong>Dodavatel:</strong> @Model.Supplier</p>
+
+<!-- Průměrné ceny -->
+<p>
+    <strong>Average price:</strong>
+    @Model.AveragePricePerUnitWithoutTax.ToString("0.00") €/ @Model.Unit
+</p>
+<p>
+    <strong>Average price (with tax):</strong>
+    @Model.AveragePricePerUnitWithTax.ToString("0.00") €/ @Model.Unit
+</p>
+<p>
+    <strong>Total value on stock:</strong>
+    @Model.TotalMaterialValueWithoutTax.ToString("0.00") €
+</p>
+<p>
+    <strong>Total value on stock (with tax):</strong>
+    @Model.TotalMaterialValueWithTax.ToString("0.00") €
+</p>
+
+
 <p><strong>Poznámky:</strong> @Model.Notes</p>
 
 <h3>Šarže</h3>
@@ -22,9 +53,10 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Name</th>
             <th>Datum nákupu</th>
             <th>Expirace</th>
-            <th>Množství (v základní jednotce)</th>
+            <th>Množství</th>
             <th>Cena za jednotku</th>
             <th>Akce</th>
         </tr>
@@ -33,10 +65,11 @@
         @foreach (var batch in Model.Batches.OrderBy(b => b.ExpirationDate))
         {
             <tr>
+                <td>@batch.Name</td>
                 <td>@batch.PurchaseDate.ToShortDateString()</td>
                 <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToShortDateString() : "Neomezená")</td>
-                <td>@batch.QuantityInBaseUnit</td>
-                <td>@batch.PricePerBaseUnit.ToString("0.00") €</td>
+                <td>@batch.AvailableQuantity.ToString("0.000") @batch.Unit</td>
+                <td>@batch.UnitPriceWithoutTax.ToString("0.000") € /@batch.Unit</td>
                 <td>
                     <a asp-controller="Batch" asp-action="Edit" asp-route-id="@batch.Id" class="btn btn-warning">Upravit</a>
                     <a asp-controller="Batch" asp-action="Delete" asp-route-id="@batch.Id" class="btn btn-danger">Smazat</a>
@@ -55,5 +88,10 @@
         font-weight: bold;
         margin-left: 5px;
         font-size: 18px;
+    }
+
+    .text-success {
+        color: green;
+        font-weight: bold;
     }
 </style>

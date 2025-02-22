@@ -14,62 +14,47 @@ namespace SoapProductionApp.Models.Warehouse
         [Required]
         public string Name { get; set; }
 
-        [Required]
-        public UnitMeasurement.UnitType DefaultUnit { get; set; }
-
-        [NotMapped]
-        public decimal TotalQuantityInBaseUnit
-        {
-            get
-            {
-                return Batches?.Sum(batch => batch.QuantityInBaseUnit) ?? 0;
-            }
-        }
-
-        [NotMapped]
-        public decimal AveragePricePerBaseUnit
-        {
-            get
-            {
-                if (Batches == null || !Batches.Any()) return 0;
-                decimal totalQuantity = TotalQuantityInBaseUnit;
-                decimal totalValue = Batches.Sum(batch => batch.QuantityInBaseUnit * batch.PricePerBaseUnit);
-                return totalQuantity > 0 ? totalValue / totalQuantity : 0;
-            }
-        }
-
-        [NotMapped]
-        public decimal PriceWithTax => AveragePricePerBaseUnit * (1 + TaxPercentage / 100);
-
-
-        [NotMapped]
-        public decimal TotalMaterialCost => TotalQuantityInBaseUnit * AveragePricePerBaseUnit;
-
-        public int TaxPercentage { get; set; }
-        public decimal MinQuantity { get; set; }
-        public string Supplier { get; set; }
-        public string Notes { get; set; }
-
+        // Výchozí jednotka (např. L nebo Kg)
         [Required]
         public UnitMeasurement.UnitType Unit { get; set; }
 
+        public int TaxPercentage { get; set; }
+
+        // Celkové množství v základních jednotkách (např. ml, g)
         [NotMapped]
-        public UnitMeasurement.MeasurementCategory MeasurementCategory => UnitMeasurement.GetCategory(Unit);
+        public decimal TotalAvailableQuantity =>
+            Batches?.Sum(batch => batch.AvailableQuantity) ?? 0;
+
+        // Prumerna cena za jednotku, could be like "TotalMaterialValueWithoutTax / TotalAvailableQuantity)"
+        [NotMapped]
+        public decimal AveragePricePerUnitWithoutTax => TotalAvailableQuantity > 0
+        ? (Batches?.Sum(batch => batch.UnitPriceWithoutTax * batch.AvailableQuantity) ?? 0) / TotalAvailableQuantity : 0;
+
+        [NotMapped]
+        public decimal AveragePricePerUnitWithTax => TotalAvailableQuantity > 0
+        ? (Batches?.Sum(batch => batch.UnitPriceWithTax * batch.AvailableQuantity) ?? 0) / TotalAvailableQuantity : 0;
+
+
+        // Celková hodnota materiálu (bez DPH)
+        [NotMapped]
+        public decimal TotalMaterialValueWithoutTax => Batches?.Sum(batch => batch.PriceOfAvailableStockQuantityWithoutTax) ?? 0;
+        [NotMapped]
+        public decimal TotalMaterialValueWithTax => Batches?.Sum(batch => batch.PriceOfAvailableStockQuantityWithTax) ?? 0;
+
+
+        // Minimální množství ve výchozí jednotce (např. L, Kg)
+        public decimal MinimumQuantityAlarm { get; set; }
+
+        [NotMapped]
+        public string Suppliers => string.Join(", ", Batches?
+            .Select(b => b.Supplier)
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Distinct() ?? new List<string>());
+
+        public string Notes { get; set; }
 
         public virtual List<Category> Categories { get; set; }
 
         public virtual List<Batch> Batches { get; set; } = new List<Batch>();
-
-        public decimal ConvertToUnit(UnitMeasurement.UnitType targetUnit, decimal quantity)
-        {
-            if (MeasurementCategory != UnitMeasurement.GetCategory(targetUnit))
-                throw new InvalidOperationException("Cannot convert between units of different categories");
-            return UnitMeasurement.ConvertToBaseUnit(targetUnit, quantity) / UnitMeasurement.ConvertToBaseUnit(Unit, 1);
-        }
-
-        public List<UnitMeasurement.UnitType> GetAllowedUnits()
-        {
-            return UnitMeasurement.GetCompatibleUnits(Unit);
-        }
     }
 }

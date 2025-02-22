@@ -10,8 +10,8 @@
         <tr>
             <th>Name</th>
             <th>Total Quantity</th>
-            <th>Price Per Unit</th>
-            <th>Total Material Cost</th>
+            <th>Price Per Unit (with Tax)</th>
+            <th>Total Value</th>
             <th>Categories</th>
             <th>Actions</th>
         </tr>
@@ -22,14 +22,14 @@
             <tr>
                 <td>@item.Name</td>
                 <td>
-                    @item.TotalQuantityInBaseUnit @item.DefaultUnit
-                    @if (item.TotalQuantityInBaseUnit <= item.MinQuantity)
+                    @item.TotalAvailableQuantity @item.Unit
+                    @if (item.TotalAvailableQuantity <= item.MinimumQuantityAlarm)
                     {
                         <span class="low-stock-indicator" title="Nízká zásoba!">⚠️</span>
                     }
                 </td>
-                <td>@item.AveragePricePerBaseUnit.ToString("0.00") €</td>
-                <td>@item.TotalMaterialCost.ToString("0.00") €</td>
+                <td>@item.AveragePricePerUnitWithoutTax.ToString("0.000") € / @item.Unit</td>
+                <td>@item.TotalMaterialValueWithoutTax.ToString("0.000") €</td>
                 <td>
                     @if (item.Categories != null && item.Categories.Any())
                     {

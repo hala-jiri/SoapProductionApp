@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models;
+using SoapProductionApp.Models.ViewModels;
 using SoapProductionApp.Models.Warehouse;
 
 namespace SoapProductionApp.Controllers
@@ -16,81 +17,113 @@ namespace SoapProductionApp.Controllers
         }
 
         // GET: Batch/Create
-        public IActionResult Create(int warehouseItemId)
+        public async Task<IActionResult> Create(int warehouseItemId)
         {
-            var warehouseItem = _context.WarehouseItems.Find(warehouseItemId);
-            if (warehouseItem == null) return NotFound();
+            var warehouseItem = await _context.WarehouseItems.FirstOrDefaultAsync(w => w.Id == warehouseItemId);
 
-            var batch = new Batch
+            if (warehouseItem == null)
             {
-                WarehouseItemId = warehouseItemId,
-                WarehouseItem = warehouseItem
-            };
+                return NotFound();
+            }
 
-            return View(batch);
+            ViewBag.Unit = warehouseItem.Unit;
+            ViewBag.WarehouseItemName = warehouseItem.Name;
+
+            var batchCreateViewModel = new BatchCreateViewModel() { };
+            return View(batchCreateViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Batch batch)
+        public async Task<IActionResult> Create(BatchCreateViewModel batchCreateViewModel)
         {
+            ModelState.Remove("WarehouseItem");
             if (ModelState.IsValid)
             {
-                // Přepočet na základní jednotky před uložením
-                batch.QuantityInBaseUnit = UnitMeasurement.ConvertToBaseUnit(batch.Unit, (decimal)batch.QuantityOfPackage);
-                batch.PricePerBaseUnit = batch.PriceOfPackage / batch.QuantityInBaseUnit;
-
-                batch.AvailableQuantity = batch.QuantityInBaseUnit;
+                var warehouseItem = await _context.WarehouseItems
+                   .FirstOrDefaultAsync(w => w.Id == batchCreateViewModel.WarehouseItemId);
+                //var quantityBaseUnit = UnitMeasurement.ConvertToBaseUnit(batchCreateViewModel.Unit, (decimal)batchCreateViewModel.QuantityOfPackage);
+                batchCreateViewModel.WarehouseItem = warehouseItem;
+                batchCreateViewModel.Unit = warehouseItem.Unit;
+                var batch = new Batch(batchCreateViewModel) { };
 
                 _context.Batches.Add(batch);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
             }
-            return View(batch);
+            return View(batchCreateViewModel);
         }
 
         // GET: Batch/Edit
         public async Task<IActionResult> Edit(int id)
         {
-            var batch = await _context.Batches.FindAsync(id);
+            var batch = await _context.Batches
+                .Include(b => b.WarehouseItem)
+                .FirstOrDefaultAsync(b => b.Id == id);
             if (batch == null) return NotFound();
-            return View(batch);
+
+            var batchCreateViewModel = new BatchCreateViewModel(batch);
+
+            ViewBag.Unit = batch.Unit;
+            return View(batchCreateViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Batch batch)
+        public async Task<IActionResult> Edit(int id, BatchCreateViewModel batchCreateViewModel)
         {
-            if (id != batch.Id) return NotFound();
-
+            if (id != batchCreateViewModel.Id) return NotFound();
+            ModelState.Remove("WarehouseItem");
             if (ModelState.IsValid)
             {
-                // Přepočet na základní jednotky před uložením
-                batch.QuantityInBaseUnit = UnitMeasurement.ConvertToBaseUnit(batch.Unit, (decimal)batch.QuantityOfPackage);
-                batch.PricePerBaseUnit = batch.PriceOfPackage / batch.QuantityInBaseUnit;
+                var batch = await _context.Batches.FirstOrDefaultAsync(i => i.Id == id);
+                if (batch == null) return NotFound();
+
+                /*var warehouseItem = await _context.WarehouseItems
+                   .FirstOrDefaultAsync(w => w.Id == batchCreateViewModel.WarehouseItemId);*/
+
+                //var quantityBaseUnit = UnitMeasurement.ConvertToBaseUnit(batchCreateViewModel.Unit, (decimal)batchCreateViewModel.QuantityOfPackage);
+
+                batch.Name = batchCreateViewModel.Name;
+                batch.Supplier = batchCreateViewModel.Supplier;
+                batch.PurchaseDate = batchCreateViewModel.PurchaseDate;
+                batch.ExpirationDate = batchCreateViewModel.ExpirationDate;
+
+                batch.TaxPercentage = batchCreateViewModel.TaxPercentage;
+
+                batch.AvailableQuantity = batchCreateViewModel.QuantityOfPackage;
+                
+                batch.UnitPriceWithoutTax = batchCreateViewModel.PriceOfPackageWithoutTax / batchCreateViewModel.QuantityOfPackage;
+
 
                 _context.Batches.Update(batch);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
+                return RedirectToAction("Details", "Warehouse", new { id = batchCreateViewModel.WarehouseItemId });
             }
-            return View(batch);
+            return View(batchCreateViewModel);
         }
 
         // GET: Batch/Delete
         public async Task<IActionResult> Delete(int id)
         {
-            var batch = await _context.Batches.FindAsync(id);
+            var batch = await _context.Batches
+                .Include(b => b.WarehouseItem)
+                .FirstOrDefaultAsync(b => b.Id == id);
             if (batch == null) return NotFound();
 
-            return View(batch);
+            var batchViewModel = new BatchViewModel(batch);
+
+            return View(batchViewModel);
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var batch = await _context.Batches.FindAsync(id);
+            var batch = await _context.Batches
+                .Include(b => b.WarehouseItem)
+                .FirstOrDefaultAsync(b => b.Id == id);
             if (batch == null) return NotFound();
 
             int warehouseItemId = batch.WarehouseItemId;

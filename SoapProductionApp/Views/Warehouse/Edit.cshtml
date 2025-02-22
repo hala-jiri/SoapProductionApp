@@ -1,4 +1,4 @@
-﻿@model SoapProductionApp.Models.Warehouse.WarehouseItemCreateViewModel
+﻿@model SoapProductionApp.Models.ViewModels.WarehouseItemCreateEditViewModel
 
 <h2>Edit Warehouse Item</h2>
 
@@ -14,14 +14,14 @@
 
     <!-- Výchozí jednotka -->
     <div class="form-group">
-        <label asp-for="DefaultUnit" class="form-label">Default Unit</label>
-        <select asp-for="DefaultUnit" class="form-control">
+        <label asp-for="Unit" class="form-label">Unit</label>
+        <select asp-for="Unit" class="form-control">
             @foreach (var unit in Model.AvailableUnits)
             {
-                <option value="@unit" selected="@(unit == Model.DefaultUnit)">@unit</option>
+                <option value="@unit" selected="@(unit == Model.Unit)">@unit</option>
             }
         </select>
-        <span asp-validation-for="DefaultUnit" class="text-danger"></span>
+        <span asp-validation-for="Unit" class="text-danger"></span>
     </div>
 
     <!-- Kategorie jako checkboxy -->
@@ -58,16 +58,9 @@
 
     <!-- Minimální množství -->
     <div class="form-group">
-        <label asp-for="MinQuantity" class="form-label">Minimum Quantity</label>
-        <input asp-for="MinQuantity" class="form-control" type="number" step="0.1" />
-        <span asp-validation-for="MinQuantity" class="text-danger"></span>
-    </div>
-
-    <!-- Dodavatel -->
-    <div class="form-group">
-        <label asp-for="Supplier" class="form-label">Supplier</label>
-        <input asp-for="Supplier" class="form-control" />
-        <span asp-validation-for="Supplier" class="text-danger"></span>
+        <label asp-for="MinimumQuantityAlarm" class="form-label">Minimum Quantity</label>
+        <input asp-for="MinimumQuantityAlarm" class="form-control" type="number" step="0.001" />
+        <span asp-validation-for="MinimumQuantityAlarm" class="text-danger"></span>
     </div>
 
     <!-- Poznámky -->

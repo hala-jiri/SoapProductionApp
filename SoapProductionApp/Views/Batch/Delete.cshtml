@@ -1,4 +1,4 @@
-﻿@model SoapProductionApp.Models.Warehouse.Batch
+﻿@model SoapProductionApp.Models.ViewModels.BatchViewModel
 
 <h2>Delete Batch</h2>
 
@@ -10,15 +10,14 @@
     <li><strong>Purchase Date:</strong> @Model.PurchaseDate.ToShortDateString()</li>
     <li><strong>Expiration Date:</strong> @(Model.ExpirationDate?.ToShortDateString() ?? "No Expiration")</li>
     <li><strong>Package Quantity:</strong> @Model.QuantityOfPackage @Model.Unit</li>
-    <li><strong>Base Quantity:</strong> @Model.QuantityInBaseUnit (Base Unit)</li>
-    <li><strong>Available Quantity:</strong> @Model.AvailableQuantity</li>
-    <li><strong>Price Per Unit:</strong> @Model.PricePerBaseUnit €</li>
-    <li><strong>Price Per Unit with Tax:</strong> @Model.PricePerBaseUnitWithTax €</li>
+    <li><strong>Available Quantity:</strong> @Model.AvailableQuantityOfPackage @Model.Unit</li>
+    <li><strong>Price of package (without tax) </strong> @Model.PriceOfPackageWithoutTax €</li>
+    <li><strong>Price per unit</strong> @Model.PricePerUnitWithoutTax €/@Model.Unit (@Model.PricePerUnitWithTax €/@Model.Unit) </li>
     <li><strong>Tax Percentage:</strong> @Model.TaxPercentage%</li>
 </ul>
 
-<form asp-action="DeleteConfirmed" method="post">
+<form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
-    <button type="submit">Delete</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Details" asp-controller="Warehouse" asp-route-id="@Model.WarehouseItem.Id" class="btn btn-secondary">Cancel</a>
 </form>

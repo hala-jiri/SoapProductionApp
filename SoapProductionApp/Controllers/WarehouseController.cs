@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models;
+using SoapProductionApp.Models.ViewModels;
 using SoapProductionApp.Models.Warehouse;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,11 +22,13 @@ namespace SoapProductionApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var items = await _context.WarehouseItems
+
+            var warehouseItems = await _context.WarehouseItems
                 .Include(i => i.Batches)
                 .Include(i => i.Categories)
                 .ToListAsync();
-            return View(items);
+
+            return View(warehouseItems);//TotalValueOfAvailableQuantity
         }
 
         public async Task<IActionResult> Create()
@@ -32,7 +37,7 @@ namespace SoapProductionApp.Controllers
             var availableCategories = await _context.Categories.ToListAsync();
 
             // Vytvoříme ViewModel
-            var viewModel = new WarehouseItemCreateViewModel
+            var viewModel = new WarehouseItemCreateEditViewModel
             {
                 AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList(),
                 AvailableCategories = availableCategories // Všechny kategorie
@@ -43,7 +48,7 @@ namespace SoapProductionApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(WarehouseItemCreateViewModel viewModel)
+        public async Task<IActionResult> Create(WarehouseItemCreateEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -51,10 +56,8 @@ namespace SoapProductionApp.Controllers
                 {
                     Name = viewModel.Name,
                     Unit = viewModel.Unit,
-                    DefaultUnit = viewModel.DefaultUnit,
                     TaxPercentage = viewModel.TaxPercentage,
-                    MinQuantity = viewModel.MinQuantity,
-                    Supplier = viewModel.Supplier,
+                    MinimumQuantityAlarm = viewModel.MinimumQuantityAlarm,
                     Notes = viewModel.Notes,
                     Categories = _context.Categories.Where(c => viewModel.SelectedCategoryIds.Contains(c.Id)).ToList()
                 };
@@ -74,7 +77,8 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var warehouseItem = await _context.WarehouseItems
-                .Include(w => w.Categories) // Načteme existující kategorie přiřazené k WarehouseItem
+                .Include(w => w.Categories)// Načteme existující kategorie přiřazené k WarehouseItem
+                .Include(w => w.Batches)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (warehouseItem == null) return NotFound();
@@ -82,31 +86,40 @@ namespace SoapProductionApp.Controllers
             // Načteme všechny dostupné kategorie
             var availableCategories = await _context.Categories.ToListAsync();
 
-            var viewModel = new WarehouseItemCreateViewModel(warehouseItem, availableCategories);
+            var viewModel = new WarehouseItemCreateEditViewModel();
+            viewModel.Id = warehouseItem.Id;
+            viewModel.Name = warehouseItem.Name;
+            viewModel.AvailableCategories = availableCategories;
+            viewModel.AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList();
+
+            viewModel.SelectedCategoryIds = warehouseItem.Categories.Select(x => x.Id).ToList();
+            viewModel.TaxPercentage = warehouseItem.TaxPercentage;
+            viewModel.MinimumQuantityAlarm = warehouseItem.MinimumQuantityAlarm;
+            viewModel.Unit = warehouseItem.Unit;
+            viewModel.Notes = warehouseItem.Notes;
 
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, WarehouseItemCreateViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, WarehouseItemCreateEditViewModel viewModel)
         {
             if (id != viewModel.Id) return NotFound();
 
+            var warehouseItem = await _context.WarehouseItems
+                .Include(w => w.Categories)
+                .Include(w => w.Batches)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouseItem == null) return NotFound();
+
             if (ModelState.IsValid)
             {
-                var warehouseItem = await _context.WarehouseItems
-                    .Include(w => w.Categories)
-                    .FirstOrDefaultAsync(w => w.Id == id);
-
-                if (warehouseItem == null) return NotFound();
-
                 warehouseItem.Name = viewModel.Name;
                 warehouseItem.Unit = viewModel.Unit;
-                warehouseItem.DefaultUnit = viewModel.DefaultUnit;
                 warehouseItem.TaxPercentage = viewModel.TaxPercentage;
-                warehouseItem.MinQuantity = viewModel.MinQuantity;
-                warehouseItem.Supplier = viewModel.Supplier;
+                warehouseItem.MinimumQuantityAlarm = viewModel.MinimumQuantityAlarm;
                 warehouseItem.Notes = viewModel.Notes;
                 warehouseItem.Categories = _context.Categories
                     .Where(c => viewModel.SelectedCategoryIds.Contains(c.Id))
@@ -120,18 +133,22 @@ namespace SoapProductionApp.Controllers
 
             viewModel.AvailableCategories = await _context.Categories.ToListAsync();
             viewModel.AvailableUnits = Enum.GetValues(typeof(UnitMeasurement.UnitType)).Cast<UnitMeasurement.UnitType>().ToList();
-
+            
             return View(viewModel);
         }
 
         public async Task<IActionResult> Details(int id)
         {
+            //TODO: here I need to load warehouseItem and convert it to WarehouseItemViewModel
+            // Also add some batchViewModels in that item
+
             var warehouseItem = await _context.WarehouseItems
                 .Include(w => w.Batches)
                 .Include(w => w.Categories)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
             if (warehouseItem == null) return NotFound();
+
 
             return View(warehouseItem);
         }

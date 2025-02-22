@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.Batch>
+﻿@model IEnumerable<SoapProductionApp.Models.ViewModels.BatchViewModel>
 
 <h2>Batches</h2>
 <table>
@@ -8,10 +8,9 @@
             <th>Supplier</th>
             <th>Purchase Date</th>
             <th>Expiration Date</th>
-            <th>Quantity (Base Unit)</th>
             <th>Available Quantity</th>
-            <th>Price Per Base Unit</th>
-            <th>Price Per Base Unit With Tax</th>
+            <th>Quantity</th>
+            <th>Price per unit</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -23,10 +22,10 @@
                 <td>@batch.Supplier</td>
                 <td>@batch.PurchaseDate.ToString("yyyy-MM-dd")</td>
                 <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
-                <td>@batch.QuantityInBaseUnit</td>
-                <td>@batch.AvailableQuantity</td>
-                <td>@batch.PricePerBaseUnit</td>
-                <td>@batch.PricePerBaseUnitWithTax</td>
+                <td>@batch.AvailableQuantityOfPackage @batch.Unit</td>
+                <td>@batch.QuantityOfPackage @batch.Unit</td>
+
+                <td>@batch.PricePerUnitWithoutTax €/@batch.Unit (@batch.PricePerUnitWithTax €/@batch.Unit) </td>
                 <td>
                     <a href="@Url.Action("Edit", "Batch", new { id = batch.Id })">Edit</a> |
                     <a href="@Url.Action("Delete", "Batch", new { id = batch.Id })">Delete</a>

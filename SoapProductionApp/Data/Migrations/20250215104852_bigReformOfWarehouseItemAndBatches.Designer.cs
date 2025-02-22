@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoapProductionApp.Data;
 
@@ -11,9 +12,11 @@ using SoapProductionApp.Data;
 namespace SoapProductionApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250215104852_bigReformOfWarehouseItemAndBatches")]
+    partial class bigReformOfWarehouseItemAndBatches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,8 +246,8 @@ namespace SoapProductionApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("AvailableQuantity")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("AvailableQuantityBaseUnit")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("datetime2");
@@ -253,17 +256,24 @@ namespace SoapProductionApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("PriceOfBaseUnitWithoutTax")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("QuantityBaseUnit")
+                        .HasColumnType("int");
+
                     b.Property<string>("Supplier")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TaxPercentage")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("UnitPriceWithoutTax")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
 
                     b.Property<int>("WarehouseItemId")
                         .HasColumnType("int");
@@ -308,7 +318,13 @@ namespace SoapProductionApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("MinimumQuantityAlarm")
+                    b.Property<int>("BaseUnit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DefaultUnit")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinQuantity")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
@@ -316,6 +332,10 @@ namespace SoapProductionApp.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Supplier")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

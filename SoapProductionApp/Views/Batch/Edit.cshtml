@@ -1,4 +1,4 @@
-﻿@model SoapProductionApp.Models.Warehouse.Batch
+﻿@model SoapProductionApp.Models.ViewModels.BatchCreateViewModel
 
 <h2>Edit Batch</h2>
 <form asp-action="Edit" method="post">
@@ -21,21 +21,12 @@
         <input asp-for="ExpirationDate" type="date" />
     </div>
     <div>
-        <label>Package Quantity</label>
+        <label>Package Quantity (@ViewBag.Unit)</label>
         <input asp-for="QuantityOfPackage" />
     </div>
     <div>
-        <label>Package Price</label>
-        <input asp-for="PriceOfPackage" />
-    </div>
-    <div>
-        <label>Unit</label>
-        <select asp-for="Unit">
-            @foreach (var unit in Enum.GetValues(typeof(SoapProductionApp.Models.UnitMeasurement.UnitType)))
-            {
-                <option value="@unit" selected="@(unit.ToString() == Model.Unit.ToString())">@unit</option>
-            }
-        </select>
+        <label>Package Price (without tax)</label>
+        <input asp-for="PriceOfPackageWithoutTax" />
     </div>
     <div>
         <label>Tax Percentage</label>
