@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using SoapProductionApp.Models.Warehouse;
 
-namespace SoapProductionApp.Models.ViewModels
+namespace SoapProductionApp.Models.Warehouse.ViewModels
 {
     public class BatchViewModel
     {
@@ -32,10 +32,10 @@ namespace SoapProductionApp.Models.ViewModels
         public decimal PriceOfPackageWithoutTax { get; set; }
 
         [Range(0, double.MaxValue)]
-        public decimal PricePerUnitWithoutTax => QuantityOfPackage>0 ? (PriceOfPackageWithoutTax / (decimal) QuantityOfPackage) : 0;
+        public decimal PricePerUnitWithoutTax => QuantityOfPackage > 0 ? PriceOfPackageWithoutTax / (decimal)QuantityOfPackage : 0;
 
         [Range(0, double.MaxValue)]
-        public decimal PricePerUnitWithTax => PricePerUnitWithoutTax*(1+TaxPercentage/100);
+        public decimal PricePerUnitWithTax => PricePerUnitWithoutTax * (1 + TaxPercentage / 100);
 
         [Required]
         public UnitMeasurement.UnitType Unit { get; set; }
@@ -56,7 +56,7 @@ namespace SoapProductionApp.Models.ViewModels
             TaxPercentage = batch.TaxPercentage;
             Unit = batch.Unit;
             QuantityOfPackage = (double)batch.AvailableQuantity;
-            PriceOfPackageWithoutTax = ((decimal)QuantityOfPackage * PriceOfPackageWithoutTax);
+            PriceOfPackageWithoutTax = (decimal)QuantityOfPackage * PriceOfPackageWithoutTax;
             WarehouseItem = batch.WarehouseItem;
         }
 

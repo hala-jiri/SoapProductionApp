@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models;
-using SoapProductionApp.Models.ViewModels;
 using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Models.Warehouse.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 

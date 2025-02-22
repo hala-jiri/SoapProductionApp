@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace SoapProductionApp.Models.ViewModels
+namespace SoapProductionApp.Models.Warehouse.ViewModels
 {
     public class BatchCreateViewModel
     {

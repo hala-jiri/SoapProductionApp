@@ -1,4 +1,4 @@
-﻿using SoapProductionApp.Models.ViewModels;
+﻿using SoapProductionApp.Models.Warehouse.ViewModels;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

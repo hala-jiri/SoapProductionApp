@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace SoapProductionApp.Models.ViewModels
+namespace SoapProductionApp.Models.Warehouse.ViewModels
 {
     public class WarehouseItemCreateEditViewModel
     {
@@ -36,7 +36,7 @@ namespace SoapProductionApp.Models.ViewModels
 
 
         public WarehouseItemCreateEditViewModel()
-        { 
+        {
         }
     }
 }

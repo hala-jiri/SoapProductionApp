@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
-using SoapProductionApp.Models;
-using SoapProductionApp.Models.ViewModels;
 using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Models.Warehouse.ViewModels;
 
 namespace SoapProductionApp.Controllers
 {
