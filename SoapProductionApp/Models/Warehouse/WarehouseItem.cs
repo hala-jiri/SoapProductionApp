@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using SoapProductionApp.Models;
 
 namespace SoapProductionApp.Models.Warehouse
@@ -55,6 +56,7 @@ namespace SoapProductionApp.Models.Warehouse
 
         public virtual List<Category> Categories { get; set; }
 
+        [JsonIgnore] // Zabrání serializaci cyklické reference
         public virtual List<Batch> Batches { get; set; } = new List<Batch>();
     }
 }

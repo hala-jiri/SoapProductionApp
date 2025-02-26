@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SoapProductionApp.Models.Warehouse
 {
@@ -38,6 +39,8 @@ namespace SoapProductionApp.Models.Warehouse
 
         [ForeignKey("WarehouseItem")]
         public int WarehouseItemId { get; set; }
+
+        [JsonIgnore] // Zabrání serializaci cyklické reference
         public WarehouseItem WarehouseItem { get; set; }
 
         public Batch()
