@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using SoapProductionApp.Data;
-using SoapProductionApp.Models.RecipeModels; // To musí být na začátku!
+using SoapProductionApp.Models;
+using SoapProductionApp.Models.Recipe;
+using SoapProductionApp.Models.Recipe.ViewModels;
 
 namespace SoapProductionApp.Controllers
 {
@@ -15,7 +17,178 @@ namespace SoapProductionApp.Controllers
             _context = context;
         }
 
-        // Zobrazení seznamu receptů
+        // Zobrazí seznam receptů
+        public async Task<IActionResult> Index()
+        {
+            var recipes = await _context.Recipes.Include(r => r.Ingredients).ToListAsync();
+            return View(recipes);
+        }
+
+        // Detail receptu
+        public async Task<IActionResult> Details(int id)
+        {
+            var recipe = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .ThenInclude(ri => ri.WarehouseItem)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            var fakeRecipe = getFakeData();
+
+            if (recipe == null)
+                return NotFound();
+
+            return View(fakeRecipe);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new RecipeCreateEditViewModel
+            {
+                AvailableWarehouseItems = await _context.WarehouseItems.Include(x=> x.Batches).ToListAsync()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(RecipeCreateEditViewModel model)
+        { //nefunguje spravne! not getting "Ingredients in model!
+            ModelState.Remove("ImageUrl");
+            ModelState.Remove("AvailableWarehouseItems");
+            if (ModelState.IsValid)
+            {
+                var recipe = new Recipe
+                {
+                    Name = model.Name,
+                    ImageUrl = model.ImageUrl,
+                    BatchSize = model.BatchSize,
+                    DaysOfCure = model.DaysOfCure,
+                    Ingredients = model.Ingredients.Select(i => new RecipeIngredient
+                    {
+                        WarehouseItemId = i.WarehouseItemId,
+                        Quantity = i.Quantity,
+                        Unit = Enum.TryParse<UnitMeasurement.UnitType>(i.Unit, out var unitEnum)
+                               ? unitEnum
+                               : throw new InvalidOperationException($"Invalid unit type: {i.Unit}")
+                    }).ToList()
+                };
+
+                _context.Recipes.Add(recipe);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            model.AvailableWarehouseItems = await _context.WarehouseItems.ToListAsync();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var recipe = await _context.Recipes.FindAsync(id);
+            if (recipe == null)
+                return NotFound();
+
+            return View(recipe);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var recipe = await _context.Recipes.FindAsync(id);
+            if (recipe != null)
+            {
+                _context.Recipes.Remove(recipe);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Recipe/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            //var recipe = await _context.Recipes.FindAsync(id);
+
+            //if (recipe == null)
+            //    return NotFound();
+
+            var recipe = getFakeData();
+
+            var model = new RecipeCreateEditViewModel
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                ImageUrl = recipe.ImageUrl,
+                BatchSize = recipe.BatchSize,
+                DaysOfCure = recipe.DaysOfCure
+            };
+
+            return View(model);
+        }
+
+        // POST: Recipe/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(RecipeCreateEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var recipe = await _context.Recipes.FindAsync(model.Id);
+                if (recipe == null)
+                    return NotFound();
+
+                recipe.Name = model.Name;
+                recipe.ImageUrl = model.ImageUrl;
+                recipe.BatchSize = model.BatchSize;
+                recipe.DaysOfCure = model.DaysOfCure;
+
+                _context.Update(recipe);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
+        }
+
+        public Recipe getFakeData()
+        {
+            //TEST
+            var oliveOil = _context.WarehouseItems
+                 .Include(x => x.Batches) // Batches je navigační vlastnost (List<Batch>)
+                 .FirstOrDefault(x => x.Id == 14);
+            var citrus = _context.WarehouseItems
+                 .Include(x => x.Batches) // Batches je navigační vlastnost (List<Batch>)
+                 .FirstOrDefault(x => x.Id == 15);
+
+            var recipeIngredience1 = new RecipeIngredient()
+            {
+                Id = 1,
+                WarehouseItemId = oliveOil.Id,
+                Quantity = (decimal)0.75,
+                Unit = oliveOil.Unit,
+                WarehouseItem = oliveOil
+            };
+            var recipeIngredience2 = new RecipeIngredient()
+            {
+                Id = 2,
+                WarehouseItemId = citrus.Id,
+                Quantity = (decimal)2,
+                Unit = citrus.Unit,
+                WarehouseItem = citrus
+            };
+
+            var recipeFake = new Recipe()
+            {
+                BatchSize = 11,
+                DaysOfCure = 60,
+                Id = 5,
+                Name = "my test recipe",
+                Ingredients = new List<RecipeIngredient>() { recipeIngredience1, recipeIngredience2 }
+            };
+            return recipeFake;
+        }
+        /*// Zobrazení seznamu receptů
         public async Task<IActionResult> Index()
         {
             var recipes = await _context.Recipes
@@ -44,7 +217,7 @@ namespace SoapProductionApp.Controllers
                 {
                     Id = w.Id,
                     Name = w.Name,
-                    UnitName = w.Unit.Name,
+                    UnitName = w.Unit.ToString(),
                     PricePerUnit = w.PricePerUnit
                 })
                 .ToList();
@@ -59,18 +232,25 @@ namespace SoapProductionApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Ručně nastavíme WarehouseItem podle ID
+                foreach (var ingredient in recipe.Ingredients)
+                {
+                    ingredient.WarehouseItem = await _context.WarehouseItems.FindAsync(ingredient.WarehouseItemId);
+                    ingredient.Recipe = recipe; // Přiřadíme recept
+                }
+
                 _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            // Opětovné naplnění ViewBag při chybě ve formuláři
+            // Při chybě znovu načteme ViewBag s ingrediencemi
             ViewBag.WarehouseItems = _context.WarehouseItems
                 .Select(w => new
                 {
                     Id = w.Id,
                     Name = w.Name,
-                    UnitName = w.Unit.Name,
+                    UnitName = w.Unit.ToString(),
                     PricePerUnit = w.PricePerUnit
                 })
                 .ToList();
@@ -136,6 +316,6 @@ namespace SoapProductionApp.Controllers
             }
 
             return View(recipe);
-        }
+        }*/
     }
 }

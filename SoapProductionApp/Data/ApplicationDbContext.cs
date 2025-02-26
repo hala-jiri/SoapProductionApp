@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SoapProductionApp.Models.RecipeModels;
+using SoapProductionApp.Models.Recipe;
 using SoapProductionApp.Models.Warehouse;
 
 namespace SoapProductionApp.Data
@@ -17,7 +17,8 @@ namespace SoapProductionApp.Data
         public DbSet<Category> Categories { get; set; }
         //public DbSet<Unit> Units { get; set; }
         public DbSet<Batch> Batches { get; set; }
-        //public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

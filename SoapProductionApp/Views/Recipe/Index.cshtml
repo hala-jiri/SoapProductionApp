@@ -1,43 +1,62 @@
-﻿@model List<SoapProductionApp.Models.RecipeModels.RecipeOverviewViewModel>
+﻿<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-12 col-lg-12 col-md-12">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Recipes</h3>
+                    <a asp-action="Create" class="btn btn-light btn-lg">➕ Add Recipe</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped wide-table">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 22%;">Name</th>
+                                    <th style="width: 13%;" class="text-center">Batch Size</th>
+                                    <th style="width: 13%;" class="text-center">Days to Cure</th>
+                                    <th style="width: 16%;" class="text-center">Price per Batch (€)</th>
+                                    <th style="width: 16%;" class="text-center">Price per Piece (€)</th>
+                                    <th style="width: 20%;" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var recipe in Model)
+                                {
+                                   
+                                    <tr>
+                                        <td class="align-middle">@recipe.Name</td>
+                                        <td class="align-middle text-center">@recipe.BatchSize</td>
+                                        <td class="align-middle text-center">@recipe.DaysOfCure</td>
+                                        <td class="align-middle text-center">@recipe.CostPerBatch.ToString("0.00") €</td>
+                                        <td class="align-middle text-center">@recipe.CostPerSliceOfBatch.ToString("0.00") €</td>
+                                        <td class="align-middle text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info btn-md">
+                                                    <i class="bi bi-eye-fill"></i> View
+                                                </a>
+                                                <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning btn-md">
+                                                    <i class="bi bi-pencil-fill"></i> Edit
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@recipe.Id" class="btn btn-danger btn-md">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h2>📜 Seznam receptů</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Název</th>
-            <th>Batch Size</th>
-            <th>Cena za batch</th>
-            <th>Cena za kus</th>
-            <th>Dostupnost surovin</th>
-            <th>Akce</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var recipe in Model)
-        {
-            <tr>
-                <td>@recipe.Name</td>
-                <td>@recipe.BatchSize ks</td>
-                <td>@recipe.TotalCost.ToString("0.00") €</td>
-                <td>@recipe.CostPerPiece.ToString("0.00") €</td>
-                <td>
-                    @if (recipe.HasEnoughStock)
-                    {
-                        <span class="text-success">✔️</span>
-                    }
-                    else
-                    {
-                        <span class="text-danger">❌</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info">Detail</a>
-                    <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning">Editovat</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<a asp-action="Create" class="btn btn-success">Přidat nový recept</a>
+<style>
+    .wide-table {
+        min-width: 900px; /* Minimální šířka tabulky, můžeš ještě upravit */
+        width: 100%;
+        table-layout: fixed;
+    }
+</style>

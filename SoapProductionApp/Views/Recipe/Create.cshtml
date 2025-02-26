@@ -1,102 +1,219 @@
-﻿@model SoapProductionApp.Models.RecipeModels.Recipe
+﻿@model SoapProductionApp.Models.Recipe.ViewModels.RecipeCreateEditViewModel
 
-<h2>Vytvořit nový recept</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Create New Recipe</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="recipeForm">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Recipe Name</label>
+                            <input asp-for="Name" class="form-control" />
+                        </div>
 
-<form method="post">
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" required />
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label">Image URL</label>
+                            <input asp-for="ImageUrl" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BatchSize" class="form-label">Batch Size</label>
+                            <input asp-for="BatchSize" class="form-control" type="number" min="1" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DaysOfCure" class="form-label">Days to Cure</label>
+                            <input asp-for="DaysOfCure" class="form-control" type="number" min="1" />
+                        </div>
+
+                        <h4>Ingredients</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Ingredient</th>
+                                    <th>Quantity</th>
+                                    <th>Cost</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ingredientList">
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-success" onclick="addIngredient()">➕ Add Ingredient</button>
+
+                        <h5 class="mt-3">Total Cost: <span id="totalCost">0.00</span> €</h5>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-success">Create Recipe</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="BatchSize"></label>
-        <input asp-for="BatchSize" type="number" class="form-control" min="1" required />
-    </div>
-
-    <h3>Ingredience</h3>
-    <table id="ingredientsTable" class="table">
-        <thead>
-            <tr>
-                <th>Ingredience</th>
-                <th>Množství</th>
-                <th>Jednotka</th>
-                <th>Cena</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Dynamicky přidávané ingredience -->
-        </tbody>
-    </table>
-
-    <button type="button" id="addIngredient" class="btn btn-success">Přidat ingredienci</button>
-
-    <h3>Celkové náklady na kus: <span id="totalCost">0.00</span> €</h3>
-
-    <button type="submit" class="btn btn-primary">Uložit recept</button>
-</form>
+</div>
 
 <script>
-    let ingredients = @Html.Raw(Json.Serialize(ViewBag.WarehouseItems));
-    let counter = 0;
+    // 1) Načteme surová data z Modelu (v nich je Unit = enum = číslo)
+    let rawItems = @Html.Raw(Json.Serialize(Model.AvailableWarehouseItems));
 
-    document.getElementById('addIngredient').addEventListener('click', function () {
-        let table = document.getElementById('ingredientsTable').getElementsByTagName('tbody')[0];
-        let row = table.insertRow();
+    // 2) Vytvoříme mapu číselných hodnot enumu na text
+    //    Upravte podle Vašeho enumu a skutečných čísel/hodnot
+    let unitMapping = {
+        1: "L",
+        2: "ml",
+        3: "Kg",
+        4: "g",
+        5: "Pcs"
+        // atd...
+    };
 
-        // Ingredience (Dropdown)
-        let cell1 = row.insertCell(0);
-        let select = document.createElement('select');
-        select.name = `Ingredients[${counter}].WarehouseItemId`;
-        select.classList.add('form-control');
-
-        // Naplníme dropdown a uložíme i jednotku do datasetu
-        ingredients.forEach(item => {
-            let option = document.createElement('option');
-            option.value = item.id;
-            option.textContent = item.name;
-            option.setAttribute("data-unit", item.unitName); // Ukládáme jednotku do atributu
-            select.appendChild(option);
-        });
-
-        cell1.appendChild(select);
-
-        // Množství
-        let cell2 = row.insertCell(1);
-        let input = document.createElement('input');
-        input.type = 'number';
-        input.name = `Ingredients[${counter}].Quantity`;
-        input.classList.add('form-control');
-        cell2.appendChild(input);
-
-        // Jednotka (automaticky doplněná)
-        let cell3 = row.insertCell(2);
-        let unitSpan = document.createElement('span');
-        unitSpan.textContent = select.options[select.selectedIndex].getAttribute("data-unit") || "-"; // Výchozí jednotka
-        cell3.appendChild(unitSpan);
-
-        // Cena
-        let cell4 = row.insertCell(3);
-        cell4.textContent = '0.00 €';
-
-        // Odstranění řádku
-        let cell5 = row.insertCell(4);
-        let removeButton = document.createElement('button');
-        removeButton.textContent = '❌';
-        removeButton.classList.add('btn', 'btn-danger');
-        removeButton.type = 'button';
-        removeButton.addEventListener('click', function () {
-            row.remove();
-        });
-        cell5.appendChild(removeButton);
-
-        // Při změně dropdownu se automaticky upraví jednotka
-        select.addEventListener('change', function () {
-            let selectedOption = this.options[this.selectedIndex];
-            let unitName = selectedOption.getAttribute("data-unit");
-            unitSpan.textContent = unitName || "-";
-        });
-
-        counter++;
+    // 3) Přemapujeme rawItems na array, kde unit bude už text (L, g, ml...)
+    let availableItems = rawItems.map(item => {
+        return {
+            ...item,
+            unit: unitMapping[item.unit] || "Unknown"
+        };
     });
+
+    // 4) Zachovejte původní funkce, jen odstraňte to, co natvrdo nastavovalo unitSpan
+    function addIngredient() {
+        let ingredientList = document.getElementById("ingredientList");
+
+        let newRow = document.createElement("tr");
+
+        // Select ingredient
+        let selectTd = document.createElement("td");
+        let select = document.createElement("select");
+        select.classList.add("form-select");
+        select.onchange = function() { updateUnitAndCost(this); };
+        updateIngredientOptions(select);
+        selectTd.appendChild(select);
+
+        // Quantity with unit
+        let quantityTd = document.createElement("td");
+        quantityTd.classList.add("d-flex", "align-items-center");
+        let quantity = document.createElement("input");
+        quantity.type = "number";
+        quantity.classList.add("form-control");
+        quantity.min = 0.01;
+        quantity.value = 1;
+        quantity.oninput = function() { updateTotalCost(); };
+        let unitSpan = document.createElement("span");
+        unitSpan.classList.add("ms-2");
+        // === SMAZÁNO: unitSpan.textContent = availableItems[0].unit; ===
+        quantityTd.appendChild(quantity);
+        quantityTd.appendChild(unitSpan);
+
+        // Cost
+        let costTd = document.createElement("td");
+        let costSpan = document.createElement("span");
+        costSpan.textContent = "0.00 €";
+        costTd.appendChild(costSpan);
+
+        // Remove button
+        let removeTd = document.createElement("td");
+        let removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.classList.add("btn", "btn-danger");
+        removeBtn.textContent = "❌";
+        removeBtn.onclick = () => {
+            ingredientList.removeChild(newRow);
+            updateTotalCost();
+            refreshAllSelectOptions();
+        };
+        removeTd.appendChild(removeBtn);
+
+        // Přidání všech TD do řádku
+        newRow.appendChild(selectTd);
+        newRow.appendChild(quantityTd);
+        newRow.appendChild(costTd);
+        newRow.appendChild(removeTd);
+
+        ingredientList.appendChild(newRow);
+
+        // Nastaví správnou jednotku a cenu
+        updateUnitAndCost(select);
+        updateTotalCost();
+    }
+
+    function updateUnitAndCost(selectElement) {
+        let selectedOption = selectElement.selectedOptions[0];
+        let unit = selectedOption.dataset.unit;
+        let pricePerUnit = parseFloat(selectedOption.dataset.price);
+
+        let row = selectElement.closest("tr");
+        let quantityInput = row.querySelector("input");
+        let quantity = parseFloat(quantityInput.value);
+        let unitSpan = row.querySelector("td:nth-child(2) span");
+        let costSpan = row.querySelector("td:nth-child(3) span");
+
+        // Nastavíme text do <span> pro jednotku
+        unitSpan.textContent = unit;
+
+        if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
+            let cost = pricePerUnit * quantity;
+            costSpan.textContent = cost.toFixed(2) + " €";
+        } else {
+            costSpan.textContent = "0.00 €";
+        }
+
+        updateTotalCost();
+        refreshAllSelectOptions();
+    }
+
+    function updateTotalCost() {
+        let total = 0;
+        document.querySelectorAll("#ingredientList tr").forEach(row => {
+            let select = row.querySelector("select");
+            let quantity = parseFloat(row.querySelector("input").value);
+            let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
+            let costSpan = row.querySelector("td:nth-child(3) span");
+
+            if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
+                let cost = pricePerUnit * quantity;
+                costSpan.textContent = cost.toFixed(2) + " €";
+                total += cost;
+            }
+        });
+
+        document.getElementById("totalCost").textContent = total.toFixed(2);
+    }
+
+    function updateIngredientOptions(selectElement) {
+        // Seznam již vybraných ID
+        let selectedIds = Array.from(document.querySelectorAll("#ingredientList select"))
+            .map(sel => parseInt(sel.value));
+
+        // Naplníme <option> jen těmi, které ještě nejsou vybrané
+        selectElement.innerHTML = availableItems
+            .filter(item => !selectedIds.includes(item.id))
+            .map(item =>
+                `<option value="${item.id}" data-price="${item.averagePricePerUnitWithoutTax}" data-unit="${item.unit}">
+                    ${item.name}
+                </option>`
+            ).join("");
+    }
+
+    function refreshAllSelectOptions() {
+        // Znovu projdeme všechny selecty a nastavíme jim správné <option>
+        document.querySelectorAll("#ingredientList select").forEach(select => {
+            let currentValue = select.value;
+            select.innerHTML = availableItems
+                .filter(item =>
+                    !Array.from(document.querySelectorAll("#ingredientList select"))
+                        .some(sel => sel !== select && parseInt(sel.value) === item.id)
+                )
+                .map(item =>
+                    `<option value="${item.id}" data-price="${item.averagePricePerUnitWithoutTax}" data-unit="${item.unit}"
+                     ${item.id == currentValue ? "selected" : ""}>
+                        ${item.name}
+                    </option>`
+                ).join("");
+        });
+    }
 </script>
