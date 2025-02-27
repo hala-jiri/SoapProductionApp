@@ -28,14 +28,14 @@ namespace SoapProductionApp.Models.Recipe
         public UnitMeasurement.UnitType Unit { get; set; } // Typ jednotky (ml, g, ks)
 
         [NotMapped]
-        public decimal CostPerIngredient => WarehouseItem.AveragePricePerUnitWithoutTax * Quantity;
+        public decimal CostPerIngredient => WarehouseItem?.AveragePricePerUnitWithoutTax * Quantity ?? 0;
 
         [NotMapped]
-        public bool IsInStock => WarehouseItem.TotalAvailableQuantity >= Quantity;
+        public bool IsInStock => WarehouseItem?.TotalAvailableQuantity >= Quantity;
 
         [NotMapped]
         public DateTime? NearestExpirationDate =>
-            WarehouseItem.Batches
+            WarehouseItem?.Batches?
                 .Where(b => b.AvailableQuantity > 0)
                 .OrderBy(b => b.ExpirationDate)
                 .Select(b => b.ExpirationDate)

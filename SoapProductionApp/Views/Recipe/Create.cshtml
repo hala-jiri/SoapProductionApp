@@ -81,33 +81,39 @@
     });
 
     // 4) Zachovejte původní funkce, jen odstraňte to, co natvrdo nastavovalo unitSpan
-    function addIngredient() {
+                function addIngredient() {
         let ingredientList = document.getElementById("ingredientList");
 
         let newRow = document.createElement("tr");
+        let index = ingredientList.children.length; // Get the correct index
 
-        // Select ingredient
+        // Ingredient Select
         let selectTd = document.createElement("td");
         let select = document.createElement("select");
         select.classList.add("form-select");
-        select.onchange = function() { updateUnitAndCost(this); };
+        select.name = `Ingredients[${index}].WarehouseItemId`;
+        select.onchange = function () { updateUnitAndCost(this); };
         updateIngredientOptions(select);
         selectTd.appendChild(select);
 
-        // Quantity with unit
+        // Quantity Field
         let quantityTd = document.createElement("td");
-        quantityTd.classList.add("d-flex", "align-items-center");
         let quantity = document.createElement("input");
         quantity.type = "number";
         quantity.classList.add("form-control");
-        quantity.min = 0.01;
-        quantity.value = 1;
-        quantity.oninput = function() { updateTotalCost(); };
-        let unitSpan = document.createElement("span");
-        unitSpan.classList.add("ms-2");
-        // === SMAZÁNO: unitSpan.textContent = availableItems[0].unit; ===
+        quantity.min = "0.01"; // Set minimum value
+        quantity.step = "0.01"; // Ensure decimal values
+        quantity.value = "1.00"; // Ensure it has two decimal places
+        quantity.name = `Ingredients[${index}].Quantity`;
+        quantity.required = true;
+        quantity.oninput = function () { updateTotalCost(); };
         quantityTd.appendChild(quantity);
-        quantityTd.appendChild(unitSpan);
+
+        // Unit (Hidden Field)
+        let unitHidden = document.createElement("input");
+        unitHidden.type = "hidden";
+        unitHidden.name = `Ingredients[${index}].Unit`;
+        quantityTd.appendChild(unitHidden);
 
         // Cost
         let costTd = document.createElement("td");
@@ -115,74 +121,76 @@
         costSpan.textContent = "0.00 €";
         costTd.appendChild(costSpan);
 
-        // Remove button
+        // Remove Button
         let removeTd = document.createElement("td");
         let removeBtn = document.createElement("button");
         removeBtn.type = "button";
         removeBtn.classList.add("btn", "btn-danger");
         removeBtn.textContent = "❌";
-        removeBtn.onclick = () => {
+        removeBtn.onclick = function () {
             ingredientList.removeChild(newRow);
             updateTotalCost();
             refreshAllSelectOptions();
         };
         removeTd.appendChild(removeBtn);
 
-        // Přidání všech TD do řádku
+        // Append all to row
         newRow.appendChild(selectTd);
         newRow.appendChild(quantityTd);
         newRow.appendChild(costTd);
         newRow.appendChild(removeTd);
-
         ingredientList.appendChild(newRow);
 
-        // Nastaví správnou jednotku a cenu
+        // Update everything
         updateUnitAndCost(select);
         updateTotalCost();
     }
 
-    function updateUnitAndCost(selectElement) {
+            function updateUnitAndCost(selectElement) {
         let selectedOption = selectElement.selectedOptions[0];
         let unit = selectedOption.dataset.unit;
         let pricePerUnit = parseFloat(selectedOption.dataset.price);
 
         let row = selectElement.closest("tr");
-        let quantityInput = row.querySelector("input");
-        let quantity = parseFloat(quantityInput.value);
-        let unitSpan = row.querySelector("td:nth-child(2) span");
+        let quantityInput = row.querySelector("input[name$='.Quantity']");
+        let unitHiddenInput = row.querySelector("input[name$='.Unit']");
         let costSpan = row.querySelector("td:nth-child(3) span");
 
-        // Nastavíme text do <span> pro jednotku
-        unitSpan.textContent = unit;
+        unitHiddenInput.value = unit; // Set hidden field for model binding
 
-        if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
-            let cost = pricePerUnit * quantity;
+        if (!isNaN(pricePerUnit) && !isNaN(quantityInput.value)) {
+            let cost = pricePerUnit * parseFloat(quantityInput.value);
             costSpan.textContent = cost.toFixed(2) + " €";
         } else {
             costSpan.textContent = "0.00 €";
         }
 
         updateTotalCost();
-        refreshAllSelectOptions();
     }
 
-    function updateTotalCost() {
-        let total = 0;
-        document.querySelectorAll("#ingredientList tr").forEach(row => {
-            let select = row.querySelector("select");
-            let quantity = parseFloat(row.querySelector("input").value);
-            let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
-            let costSpan = row.querySelector("td:nth-child(3) span");
+        function updateTotalCost() 
+        {
+            let total = 0;
 
-            if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
-                let cost = pricePerUnit * quantity;
-                costSpan.textContent = cost.toFixed(2) + " €";
-                total += cost;
-            }
-        });
+            document.querySelectorAll("#ingredientList tr").forEach(row => {
+                let select = row.querySelector("select");
+                let quantityInput = row.querySelector("input");
+                let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
+                let quantity = parseFloat(quantityInput.value) || 0;
+                let costSpan = row.querySelector("td:nth-child(3) span");
 
-        document.getElementById("totalCost").textContent = total.toFixed(2);
-    }
+                if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
+                    let cost = pricePerUnit * quantity;
+                    costSpan.textContent = cost.toFixed(2) + " €"; // ✅ Opraveno
+                    total += cost;
+                } else {
+                    costSpan.textContent = "0.00 €"; // ✅ Opraveno
+                }
+            });
+
+            // ✅ Opraveno: Nastavíme celkovou cenu
+            document.getElementById("totalCost").textContent = total.toFixed(2) + " €";
+        }
 
     function updateIngredientOptions(selectElement) {
         // Seznam již vybraných ID

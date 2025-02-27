@@ -1,4 +1,5 @@
 ﻿using SoapProductionApp.Models.Recipe;
+using SoapProductionApp.Models.Recipe.ViewModels;
 using SoapProductionApp.Models.Warehouse;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +14,6 @@ namespace SoapProductionApp.Models.Recipe
         [Required]
         public string Name { get; set; }
 
-        [Required]
         public string ImageUrl { get; set; } // Odkaz na obrázek
 
         [Required]
@@ -32,5 +32,18 @@ namespace SoapProductionApp.Models.Recipe
 
         [NotMapped]
         public bool AreAllIngredientsInStock => Ingredients.All(i => i.IsInStock);
+
+        public Recipe()
+        {
+        }
+
+        public Recipe(RecipeCreateEditViewModel model)
+        {
+            Name = model.Name;
+            ImageUrl = model.ImageUrl;
+            BatchSize = model.BatchSize;
+            DaysOfCure = model.DaysOfCure;
+        }
     }
+
 }

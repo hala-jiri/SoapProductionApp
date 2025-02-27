@@ -30,14 +30,15 @@ namespace SoapProductionApp.Controllers
             var recipe = await _context.Recipes
                 .Include(r => r.Ingredients)
                 .ThenInclude(ri => ri.WarehouseItem)
+                .ThenInclude(b => b.Batches)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
-            var fakeRecipe = getFakeData();
+            //var fakeRecipe = getFakeData();
 
             if (recipe == null)
                 return NotFound();
 
-            return View(fakeRecipe);
+            return View(recipe);
         }
 
         [HttpGet]
@@ -57,8 +58,27 @@ namespace SoapProductionApp.Controllers
             ModelState.Remove("AvailableWarehouseItems");
             if (ModelState.IsValid)
             {
-                var recipe = new Recipe
+                var recipe = new Recipe(model);
+
+                var ingredients = model.Ingredients.Select(i => new RecipeIngredient
                 {
+                    WarehouseItemId = i.WarehouseItemId,
+                    Quantity = Math.Round(i.Quantity, 2), // Round Quantity to 2 decimal places
+                    Unit = Enum.TryParse<UnitMeasurement.UnitType>(i.Unit, out var unitEnum)
+                        ? unitEnum
+                        : throw new InvalidOperationException($"Invalid unit type: {i.Unit}")
+                }).ToList();
+
+                foreach (var ingredience in ingredients)
+                {
+                    var warehouseItem = await _context.WarehouseItems
+                        .Include(w => w.Batches)
+                    .FirstOrDefaultAsync(w => w.Id == ingredience.WarehouseItemId);
+                    ingredience.WarehouseItem = warehouseItem;
+                }
+
+                recipe.Ingredients = ingredients;
+                /*{
                     Name = model.Name,
                     ImageUrl = model.ImageUrl,
                     BatchSize = model.BatchSize,
@@ -71,7 +91,7 @@ namespace SoapProductionApp.Controllers
                                ? unitEnum
                                : throw new InvalidOperationException($"Invalid unit type: {i.Unit}")
                     }).ToList()
-                };
+                };*/
 
                 _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
@@ -104,15 +124,16 @@ namespace SoapProductionApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Recipe/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            //var recipe = await _context.Recipes.FindAsync(id);
+            var recipe = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .ThenInclude(i => i.WarehouseItem)
+                .ThenInclude(b => b.Batches)
+                .FirstOrDefaultAsync(r => r.Id == id);
 
-            //if (recipe == null)
-            //    return NotFound();
-
-            var recipe = getFakeData();
+            if (recipe == null) return NotFound();
 
             var model = new RecipeCreateEditViewModel
             {
@@ -120,34 +141,53 @@ namespace SoapProductionApp.Controllers
                 Name = recipe.Name,
                 ImageUrl = recipe.ImageUrl,
                 BatchSize = recipe.BatchSize,
-                DaysOfCure = recipe.DaysOfCure
+                DaysOfCure = recipe.DaysOfCure,
+                Ingredients = recipe.Ingredients.Select(i => new RecipeIngredientViewModel
+                {
+                    WarehouseItemId = i.WarehouseItemId,
+                    Quantity = i.Quantity,
+                    Unit = i.Unit.ToString(),
+                    Cost = i.CostPerIngredient
+                }).ToList(),
+                AvailableWarehouseItems = await _context.WarehouseItems.Include(x => x.Batches).ToListAsync()
             };
 
             return View(model);
         }
 
-        // POST: Recipe/Edit
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(RecipeCreateEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var recipe = await _context.Recipes.FindAsync(model.Id);
-                if (recipe == null)
-                    return NotFound();
+                var recipe = await _context.Recipes
+                    .Include(r => r.Ingredients)
+                    .FirstOrDefaultAsync(r => r.Id == model.Id);
+
+                if (recipe == null) return NotFound();
 
                 recipe.Name = model.Name;
                 recipe.ImageUrl = model.ImageUrl;
                 recipe.BatchSize = model.BatchSize;
                 recipe.DaysOfCure = model.DaysOfCure;
 
-                _context.Update(recipe);
-                await _context.SaveChangesAsync();
+                // Aktualizace ingrediencí
+                recipe.Ingredients.Clear();
+                foreach (var ingredient in model.Ingredients)
+                {
+                    recipe.Ingredients.Add(new RecipeIngredient
+                    {
+                        WarehouseItemId = ingredient.WarehouseItemId,
+                        Quantity = ingredient.Quantity,
+                        Unit = Enum.Parse<UnitMeasurement.UnitType>(ingredient.Unit)
+                    });
+                }
 
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
+            model.AvailableWarehouseItems = await _context.WarehouseItems.ToListAsync();
             return View(model);
         }
 
