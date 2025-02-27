@@ -27,6 +27,11 @@
                         </tbody>
                     </table>
 
+                    <div class="mb-3">
+                        <strong>Note:</strong>
+                        <p>@Model.Note</p>
+                    </div>
+
                     <form asp-action="Delete" method="post">
                         <input type="hidden" asp-for="Id" />
                         <div class="d-grid gap-2">

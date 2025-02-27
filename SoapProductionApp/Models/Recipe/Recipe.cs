@@ -33,6 +33,8 @@ namespace SoapProductionApp.Models.Recipe
         [NotMapped]
         public bool AreAllIngredientsInStock => Ingredients.All(i => i.IsInStock);
 
+        public string? Note { get; set; }
+
         public Recipe()
         {
         }
@@ -43,6 +45,7 @@ namespace SoapProductionApp.Models.Recipe
             ImageUrl = model.ImageUrl;
             BatchSize = model.BatchSize;
             DaysOfCure = model.DaysOfCure;
+            Note = model.Note;
         }
     }
 

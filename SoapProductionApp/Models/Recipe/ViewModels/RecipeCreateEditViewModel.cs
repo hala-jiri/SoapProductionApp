@@ -21,5 +21,7 @@ namespace SoapProductionApp.Models.Recipe.ViewModels
 
         // Pro seznam skladových položek, aby si uživatel mohl vybírat ingredience
         public List<WarehouseItem> AvailableWarehouseItems { get; set; }
+
+        public string? Note {  get; set; }
     }
 }

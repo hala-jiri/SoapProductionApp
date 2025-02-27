@@ -31,6 +31,11 @@
                             <input asp-for="DaysOfCure" class="form-control" type="number" min="1" />
                         </div>
 
+                        <div class="mb-3">
+                            <label asp-for="Note" class="form-label">Note</label>
+                            <textarea asp-for="Note" class="form-control"></textarea>
+                        </div>
+
                         <h4>Ingredients</h4>
                         <table class="table">
                             <thead>
@@ -58,10 +63,12 @@
                                             </select>
                                         </td>
                                         <td class="d-flex align-items-center">
-                                            <input type="number" class="form-control w-50 quantity-input"
+                                            <input type="text" class="form-control w-50 quantity-input"
                                                    name="Ingredients[@i].Quantity"
-                                                   value="@Model.Ingredients[i].Quantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                                   min="0.01" step="0.01" oninput="updateUnitAndCost(this.closest('tr').querySelector('select'))" />
+                                                   value="@Model.Ingredients[i].Quantity.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                                   min="0.01" step="0.01"
+                                                   pattern="^\d+([.,]\d{1,2})?$"
+                                                   oninput="this.value = this.value.replace(',', '.'); updateUnitAndCost(this.closest('tr').querySelector('select'))" />
                                             <span class="ms-2 unit-display">@Model.Ingredients[i].Unit</span>
 
                                             <input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />

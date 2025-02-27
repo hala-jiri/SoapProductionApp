@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models;
 using SoapProductionApp.Models.Recipe;
@@ -142,6 +141,7 @@ namespace SoapProductionApp.Controllers
             {
                 Id = recipe.Id,
                 Name = recipe.Name,
+                Note = recipe.Note,
                 ImageUrl = recipe.ImageUrl,
                 BatchSize = recipe.BatchSize,
                 DaysOfCure = recipe.DaysOfCure,
@@ -162,6 +162,15 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Edit(RecipeCreateEditViewModel model)
         {
             ModelState.Remove("AvailableWarehouseItems");
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                Console.WriteLine("ModelState Errors: " + string.Join(", ", errors));
+                model.AvailableWarehouseItems = await _context.WarehouseItems.Include(x => x.Batches).ToListAsync();
+                return View(model);
+            }
+
+
             if (ModelState.IsValid)
             {
                 var recipe = await _context.Recipes
@@ -171,6 +180,7 @@ namespace SoapProductionApp.Controllers
                 if (recipe == null) return NotFound();
 
                 recipe.Name = model.Name;
+                recipe.Note = model.Note;   
                 recipe.ImageUrl = model.ImageUrl;
                 recipe.BatchSize = model.BatchSize;
                 recipe.DaysOfCure = model.DaysOfCure;
