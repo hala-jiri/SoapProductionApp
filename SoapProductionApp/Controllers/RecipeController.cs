@@ -20,7 +20,10 @@ namespace SoapProductionApp.Controllers
         // Zobrazí seznam receptů
         public async Task<IActionResult> Index()
         {
-            var recipes = await _context.Recipes.Include(r => r.Ingredients).ToListAsync();
+            var recipes = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .ThenInclude(ri => ri.WarehouseItem)
+                .ThenInclude(b => b.Batches).ToListAsync();
             return View(recipes);
         }
 
@@ -158,6 +161,7 @@ namespace SoapProductionApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RecipeCreateEditViewModel model)
         {
+            ModelState.Remove("AvailableWarehouseItems");
             if (ModelState.IsValid)
             {
                 var recipe = await _context.Recipes

@@ -81,7 +81,7 @@
     });
 
     // 4) Zachovejte původní funkce, jen odstraňte to, co natvrdo nastavovalo unitSpan
-                function addIngredient() {
+    function addIngredient() {
         let ingredientList = document.getElementById("ingredientList");
 
         let newRow = document.createElement("tr");
@@ -146,7 +146,7 @@
         updateTotalCost();
     }
 
-            function updateUnitAndCost(selectElement) {
+    function updateUnitAndCost(selectElement) {
         let selectedOption = selectElement.selectedOptions[0];
         let unit = selectedOption.dataset.unit;
         let pricePerUnit = parseFloat(selectedOption.dataset.price);
@@ -168,29 +168,29 @@
         updateTotalCost();
     }
 
-        function updateTotalCost() 
-        {
-            let total = 0;
+    function updateTotalCost() 
+    {
+        let total = 0;
 
-            document.querySelectorAll("#ingredientList tr").forEach(row => {
-                let select = row.querySelector("select");
-                let quantityInput = row.querySelector("input");
-                let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
-                let quantity = parseFloat(quantityInput.value) || 0;
-                let costSpan = row.querySelector("td:nth-child(3) span");
+        document.querySelectorAll("#ingredientList tr").forEach(row => {
+            let select = row.querySelector("select");
+            let quantityInput = row.querySelector("input");
+            let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
+            let quantity = parseFloat(quantityInput.value) || 0;
+            let costSpan = row.querySelector("td:nth-child(3) span");
 
-                if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
-                    let cost = pricePerUnit * quantity;
-                    costSpan.textContent = cost.toFixed(2) + " €"; // ✅ Opraveno
-                    total += cost;
-                } else {
-                    costSpan.textContent = "0.00 €"; // ✅ Opraveno
-                }
-            });
+            if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
+                let cost = pricePerUnit * quantity;
+                costSpan.textContent = cost.toFixed(2) + " €"; // ✅ Opraveno
+                total += cost;
+            } else {
+                costSpan.textContent = "0.00 €"; // ✅ Opraveno
+            }
+        });
 
-            // ✅ Opraveno: Nastavíme celkovou cenu
-            document.getElementById("totalCost").textContent = total.toFixed(2) + " €";
-        }
+        // ✅ Opraveno: Nastavíme celkovou cenu
+        document.getElementById("totalCost").textContent = total.toFixed(2) + " €";
+    }
 
     function updateIngredientOptions(selectElement) {
         // Seznam již vybraných ID

@@ -49,8 +49,9 @@
                                             <select class="form-select ingredient-select" name="Ingredients[@i].WarehouseItemId" onchange="updateUnitAndCost(this)">
                                                 @foreach (var item in Model.AvailableWarehouseItems)
                                                 {
-                                                    <option value="@item.Id" data-price="@item.AveragePricePerUnitWithoutTax" data-unit="@item.Unit"
-                                                            selected="@(item.Id == Model.Ingredients[i].WarehouseItemId ? "selected" : null)">
+                                                    <option value="@item.Id"
+                                                            data-price="@item.AveragePricePerUnitWithoutTax.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                                            data-unit="@((int)item.Unit)">
                                                         @item.Name
                                                     </option>
                                                 }
@@ -62,6 +63,7 @@
                                                    value="@Model.Ingredients[i].Quantity.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                                    min="0.01" step="0.01" oninput="updateUnitAndCost(this.closest('tr').querySelector('select'))" />
                                             <span class="ms-2 unit-display">@Model.Ingredients[i].Unit</span>
+
                                             <input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />
                                         </td>
                                         <td>
@@ -91,19 +93,36 @@
 </div>
 
 <script>
+    console.log("Skript se načetl!"); // Debug zpráva
+
     let availableItems = @Html.Raw(Json.Serialize(Model.AvailableWarehouseItems));
+
+    let unitMapping = {
+        1: "L",
+        2: "ml",
+        3: "Kg",
+        4: "g",
+        5: "Pcs"
+    };
 
     function updateUnitAndCost(selectElement) {
         let selectedOption = selectElement.selectedOptions[0];
-        let unit = selectedOption.dataset.unit;
-        let pricePerUnit = parseFloat(selectedOption.dataset.price);
+        if (!selectedOption) return;
 
+        let unitKey = parseInt(selectedOption.dataset.unit);
+        let pricePerUnit = parseFloat(selectedOption.dataset.price.replace(",", ".")) || 0;
         let row = selectElement.closest("tr");
+
         let quantityInput = row.querySelector(".quantity-input");
         let unitSpan = row.querySelector(".unit-display");
+        let unitHidden = row.querySelector("input[name$='.Unit']");
         let costSpan = row.querySelector(".cost");
 
         let quantity = parseFloat(quantityInput.value.replace(",", ".")) || 0;
+
+        let unitText = unitMapping[unitKey] || "Unknown";
+        unitSpan.textContent = unitText;
+        unitHidden.value = unitText;
 
         if (!isNaN(pricePerUnit) && !isNaN(quantity) && quantity > 0) {
             let cost = pricePerUnit * quantity;
@@ -112,7 +131,6 @@
             costSpan.textContent = "0.00 €";
         }
 
-        unitSpan.textContent = unit;
         updateTotalCost();
     }
 
@@ -121,7 +139,7 @@
         document.querySelectorAll("#ingredientList tr").forEach(row => {
             let select = row.querySelector("select");
             let quantityInput = row.querySelector(".quantity-input");
-            let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
+            let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price.replace(",", "."));
             let costSpan = row.querySelector(".cost");
 
             let quantity = parseFloat(quantityInput.value.replace(",", ".")) || 0;
@@ -173,7 +191,51 @@
         selectTd.appendChild(select);
         newRow.appendChild(selectTd);
 
+        let quantityTd = document.createElement("td");
+        quantityTd.classList.add("d-flex", "align-items-center");
+
+        let quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.classList.add("form-control", "w-50", "quantity-input");
+        quantityInput.name = `Ingredients[${index}].Quantity`;
+        quantityInput.value = "1.00";
+        quantityInput.min = "0.01";
+        quantityInput.step = "0.01";
+        quantityInput.oninput = function () { updateUnitAndCost(select); };
+
+        let unitSpan = document.createElement("span");
+        unitSpan.classList.add("ms-2", "unit-display");
+
+        let unitHidden = document.createElement("input");
+        unitHidden.type = "hidden";
+        unitHidden.name = `Ingredients[${index}].Unit`;
+
+        quantityTd.appendChild(quantityInput);
+        quantityTd.appendChild(unitSpan);
+        quantityTd.appendChild(unitHidden);
+
+        let costTd = document.createElement("td");
+        let costSpan = document.createElement("span");
+        costSpan.classList.add("cost");
+        costSpan.textContent = "0.00 €";
+        costTd.appendChild(costSpan);
+
+        let removeTd = document.createElement("td");
+        let removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.classList.add("btn", "btn-danger");
+        removeBtn.textContent = "❌";
+        removeBtn.onclick = function () {
+            ingredientList.removeChild(newRow);
+            updateTotalCost();
+        };
+        removeTd.appendChild(removeBtn);
+
+        newRow.appendChild(quantityTd);
+        newRow.appendChild(costTd);
+        newRow.appendChild(removeTd);
         ingredientList.appendChild(newRow);
+
         updateUnitAndCost(select);
         updateTotalCost();
         checkAvailableItems();
