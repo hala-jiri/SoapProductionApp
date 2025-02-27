@@ -2,7 +2,7 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-8 col-lg-7">
             <div class="card shadow-lg rounded-4">
                 <div class="card-header bg-primary text-white text-center">
                     <h3 class="mb-0">Create New Recipe</h3>
@@ -100,7 +100,7 @@
         let quantityTd = document.createElement("td");
         let quantity = document.createElement("input");
         quantity.type = "number";
-        quantity.classList.add("form-control");
+        quantity.classList.add("form-control", "w-50", "quantity-input"); // ✅ Přidána menší šířka
         quantity.min = "0.01"; // Set minimum value
         quantity.step = "0.01"; // Ensure decimal values
         quantity.value = "1.00"; // Ensure it has two decimal places
@@ -117,6 +117,7 @@
 
         // Cost
         let costTd = document.createElement("td");
+        costTd.style.width = "120px"; // ✅ Zvýšená šířka pro lepší zobrazení ceny
         let costSpan = document.createElement("span");
         costSpan.textContent = "0.00 €";
         costTd.appendChild(costSpan);
