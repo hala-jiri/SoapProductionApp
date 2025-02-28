@@ -11,24 +11,34 @@
                         <table class="table table-bordered table-striped wide-table">
                             <thead class="bg-light">
                                 <tr>
-                                    <th style="width: 22%;">Name</th>
-                                    <th style="width: 13%;" class="text-center">Batch Size</th>
-                                    <th style="width: 13%;" class="text-center">Days to Cure</th>
-                                    <th style="width: 16%;" class="text-center">Price per Batch (€)</th>
-                                    <th style="width: 16%;" class="text-center">Price per Piece (€)</th>
-                                    <th style="width: 20%;" class="text-center">Actions</th>
+                                    <th style="width: 20%;">Name</th>
+                                    <th style="width: 10%;" class="text-center">Batch Size</th>
+                                    <th style="width: 10%;" class="text-center">Days to Cure</th>
+                                    <th style="width: 12%;" class="text-center">Price per Batch (€)</th>
+                                    <th style="width: 12%;" class="text-center">Price per Piece (€)</th>
+                                    <th style="width: 10%;" class="text-center">In Stock</th>
+                                    <th style="width: 26%;" class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var recipe in Model)
                                 {
-                                   
                                     <tr>
                                         <td class="align-middle">@recipe.Name</td>
                                         <td class="align-middle text-center">@recipe.BatchSize</td>
                                         <td class="align-middle text-center">@recipe.DaysOfCure</td>
                                         <td class="align-middle text-center">@recipe.CostPerBatch.ToString("0.00") €</td>
                                         <td class="align-middle text-center">@recipe.CostPerSliceOfBatch.ToString("0.00") €</td>
+                                        <td class="align-middle text-center">
+                                            @if (recipe.AreAllIngredientsInStock)
+                                            {
+                                                <span class="text-success">✅</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">❌</span>
+                                            }
+                                        </td>
                                         <td class="align-middle text-center">
                                             <div class="d-flex justify-content-center gap-2">
                                                 <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info btn-md">
@@ -55,7 +65,7 @@
 
 <style>
     .wide-table {
-        min-width: 900px; /* Minimální šířka tabulky, můžeš ještě upravit */
+        min-width: 1000px;
         width: 100%;
         table-layout: fixed;
     }

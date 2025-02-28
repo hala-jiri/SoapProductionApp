@@ -105,13 +105,41 @@ namespace SoapProductionApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var recipe = await _context.Recipes.FindAsync(id);
-            if (recipe == null)
+            if (id == null)
+            {
                 return NotFound();
+            }
 
-            return View(recipe);
+            var recipe = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .ThenInclude(i => i.WarehouseItem)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new RecipeCreateEditViewModel
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                BatchSize = recipe.BatchSize,
+                DaysOfCure = recipe.DaysOfCure,
+                Note = recipe.Note,
+                Ingredients = recipe.Ingredients.Select(i => new RecipeIngredientViewModel
+                {
+                    WarehouseItemId = i.WarehouseItemId,
+                    WarehouseItemName = i.WarehouseItem.Name,
+                    Quantity = i.Quantity,
+                    Unit = i.Unit.ToString(),
+                    Cost = i.CostPerIngredient
+                }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost, ActionName("Delete")]

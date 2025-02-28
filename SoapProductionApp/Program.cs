@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,23 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseStaticFiles();
+
+// Přidáváme podporu českého formátování čísel a datumu
+var cultureInfo = new CultureInfo("en-US");
+cultureInfo.NumberFormat.NumberDecimalSeparator = "."; // Zajišťuje čárku jako oddělovač desetinných míst
+
+var supportedCultures = new[] { cultureInfo };
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en-US"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
+
+
 
 app.UseRouting();
 

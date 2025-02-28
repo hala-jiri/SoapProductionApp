@@ -5,6 +5,8 @@ namespace SoapProductionApp.Models.Recipe.ViewModels
     public class RecipeIngredientViewModel
     {
         public int WarehouseItemId { get; set; }
+
+        public string WarehouseItemName { get; set; }
         
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Quantity must be greater than zero.")]

@@ -54,9 +54,11 @@
                                             <select class="form-select ingredient-select" name="Ingredients[@i].WarehouseItemId" onchange="updateUnitAndCost(this)">
                                                 @foreach (var item in Model.AvailableWarehouseItems)
                                                 {
+                                                    bool isSelected = item.Id == Model.Ingredients[i].WarehouseItemId; // Přesunutí logiky do Razor bloku
                                                     <option value="@item.Id"
                                                             data-price="@item.AveragePricePerUnitWithoutTax.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
-                                                            data-unit="@((int)item.Unit)">
+                                                            data-unit="@((int)item.Unit)"
+                                                            selected="@(isSelected ? "selected" : null)">
                                                         @item.Name
                                                     </option>
                                                 }
@@ -65,10 +67,10 @@
                                         <td class="d-flex align-items-center">
                                             <input type="text" class="form-control w-50 quantity-input"
                                                    name="Ingredients[@i].Quantity"
-                                                   value="@Model.Ingredients[i].Quantity.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
-                                                   min="0.01" step="0.01"
+                                                   value="@Model.Ingredients[i].Quantity.ToString("0.00", new System.Globalization.CultureInfo("en-US"))"
+                                                   min="0,01" step="0,01"
                                                    pattern="^\d+([.,]\d{1,2})?$"
-                                                   oninput="this.value = this.value.replace(',', '.'); updateUnitAndCost(this.closest('tr').querySelector('select'))" />
+                                                   oninput="this.value = this.value.replace('.', ','); updateUnitAndCost(this.closest('tr').querySelector('select'))" />
                                             <span class="ms-2 unit-display">@Model.Ingredients[i].Unit</span>
 
                                             <input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />
