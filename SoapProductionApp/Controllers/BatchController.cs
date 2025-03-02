@@ -42,10 +42,14 @@ namespace SoapProductionApp.Controllers
             {
                 var warehouseItem = await _context.WarehouseItems
                    .FirstOrDefaultAsync(w => w.Id == batchCreateViewModel.WarehouseItemId);
-                //var quantityBaseUnit = UnitMeasurement.ConvertToBaseUnit(batchCreateViewModel.Unit, (decimal)batchCreateViewModel.QuantityOfPackage);
+                if (warehouseItem == null)
+                {
+                    return View(batchCreateViewModel);
+                }
+
                 batchCreateViewModel.WarehouseItem = warehouseItem;
                 batchCreateViewModel.Unit = warehouseItem.Unit;
-                var batch = new Batch(batchCreateViewModel) { };
+                var batch = new Batch(batchCreateViewModel, warehouseItem) { };
 
                 _context.Batches.Add(batch);
                 await _context.SaveChangesAsync();
@@ -79,22 +83,13 @@ namespace SoapProductionApp.Controllers
                 var batch = await _context.Batches.FirstOrDefaultAsync(i => i.Id == id);
                 if (batch == null) return NotFound();
 
-                /*var warehouseItem = await _context.WarehouseItems
-                   .FirstOrDefaultAsync(w => w.Id == batchCreateViewModel.WarehouseItemId);*/
-
-                //var quantityBaseUnit = UnitMeasurement.ConvertToBaseUnit(batchCreateViewModel.Unit, (decimal)batchCreateViewModel.QuantityOfPackage);
-
                 batch.Name = batchCreateViewModel.Name;
                 batch.Supplier = batchCreateViewModel.Supplier;
                 batch.PurchaseDate = batchCreateViewModel.PurchaseDate;
                 batch.ExpirationDate = batchCreateViewModel.ExpirationDate;
-
                 batch.TaxPercentage = batchCreateViewModel.TaxPercentage;
-
                 batch.AvailableQuantity = batchCreateViewModel.QuantityOfPackage;
-                
                 batch.UnitPriceWithoutTax = batchCreateViewModel.PriceOfPackageWithoutTax / batchCreateViewModel.QuantityOfPackage;
-
 
                 _context.Batches.Update(batch);
                 await _context.SaveChangesAsync();

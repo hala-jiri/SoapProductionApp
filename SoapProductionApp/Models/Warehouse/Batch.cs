@@ -10,7 +10,7 @@ namespace SoapProductionApp.Models.Warehouse
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string? Supplier { get; set; }
+        public string Supplier { get; set; } = String.Empty;
         [Required]
         public DateTime PurchaseDate { get; set; }
         public DateTime? ExpirationDate { get; set; }
@@ -18,6 +18,7 @@ namespace SoapProductionApp.Models.Warehouse
 
 
         [Required]
+        [Range(0, 100, ErrorMessage = "Tax must be between 0% and 100%.")]
         public int TaxPercentage { get; set; }
 
         [Required]
@@ -45,9 +46,10 @@ namespace SoapProductionApp.Models.Warehouse
 
         public Batch()
         {
+
         }
 
-        public Batch(BatchCreateViewModel batchCreateViewModel)
+        public Batch(BatchCreateViewModel batchCreateViewModel, WarehouseItem warehouseItem)
         {
             Name = batchCreateViewModel.Name;
             Supplier = batchCreateViewModel.Supplier;
@@ -55,10 +57,11 @@ namespace SoapProductionApp.Models.Warehouse
             ExpirationDate = batchCreateViewModel.ExpirationDate;
             TaxPercentage = batchCreateViewModel.TaxPercentage;
 
-            AvailableQuantity = (decimal)batchCreateViewModel.QuantityOfPackage;
-            UnitPriceWithoutTax = batchCreateViewModel.PriceOfPackageWithoutTax / (decimal)batchCreateViewModel.QuantityOfPackage;
+            AvailableQuantity = batchCreateViewModel.QuantityOfPackage > 0 ? (decimal)batchCreateViewModel.QuantityOfPackage : 0;
+            UnitPriceWithoutTax = AvailableQuantity > 0 ? batchCreateViewModel.PriceOfPackageWithoutTax / AvailableQuantity : 0;
 
             WarehouseItemId = batchCreateViewModel.WarehouseItemId;
+            WarehouseItem = batchCreateViewModel.WarehouseItem;
         }
 
     }

@@ -28,10 +28,10 @@ namespace SoapProductionApp.Models.Recipe
         public UnitMeasurement.UnitType Unit { get; set; } // Typ jednotky (ml, g, ks)
 
         [NotMapped]
-        public decimal CostPerIngredient => WarehouseItem?.AveragePricePerUnitWithoutTax * Quantity ?? 0;
+        public decimal CostPerIngredient => (WarehouseItem?.AveragePricePerUnitWithoutTax ?? 0) * Quantity;
 
         [NotMapped]
-        public bool IsInStock => WarehouseItem?.TotalAvailableQuantity >= Quantity;
+        public bool IsInStock => (WarehouseItem?.TotalAvailableQuantity ?? 0) >= Quantity;
 
         [NotMapped]
         public DateTime? NearestExpirationDate =>

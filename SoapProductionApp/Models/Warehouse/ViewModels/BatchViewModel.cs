@@ -50,7 +50,7 @@ namespace SoapProductionApp.Models.Warehouse.ViewModels
         {
             Id = batch.Id;
             Name = batch.Name;
-            Supplier = batch.Supplier;
+            Supplier = batch.Supplier ?? string.Empty;
             PurchaseDate = batch.PurchaseDate;
             ExpirationDate = batch.ExpirationDate;
             TaxPercentage = batch.TaxPercentage;
@@ -58,10 +58,6 @@ namespace SoapProductionApp.Models.Warehouse.ViewModels
             QuantityOfPackage = (double)batch.AvailableQuantity;
             PriceOfPackageWithoutTax = (decimal)QuantityOfPackage * PriceOfPackageWithoutTax;
             WarehouseItem = batch.WarehouseItem;
-        }
-
-        public BatchViewModel()
-        {
         }
     }
 }

@@ -9,10 +9,26 @@ namespace SoapProductionApp.Models.Warehouse
         [Required]
         public string Name { get; set; }
 
-        public string ColorBackground { get; set; } = "#ffffff"; // Výchozí barva pozadí (bílá)
-        public string ColorText { get; set; } = "#000000"; // Výchozí barva textu (černá)
+        public string ColorBackground { get; set; }
+        public string ColorText { get; set; }
 
-        public virtual List<WarehouseItem> WarehouseItems { get; set; }
+        public virtual List<WarehouseItem> WarehouseItems { get; set; } = new();
 
+        private const string DefaultBackgroundColor = "#ffffff";
+        private const string DefaultTextColor = "#000000";
+
+        public Category(string name)
+        {
+            Name = name;
+            ColorBackground = DefaultBackgroundColor;
+            ColorText = DefaultTextColor;
+        }
+
+        public Category(string name, string? colorBackground, string? colorText)
+        {
+            Name = name;
+            ColorBackground = colorBackground ?? DefaultBackgroundColor;
+            ColorText = colorText ?? DefaultTextColor;
+        }
     }
 }

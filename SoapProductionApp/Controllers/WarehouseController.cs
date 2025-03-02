@@ -20,15 +20,27 @@ namespace SoapProductionApp.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
+            ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
 
-            var warehouseItems = await _context.WarehouseItems
+
+            var warehouseItems = _context.WarehouseItems
                 .Include(i => i.Batches)
                 .Include(i => i.Categories)
-                .ToListAsync();
+                .AsQueryable();
 
-            return View(warehouseItems);//TotalValueOfAvailableQuantity
+            // Řazení podle názvu (ASC nebo DESC)
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    warehouseItems = warehouseItems.OrderByDescending(i => i.Name);
+                    break;
+                default:
+                    warehouseItems = warehouseItems.OrderBy(i => i.Name);
+                    break;
+            }
+            return View(await warehouseItems.ToListAsync());
         }
 
         public async Task<IActionResult> Create()

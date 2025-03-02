@@ -1,9 +1,6 @@
-﻿using SoapProductionApp.Models.Recipe;
-using SoapProductionApp.Models.Recipe.ViewModels;
-using SoapProductionApp.Models.Warehouse;
+﻿using SoapProductionApp.Models.Recipe.ViewModels;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SoapProductionApp.Models.Recipe
 {
@@ -14,15 +11,15 @@ namespace SoapProductionApp.Models.Recipe
         [Required]
         public string Name { get; set; }
 
-        public string ImageUrl { get; set; } // Odkaz na obrázek
+        public string ImageUrl { get; set; }
 
         [Required]
-        public int BatchSize { get; set; } // Kolik kusů mýdla vznikne
+        public int BatchSize { get; set; }
 
         [Required]
-        public int DaysOfCure { get; set; } // Počet dní zrání
+        public int DaysOfCure { get; set; }
 
-        public virtual List<RecipeIngredient> Ingredients { get; set; } = new List<RecipeIngredient>();
+        public virtual List<RecipeIngredient> Ingredients { get; set; } = new();
 
         [NotMapped]
         public decimal CostPerBatch => Ingredients.Sum(x => x.CostPerIngredient);
@@ -38,14 +35,14 @@ namespace SoapProductionApp.Models.Recipe
         public Recipe()
         {
         }
-
-        public Recipe(RecipeCreateEditViewModel model)
+        public Recipe(RecipeCreateEditViewModel model, List<RecipeIngredient> ingredients)
         {
             Name = model.Name;
             ImageUrl = model.ImageUrl;
             BatchSize = model.BatchSize;
             DaysOfCure = model.DaysOfCure;
-            Note = model.Note;
+            Note = model.Note ?? string.Empty;
+            Ingredients = ingredients;
         }
     }
 
