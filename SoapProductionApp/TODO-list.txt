@@ -1,1 +1,3 @@
 ﻿- Item in recipe dont recaltulate price depend of usage
+- write unit tests
+- make a admin section with delete and filling database (for testing purposes)
