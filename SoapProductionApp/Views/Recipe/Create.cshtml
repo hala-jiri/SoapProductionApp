@@ -67,7 +67,6 @@
     let rawItems = @Html.Raw(Json.Serialize(Model.AvailableWarehouseItems));
 
     // 2) Vytvoříme mapu číselných hodnot enumu na text
-    //    Upravte podle Vašeho enumu a skutečných čísel/hodnot
     let unitMapping = {
         1: "L",
         2: "ml",
@@ -85,12 +84,12 @@
         };
     });
 
-    // 4) Zachovejte původní funkce, jen odstraňte to, co natvrdo nastavovalo unitSpan
+    // 4) Funkce pro přidání ingredience
     function addIngredient() {
         let ingredientList = document.getElementById("ingredientList");
 
         let newRow = document.createElement("tr");
-        let index = ingredientList.children.length; // Get the correct index
+        let index = ingredientList.children.length; // správné indexování
 
         // Ingredient Select
         let selectTd = document.createElement("td");
@@ -101,14 +100,20 @@
         updateIngredientOptions(select);
         selectTd.appendChild(select);
 
+        // ★ Přidání skrytého inputu pro WarehouseItemName ★
+        let nameHidden = document.createElement("input");
+        nameHidden.type = "hidden";
+        nameHidden.name = `Ingredients[${index}].WarehouseItemName`;
+        selectTd.appendChild(nameHidden);
+
         // Quantity Field
         let quantityTd = document.createElement("td");
         let quantity = document.createElement("input");
         quantity.type = "number";
-        quantity.classList.add("form-control", "w-50", "quantity-input"); // ✅ Přidána menší šířka
-        quantity.min = "0.01"; // Set minimum value
-        quantity.step = "0.01"; // Ensure decimal values
-        quantity.value = "1.00"; // Ensure it has two decimal places
+        quantity.classList.add("form-control", "w-50", "quantity-input");
+        quantity.min = "0.01";
+        quantity.step = "0.01";
+        quantity.value = "1.00";
         quantity.name = `Ingredients[${index}].Quantity`;
         quantity.required = true;
         quantity.oninput = function () { updateTotalCost(); };
@@ -122,7 +127,7 @@
 
         // Cost
         let costTd = document.createElement("td");
-        costTd.style.width = "120px"; // ✅ Zvýšená šířka pro lepší zobrazení ceny
+        costTd.style.width = "120px";
         let costSpan = document.createElement("span");
         costSpan.textContent = "0.00 €";
         costTd.appendChild(costSpan);
@@ -140,14 +145,14 @@
         };
         removeTd.appendChild(removeBtn);
 
-        // Append all to row
+        // Přidání buněk do řádku
         newRow.appendChild(selectTd);
         newRow.appendChild(quantityTd);
         newRow.appendChild(costTd);
         newRow.appendChild(removeTd);
         ingredientList.appendChild(newRow);
 
-        // Update everything
+        // Update hodnot
         updateUnitAndCost(select);
         updateTotalCost();
     }
@@ -162,7 +167,12 @@
         let unitHiddenInput = row.querySelector("input[name$='.Unit']");
         let costSpan = row.querySelector("td:nth-child(3) span");
 
-        unitHiddenInput.value = unit; // Set hidden field for model binding
+        // Nastavení hidden inputu pro Unit
+        unitHiddenInput.value = unit;
+
+        // ★ Nastavení hidden inputu pro WarehouseItemName ★
+        let nameHidden = row.querySelector("input[name$='.WarehouseItemName']");
+        nameHidden.value = selectedOption.textContent.trim();
 
         if (!isNaN(pricePerUnit) && !isNaN(quantityInput.value)) {
             let cost = pricePerUnit * parseFloat(quantityInput.value);
@@ -174,27 +184,26 @@
         updateTotalCost();
     }
 
-    function updateTotalCost() 
-    {
+    function updateTotalCost() {
         let total = 0;
 
         document.querySelectorAll("#ingredientList tr").forEach(row => {
             let select = row.querySelector("select");
-            let quantityInput = row.querySelector("input");
+            // ★ Zajištění, že vybíráme správný input (množství) ★
+            let quantityInput = row.querySelector("input[name$='.Quantity']");
             let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
             let quantity = parseFloat(quantityInput.value) || 0;
             let costSpan = row.querySelector("td:nth-child(3) span");
 
             if (!isNaN(pricePerUnit) && !isNaN(quantity)) {
                 let cost = pricePerUnit * quantity;
-                costSpan.textContent = cost.toFixed(2) + " €"; // ✅ Opraveno
+                costSpan.textContent = cost.toFixed(2) + " €";
                 total += cost;
             } else {
-                costSpan.textContent = "0.00 €"; // ✅ Opraveno
+                costSpan.textContent = "0.00 €";
             }
         });
 
-        // ✅ Opraveno: Nastavíme celkovou cenu
         document.getElementById("totalCost").textContent = total.toFixed(2) + " €";
     }
 
@@ -203,7 +212,7 @@
         let selectedIds = Array.from(document.querySelectorAll("#ingredientList select"))
             .map(sel => parseInt(sel.value));
 
-        // Naplníme <option> jen těmi, které ještě nejsou vybrané
+        // Naplnění <option> pouze nevybranými ingrediencemi
         selectElement.innerHTML = availableItems
             .filter(item => !selectedIds.includes(item.id))
             .map(item =>
@@ -214,7 +223,7 @@
     }
 
     function refreshAllSelectOptions() {
-        // Znovu projdeme všechny selecty a nastavíme jim správné <option>
+        // Aktualizace všech selectů
         document.querySelectorAll("#ingredientList select").forEach(select => {
             let currentValue = select.value;
             select.innerHTML = availableItems

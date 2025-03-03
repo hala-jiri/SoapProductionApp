@@ -4,7 +4,9 @@
             <div class="card shadow-lg rounded-4">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Recipes</h3>
-                    <a asp-action="Create" class="btn btn-light btn-lg">➕ Add Recipe</a>
+                    <a asp-action="Create" class="btn btn-light btn-sm action-btn">
+                        ➕ Add Recipe
+                    </a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -41,13 +43,13 @@
                                         </td>
                                         <td class="align-middle text-center">
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info btn-md">
+                                                <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info btn-sm action-btn">
                                                     <i class="bi bi-eye-fill"></i> View
                                                 </a>
-                                                <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning btn-md">
+                                                <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning btn-sm action-btn">
                                                     <i class="bi bi-pencil-fill"></i> Edit
                                                 </a>
-                                                <a asp-action="Delete" asp-route-id="@recipe.Id" class="btn btn-danger btn-md">
+                                                <a asp-action="Delete" asp-route-id="@recipe.Id" class="btn btn-danger btn-sm action-btn">
                                                     <i class="bi bi-trash-fill"></i> Delete
                                                 </a>
                                             </div>
