@@ -1,0 +1,100 @@
+﻿@model SoapProductionApp.Models.Cooking.ViewModels.CookingDetailViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-info text-white text-center">
+                    <h3 class="mb-0">Cooking Details</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><strong>Recipe Name:</strong></td>
+                                <td class="text-end">@Model.RecipeName</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Batch Size:</strong></td>
+                                <td class="text-end">@Model.BatchSize pcs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cooking Date:</strong></td>
+                                <td class="text-end">@Model.CookingDate.ToShortDateString()</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Curing Date:</strong></td>
+                                <td class="text-end">@Model.CuringDate.ToShortDateString()</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Expiration Date:</strong></td>
+                                <td class="text-end">
+                                    @(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToShortDateString() : "N/A")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Cost:</strong></td>
+                                <td class="text-end">@Model.TotalCost.ToString("0.00") €</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cost per Soap:</strong></td>
+                                <td class="text-end">@Model.CostPerSoap.ToString("0.00") €</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Is Cut?</strong></td>
+                                <td class="text-end">
+                                    @(Model.IsCut ? "✅ Yes" : "❌ No")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ready to Sell?</strong></td>
+                                <td class="text-end">
+                                    @(Model.IsReadyToBeSold ? "✅ Yes" : "❌ No")
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mb-3">
+                        <strong>Recipe Notes:</strong>
+                        <p>@Model.RecipeNotes</p>
+                    </div>
+
+                    <h4>Used Ingredients</h4>
+                    @if (Model.UsedIngredients.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ingredient</th>
+                                    <th>Quantity</th>
+                                    <th>Cost</th>
+                                    <th>Expiration Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ingredient in Model.UsedIngredients)
+                                {
+                                    <tr>
+                                        <td>@ingredient.IngredientName</td>
+                                        <td>@ingredient.QuantityUsed @ingredient.Unit</td>
+                                        <td>@ingredient.Cost.ToString("0.00") €</td>
+                                        <td>@ingredient.ExpirationDate.ToShortDateString()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No ingredients used.</p>
+                    }
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

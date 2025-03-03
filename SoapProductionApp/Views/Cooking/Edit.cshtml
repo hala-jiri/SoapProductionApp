@@ -1,0 +1,38 @@
+﻿@model SoapProductionApp.Models.Cooking.Cooking
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-warning text-white text-center">
+                    <h3 class="mb-0">Edit Cooking</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Recipe</label>
+                            <input class="form-control" value="@Model.Recipe.Name" disabled />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BatchSize" class="form-label">Batch Size</label>
+                            <input asp-for="BatchSize" class="form-control" type="number" min="1" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RecipeNotes" class="form-label">Recipe Notes</label>
+                            <textarea asp-for="RecipeNotes" class="form-control"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-warning">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

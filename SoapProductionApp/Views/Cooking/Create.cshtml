@@ -1,0 +1,96 @@
+﻿@model SoapProductionApp.Models.Cooking.ViewModels.CookingCreateViewModel
+
+@{
+    ViewBag.Title = "Start New Cooking";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="mb-0">Start New Cooking</h3>
+                </div>
+                <div class="card-body">
+
+                    <!-- FORM 1: GET na tutéž akci ( načte vybraný recept ) -->
+                    <form method="get">
+                        <div class="mb-3">
+                            <label for="recipeSelect" class="form-label">Select Recipe</label>
+                            <select name="selectedRecipeId" id="recipeSelect" class="form-select"
+                                    onchange="this.form.submit()"> <!-- ODSTRAŇTE, chcete-li 0 JS -->
+                                <option value="">-- Choose a recipe --</option>
+                                @if (Model.Recipes != null)
+                                {
+                                    foreach (var recipe in Model.Recipes)
+                                    {
+                                        <option value="@recipe.Id" selected="@((bool)(recipe.Id == Model.SelectedRecipeId))">
+                                            @recipe.Name
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Load Recipe Data</button>
+                    </form>
+
+                    <hr />
+
+                    <!-- Zobrazení předvyplněných údajů -->
+                    <div class="mb-3">
+                        <label class="form-label">Batch Size</label>
+                        <input type="number" class="form-control" value="@Model.BatchSize" disabled />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Recipe Notes</label>
+                        <textarea class="form-control" disabled>@Model.RecipeNotes</textarea>
+                    </div>
+
+                    <h5>Ingredients</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Ingredient</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Ingredients != null)
+                            {
+                                foreach (var ing in Model.Ingredients)
+                                {
+                                    <tr>
+                                        <td>@ing.WarehouseItemName</td>
+                                        <td>@ing.Quantity</td>
+                                        <td>@ing.Unit</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr />
+
+                    <!-- FORM 2: POST na CreatePost => založí se Cooking v DB -->
+                    <form asp-action="CreatePost" method="post">
+                        <!-- Schované inputy pro přenos zobrazených údajů do POST akce -->
+                        <input type="hidden" name="selectedRecipeId" value="@Model.SelectedRecipeId" />
+                        <input type="hidden" name="batchSize" value="@Model.BatchSize" />
+                        <input type="hidden" name="recipeNotes" value="@Model.RecipeNotes" />
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-success" 
+                                    @(Model.SelectedRecipeId == null ? "disabled" : "")>
+                                Start Cooking
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
