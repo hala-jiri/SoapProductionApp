@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -19,4 +19,22 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
+.action-btn {
+    font-size: 0.85rem; /* Stejná velikost jako Add Recipe */
+    padding: 6px 10px; /* Upravíme padding pro menší vzhled */
+    height: auto; /* Tlačítko se nebude přizpůsobovat */
+    line-height: 1.2; /* Lepší vertikální zarovnání */
+}
+
+.menu-icon {
+    width: 24px; /* Nastaví velikost ikony */
+    height: 24px; /* Udržuje poměr */
+    object-fit: contain; /* Zajistí správné vykreslení */
 }
