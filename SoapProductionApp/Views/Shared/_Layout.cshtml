@@ -11,22 +11,24 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/Images/SoapMateLogo.png" alt="SoapMate Logo" class="logo-img">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <!-- Levé menu -->
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link text-dark d-flex align-items-center" asp-controller="Warehouse" asp-action="Index">
                                 <img src="~/Images/Icons/warehouse.png" alt="Warehouse Icon" class="menu-icon">
                                 <span class="ms-2">Warehouse</span>
-                                </a>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark d-flex align-items-center" asp-area="" asp-controller="Recipe" asp-action="Index">
@@ -40,17 +42,29 @@
                                 <span class="ms-2">Cooking</span>
                             </a>
                         </li>
+                    </ul>
+
+                    <!-- Pravá část menu (Admin odkazy + přihlášení) -->
+                    <ul class="navbar-nav">
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Category" asp-action="Index">Kategorie</a>
+                                <a class="nav-link text-dark" asp-controller="Category" asp-action="Index">Kategorie</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Index">Správa uživatelů</a>
+                                <a class="nav-link text-dark" asp-controller="DatabaseSetup" asp-action="Index">Database Setup</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Správa uživatelů</a>
+                            </li>
+
                         }
+
+                        <!-- Sem vložíme LoginPartial jako poslední položku vpravo -->
+                        <li class="nav-item">
+                            <partial name="_LoginPartial" />
+                        </li>
                     </ul>
-                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

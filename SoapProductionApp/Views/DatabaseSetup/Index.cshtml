@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Database Setup";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3 class="mb-0">Reset Database</h3>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-4">This will delete all data and generate new test data.</p>
+                    <form asp-action="ResetDatabase" method="post">
+                        <button type="submit" class="btn btn-danger btn-lg">⚠️ Reset & Generate Data</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
