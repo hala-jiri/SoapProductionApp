@@ -1,3 +1,8 @@
-﻿- Item in recipe dont recaltulate price depend of usage
-- write unit tests
+﻿- write unit tests
 - make a admin section with delete and filling database (for testing purposes)
+- Cooking:
+	- when I made Edit of cooking (amount of cuts), check what will happens with price (recalculated?)
+	- problem with not showing expiration! fix it....
+- Recipe:
+	- Unit should be related to WarehouseItem, dont want to mix units between recipe and warehouse. Keep it simple (one unit per WarehouseItem)
+		- it will be linked/related to WarehouseItem (Unit)
