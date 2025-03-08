@@ -8,6 +8,7 @@
 		- should be able to set up CUT (or make extra action in Cooking/Index view
 	- Create:
 		- notes should be able in Create)
+		- what will happen if user will push create new Recipe but we dont have enough stuff on stock?
 
 - Recipe:
 	- Unit should be related to WarehouseItem, dont want to mix units between recipe and warehouse. Keep it simple (one unit per WarehouseItem)
