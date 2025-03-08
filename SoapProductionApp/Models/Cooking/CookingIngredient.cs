@@ -18,6 +18,8 @@ public class CookingIngredient
 
     public string Unit { get; set; } // Jednotka (L, g, ml, ...)
 
+    public decimal Cost { get; set; }
+
     public DateTime ExpirationDate { get; set; } // Expirace suroviny
 }
 

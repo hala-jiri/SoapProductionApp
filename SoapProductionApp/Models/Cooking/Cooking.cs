@@ -22,7 +22,8 @@ namespace SoapProductionApp.Models.Cooking
 
         public DateTime CuringDate { get; set; }
 
-        public decimal TotalCost { get; set; }
+        [NotMapped]
+        public decimal TotalCost => UsedIngredients.Sum(x => x.Cost);
 
         [NotMapped]
         public decimal CostPerSoap => BatchSize > 0 ? TotalCost / (decimal)BatchSize : 0;
@@ -33,7 +34,7 @@ namespace SoapProductionApp.Models.Cooking
             ? UsedIngredients.Min(i => i.ExpirationDate)
             : (DateTime?)null; // Pokud nejsou ingredience, vrátí null
 
-        public string RecipeNotes { get; set; }
+        public string? RecipeNotes { get; set; }
 
         public bool IsCut { get; set; } = false;
 

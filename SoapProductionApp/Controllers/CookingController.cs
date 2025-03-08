@@ -30,9 +30,10 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var cooking = await _context.Cookings
-        .Include(c => c.Recipe)
-        .Include(c => c.UsedIngredients)
-        .FirstOrDefaultAsync(c => c.Id == id);
+                .Include(c => c.Recipe)
+                .Include(c => c.UsedIngredients)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
 
             if (cooking == null) return NotFound();
 
@@ -103,7 +104,7 @@ namespace SoapProductionApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePost(int selectedRecipeId, int batchSize, string? recipeNotes)
+        public async Task<IActionResult> Create(int selectedRecipeId, int batchSize, string? recipeNotes)
         {
             // Najdeme recept podle ID
             var recipe = await _context.Recipes
@@ -160,9 +161,6 @@ namespace SoapProductionApp.Controllers
                     totalCost += takeFromBatch * batch.UnitPriceWithoutTax;
                 }
             }
-
-            cooking.TotalCost = totalCost;
-
             _context.Cookings.Add(cooking);
             await _context.SaveChangesAsync();
 
@@ -172,7 +170,10 @@ namespace SoapProductionApp.Controllers
         // GET: Cooking/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var cooking = await _context.Cookings.FindAsync(id);
+            var cooking = await _context.Cookings
+                .Include(r => r.Recipe)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (cooking == null) return NotFound();
             return View(cooking);
         }
