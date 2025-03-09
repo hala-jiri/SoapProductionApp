@@ -5,6 +5,10 @@ using SoapProductionApp.Models.Cooking;
 using SoapProductionApp.Models.Cooking.ViewModels;
 using SoapProductionApp.Models.Recipe.ViewModels;
 
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+
 namespace SoapProductionApp.Controllers
 {
     public class CookingController : Controller
@@ -214,6 +218,162 @@ namespace SoapProductionApp.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+
+        public async Task<ActionResult> ExportToPdf(int id)
+        {
+            // Nastavení Community License pro QuestPDF
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var cooking = await _context.Cookings
+                .Include(c => c.Recipe)
+                .Include(c => c.UsedIngredients)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+
+            if (cooking == null) return NotFound();
+
+            var cookingDetailViewModel = new CookingDetailViewModel
+            {
+                Id = cooking.Id,
+                RecipeName = cooking.Recipe.Name,
+                BatchSize = cooking.BatchSize,
+                CookingDate = cooking.CookingDate,
+                CuringDate = cooking.CuringDate,
+                TotalCost = cooking.TotalCost,
+                CostPerSoap = cooking.CostPerSoap,
+                ExpirationDate = cooking.ExpirationDate,
+                RecipeNotes = cooking.RecipeNotes,
+                IsCut = cooking.IsCut,
+                IsReadyToBeSold = cooking.IsReadyToBeSold,
+                UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
+                {
+                    IngredientName = i.IngredientName,
+                    QuantityUsed = i.QuantityUsed,
+                    Unit = i.Unit,
+                    Cost = i.Cost,
+                    ExpirationDate = i.ExpirationDate
+                }).ToList()
+            };
+
+
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(30);
+                    page.Background(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12));
+
+                    page.Header()
+                        .Background("#17a2b8") // Modrá hlavička jako v HTML
+                        .Padding(10)
+                        .AlignCenter()
+                        .Text("Cooking Details")
+                        .FontSize(20).Bold().FontColor(Colors.White);
+
+                    page.Content()
+                        .Column(col =>
+                        {
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Recipe Name:").SemiBold();
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.RecipeName);
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Batch Size:").SemiBold();
+                                row.RelativeItem().AlignRight().Text($"{cookingDetailViewModel.BatchSize} pcs");
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Cooking Date:").SemiBold();
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.CookingDate.ToShortDateString());
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Curing Date:").SemiBold();
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.CuringDate.ToShortDateString());
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Expiration Date:").SemiBold();
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.ExpirationDate.HasValue ? cookingDetailViewModel.ExpirationDate.Value.ToShortDateString() : "N/A");
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Total Cost:").SemiBold();
+                                row.RelativeItem().AlignRight().Text($"{cookingDetailViewModel.TotalCost:0.00} €");
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Cost per Soap:").SemiBold();
+                                row.RelativeItem().AlignRight().Text($"{cookingDetailViewModel.CostPerSoap:0.00} €");
+                            });
+
+                            col.Item().PaddingTop(10).Text("Recipe Notes:").Bold();
+                            col.Item().Text(cookingDetailViewModel.RecipeNotes).Italic();
+
+                            col.Item().PaddingTop(15).Text("Used Ingredients").FontSize(16).Bold();
+
+                            if (cookingDetailViewModel.UsedIngredients.Any())
+                            {
+                                col.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(columns =>
+                                    {
+                                        columns.RelativeColumn(3);
+                                        columns.RelativeColumn(2);
+                                        columns.RelativeColumn(2);
+                                        columns.RelativeColumn(2);
+                                    });
+
+                                    table.Header(header =>
+                                    {
+                                        header.Cell().BorderBottom(1).Text("Ingredient").Bold();
+                                        header.Cell().BorderBottom(1).Text("Quantity").Bold();
+                                        header.Cell().BorderBottom(1).Text("Cost").Bold();
+                                        header.Cell().BorderBottom(1).Text("Expiration Date").Bold();
+                                    });
+
+                                    foreach (var ingredient in cookingDetailViewModel.UsedIngredients)
+                                    {
+                                        table.Cell().Text(ingredient.IngredientName);
+                                        table.Cell().Text($"{ingredient.QuantityUsed} {ingredient.Unit}");
+                                        table.Cell().Text($"{ingredient.Cost:0.00} €");
+                                        table.Cell().Text(ingredient.ExpirationDate.ToShortDateString());
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                col.Item().Text("No ingredients used.").Italic();
+                            }
+                        });
+
+                    page.Footer()
+                        .AlignRight()
+                        .Text(txt =>
+                        {
+                            txt.Span("Generated on: ").SemiBold();
+                            txt.Span(DateTime.Now.ToString("g"));
+                        });
+                });
+            });
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                document.GeneratePdf(stream);
+                return File(stream.ToArray(), "application/pdf", "CookingDetails-"+ cookingDetailViewModel.Id + "-" + cookingDetailViewModel.RecipeName + "-"+ cookingDetailViewModel.CookingDate + ".pdf");
+            }
         }
     }
 }
