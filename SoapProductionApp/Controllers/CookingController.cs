@@ -90,7 +90,6 @@ namespace SoapProductionApp.Controllers
                     // Předvyplníme BatchSize a RecipeNotes
                     model.BatchSize = recipe.BatchSize;
                     model.RecipeNotes = recipe.Note;
-
                     // Připravíme si seznam ingrediencí k zobrazení
                     model.Ingredients = recipe.Ingredients
                         .Select(i => new RecipeIngredientViewModel
@@ -108,7 +107,7 @@ namespace SoapProductionApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int selectedRecipeId, int batchSize, string? recipeNotes)
+        public async Task<IActionResult> Create(int selectedRecipeId, int batchSize, string? cookingNotes)
         {
             // Najdeme recept podle ID
             var recipe = await _context.Recipes
@@ -127,7 +126,8 @@ namespace SoapProductionApp.Controllers
                 BatchSize = batchSize,
                 CookingDate = DateTime.Now,
                 CuringDate = DateTime.Now.AddDays(recipe.DaysOfCure),
-                RecipeNotes = recipeNotes,
+                RecipeNotes = recipe.Note,
+                CookingNotes = cookingNotes,
                 IsCut = false,
                 IsReadyToBeSold = false,
                 UsedIngredients = new List<CookingIngredient>()
@@ -158,7 +158,8 @@ namespace SoapProductionApp.Controllers
                         IngredientName = ingredient.WarehouseItem.Name,
                         QuantityUsed = takeFromBatch,
                         Unit = ingredient.Unit.ToString(),
-                        ExpirationDate = batch.ExpirationDate ?? DateTime.Now.AddYears(1)
+                        ExpirationDate = batch.ExpirationDate ?? DateTime.Now.AddYears(1),
+                        Cost = takeFromBatch * batch.UnitPriceWithoutTax
                     };
 
                     cooking.UsedIngredients.Add(cookingIngredient);
@@ -245,6 +246,7 @@ namespace SoapProductionApp.Controllers
                 CostPerSoap = cooking.CostPerSoap,
                 ExpirationDate = cooking.ExpirationDate,
                 RecipeNotes = cooking.RecipeNotes,
+                CookingNotes = cooking.CookingNotes,
                 IsCut = cooking.IsCut,
                 IsReadyToBeSold = cooking.IsReadyToBeSold,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
@@ -321,6 +323,9 @@ namespace SoapProductionApp.Controllers
 
                             col.Item().PaddingTop(10).Text("Recipe Notes:").Bold();
                             col.Item().Text(cookingDetailViewModel.RecipeNotes).Italic();
+
+                            col.Item().PaddingTop(10).Text("Cooking Notes:").Bold();
+                            col.Item().Text(cookingDetailViewModel.CookingNotes).Italic();
 
                             col.Item().PaddingTop(15).Text("Used Ingredients").FontSize(16).Bold();
 

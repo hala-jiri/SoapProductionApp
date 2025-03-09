@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoapProductionApp.Data;
 
@@ -11,9 +12,11 @@ using SoapProductionApp.Data;
 namespace SoapProductionApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250309230430_AddCookingNotesToCookingModel")]
+    partial class AddCookingNotesToCookingModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,9 +286,6 @@ namespace SoapProductionApp.Data.Migrations
 
                     b.Property<DateTime>("CookingDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CookingNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CuringDate")
                         .HasColumnType("datetime2");

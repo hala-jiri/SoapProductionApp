@@ -36,6 +36,8 @@ namespace SoapProductionApp.Models.Cooking
 
         public string? RecipeNotes { get; set; }
 
+        public string? CookingNotes { get; set; }
+
         public bool IsCut { get; set; } = false;
 
         public bool IsReadyToBeSold { get; set; } = false;

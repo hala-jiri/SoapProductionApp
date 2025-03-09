@@ -18,12 +18,17 @@
 
                         <div class="mb-3">
                             <label asp-for="BatchSize" class="form-label">Batch Size</label>
-                            <input asp-for="BatchSize" class="form-control" type="number" min="1" />
+                            <input asp-for="BatchSize" class="form-control" disabled type="number" min="1" />
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="RecipeNotes" class="form-label">Recipe Notes</label>
-                            <textarea asp-for="RecipeNotes" class="form-control"></textarea>
+                            <textarea asp-for="RecipeNotes" class="form-control" disabled></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CookingNotes" class="form-label">Cooking Notes</label>
+                            <textarea asp-for="CookingNotes" class="form-control"></textarea>
                         </div>
 
                         <div class="d-grid gap-2 mt-3">

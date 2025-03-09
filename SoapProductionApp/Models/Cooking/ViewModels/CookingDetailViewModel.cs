@@ -14,7 +14,8 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public decimal TotalCost { get; set; }
         public decimal CostPerSoap { get; set; }
         public DateTime? ExpirationDate { get; set; }
-        public string RecipeNotes { get; set; }
+        public string? RecipeNotes { get; set; }
+        public string? CookingNotes { get; set; }
         public bool IsCut { get; set; }
         public bool IsReadyToBeSold { get; set; }
 

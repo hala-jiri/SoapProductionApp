@@ -60,6 +60,11 @@
                         <p>@Model.RecipeNotes</p>
                     </div>
 
+                    <div class="mb-3">
+                        <strong>Cooking Notes:</strong>
+                        <p>@Model.CookingNotes</p>
+                    </div>
+
                     <h4>Used Ingredients</h4>
                     @if (Model.UsedIngredients.Any())
                     {
@@ -89,7 +94,11 @@
                     {
                         <p class="text-muted">No ingredients used.</p>
                     }
-
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="@Url.Action("ExportToPdf", "Cooking", new { id = Model.Id })" class="btn btn-secondary">
+                            Download PDF
+                        </a>
+                    </div>
                     <div class="d-grid gap-2 mt-3">
                         <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
                     </div>
