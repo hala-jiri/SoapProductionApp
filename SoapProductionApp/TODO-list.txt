@@ -1,17 +1,15 @@
 ﻿- write unit tests
-- make a admin section with delete and filling database (for testing purposes)
+
 - Cooking:
 	- when I made Edit of cooking (amount of cuts), check what will happens with price (recalculated?)
 	- problem with not showing expiration! fix it....
 	- Edit: should have different view 
-		- should not be able to change batch size or notes
 		- should be able to set up CUT (or make extra action in Cooking/Index view
+		- problem with SaveChanges while editing, (some of the data are not loaded)
 	- Create:
-		- notes should be able in Create)
 		- what will happen if user will push create new Recipe but we dont have enough stuff on stock?
 
 - Recipe:
 	- Unit should be related to WarehouseItem, dont want to mix units between recipe and warehouse. Keep it simple (one unit per WarehouseItem)
 		- it will be linked/related to WarehouseItem (Unit)
 
-	- new recipe dont show units! (compare to edit which show units)
