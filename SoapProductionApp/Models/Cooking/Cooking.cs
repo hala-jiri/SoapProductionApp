@@ -42,7 +42,8 @@ namespace SoapProductionApp.Models.Cooking
 
         public bool IsCut { get; set; } = false;
 
-        public bool IsReadyToBeSold { get; set; } = false;
+        [NotMapped]
+        public bool IsReadyToBeSold => CuringDate <= DateTime.Today;
 
         public List<CookingIngredient> UsedIngredients { get; set; } = new List<CookingIngredient>();
 

@@ -54,7 +54,6 @@ namespace SoapProductionApp.Controllers
                 RecipeNotes = cooking.RecipeNotes,
                 CookingNotes = cooking.CookingNotes,
                 IsCut = cooking.IsCut,
-                IsReadyToBeSold = cooking.IsReadyToBeSold,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
                 {
                     IngredientName = i.IngredientName,
@@ -134,7 +133,6 @@ namespace SoapProductionApp.Controllers
                 RecipeNotes = recipe.Note,
                 CookingNotes = cookingNotes,
                 IsCut = false,
-                IsReadyToBeSold = false,
                 UsedIngredients = new List<CookingIngredient>()
             };
 
@@ -253,7 +251,6 @@ namespace SoapProductionApp.Controllers
                 RecipeNotes = cooking.RecipeNotes,
                 CookingNotes = cooking.CookingNotes,
                 IsCut = cooking.IsCut,
-                IsReadyToBeSold = cooking.IsReadyToBeSold,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
                 {
                     IngredientName = i.IngredientName,
@@ -417,7 +414,6 @@ namespace SoapProductionApp.Controllers
                 RecipeNotes = cooking.RecipeNotes,
                 CookingNotes = cooking.CookingNotes,
                 IsCut = cooking.IsCut,
-                IsReadyToBeSold = cooking.IsReadyToBeSold,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
                 {
                     IngredientName = i.IngredientName,

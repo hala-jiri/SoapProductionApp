@@ -18,7 +18,7 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public string? RecipeNotes { get; set; }
         public string? CookingNotes { get; set; }
         public bool IsCut { get; set; }
-        public bool IsReadyToBeSold { get; set; }
+        public bool IsReadyToBeSold => CuringDate <= DateTime.Today;
 
         // Seznam použitých ingrediencí
         public List<CookingIngredientViewModel> UsedIngredients { get; set; } = new List<CookingIngredientViewModel>();
