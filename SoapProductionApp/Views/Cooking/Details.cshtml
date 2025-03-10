@@ -100,6 +100,13 @@
                         </a>
                     </div>
                     <div class="d-grid gap-2 mt-3">
+                        <a href="@Url.Action("Cut", "Cooking", new { id = Model.Id })"
+                           class="btn btn-secondary @(Model.IsCut ? "disabled" : "")">
+                            <i class="fas fa-cut"></i> Cut soap
+                        </a>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
                         <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
                     </div>
                 </div>

@@ -85,13 +85,13 @@
     });
 
     // 4) Funkce pro přidání ingredience
-    function addIngredient() {
+        function addIngredient() {
         let ingredientList = document.getElementById("ingredientList");
 
         let newRow = document.createElement("tr");
-        let index = ingredientList.children.length; // správné indexování
+        let index = ingredientList.children.length; // Počet ingrediencí = správné indexování polí
 
-        // Ingredient Select
+        // 🔹 Ingredient Select (výběr ingredience)
         let selectTd = document.createElement("td");
         let select = document.createElement("select");
         select.classList.add("form-select");
@@ -100,39 +100,48 @@
         updateIngredientOptions(select);
         selectTd.appendChild(select);
 
-        // ★ Přidání skrytého inputu pro WarehouseItemName ★
+        // Skrytý input pro název ingredience
         let nameHidden = document.createElement("input");
         nameHidden.type = "hidden";
         nameHidden.name = `Ingredients[${index}].WarehouseItemName`;
         selectTd.appendChild(nameHidden);
 
-        // Quantity Field
+        // Quantity (Množství) + Jednotka
         let quantityTd = document.createElement("td");
-        let quantity = document.createElement("input");
-        quantity.type = "number";
-        quantity.classList.add("form-control", "w-50", "quantity-input");
-        quantity.min = "0.01";
-        quantity.step = "0.01";
-        quantity.value = "1.00";
-        quantity.name = `Ingredients[${index}].Quantity`;
-        quantity.required = true;
-        quantity.oninput = function () { updateTotalCost(); };
-        quantityTd.appendChild(quantity);
+        quantityTd.classList.add("d-flex", "align-items-center"); // Aby byla jednotka vedle inputu
 
-        // Unit (Hidden Field)
+        let quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.classList.add("form-control", "w-50", "quantity-input");
+        quantityInput.min = "0.01";
+        quantityInput.step = "0.01";
+        quantityInput.value = "1.00";
+        quantityInput.name = `Ingredients[${index}].Quantity`;
+        quantityInput.required = true;
+        quantityInput.oninput = function () { updateUnitAndCost(select); };
+
+        // Jednotka (Text vedle inputu)
+        let unitSpan = document.createElement("span");
+        unitSpan.classList.add("ms-2", "unit-display");
+        unitSpan.textContent = "-"; // Výchozí hodnota, která se později aktualizuje
+
+        // Skrytý input pro jednotku
         let unitHidden = document.createElement("input");
         unitHidden.type = "hidden";
         unitHidden.name = `Ingredients[${index}].Unit`;
+
+        quantityTd.appendChild(quantityInput);
+        quantityTd.appendChild(unitSpan);
         quantityTd.appendChild(unitHidden);
 
-        // Cost
+        // Cost (Cena)
         let costTd = document.createElement("td");
-        costTd.style.width = "120px";
         let costSpan = document.createElement("span");
-        costSpan.textContent = "0.00 €";
+        costSpan.classList.add("cost");
+        costSpan.textContent = "0.00 €"; // Výchozí hodnota
         costTd.appendChild(costSpan);
 
-        // Remove Button
+        // Remove Button (Tlačítko pro odstranění ingredience)
         let removeTd = document.createElement("td");
         let removeBtn = document.createElement("button");
         removeBtn.type = "button";
@@ -141,7 +150,6 @@
         removeBtn.onclick = function () {
             ingredientList.removeChild(newRow);
             updateTotalCost();
-            refreshAllSelectOptions();
         };
         removeTd.appendChild(removeBtn);
 
@@ -152,30 +160,36 @@
         newRow.appendChild(removeTd);
         ingredientList.appendChild(newRow);
 
-        // Update hodnot
+        // Nastavení jednotky a ceny
         updateUnitAndCost(select);
         updateTotalCost();
     }
 
-    function updateUnitAndCost(selectElement) {
+        function updateUnitAndCost(selectElement) {
         let selectedOption = selectElement.selectedOptions[0];
-        let unit = selectedOption.dataset.unit;
-        let pricePerUnit = parseFloat(selectedOption.dataset.price);
+        if (!selectedOption) return;
+
+        let unit = selectedOption.dataset.unit; // Načtení jednotky z <option>
+        let pricePerUnit = parseFloat(selectedOption.dataset.price); // Načtení ceny za jednotku
 
         let row = selectElement.closest("tr");
         let quantityInput = row.querySelector("input[name$='.Quantity']");
         let unitHiddenInput = row.querySelector("input[name$='.Unit']");
-        let costSpan = row.querySelector("td:nth-child(3) span");
+        let unitSpan = row.querySelector(".unit-display"); // Najdeme span pro jednotku
+        let costSpan = row.querySelector(".cost");
 
-        // Nastavení hidden inputu pro Unit
+        // Nastavení hidden inputu a zobrazení jednotky vedle inputu
         unitHiddenInput.value = unit;
+        unitSpan.textContent = unit; // Aktualizujeme zobrazenou jednotku
 
-        // ★ Nastavení hidden inputu pro WarehouseItemName ★
+        // Nastavení skrytého inputu pro WarehouseItemName
         let nameHidden = row.querySelector("input[name$='.WarehouseItemName']");
         nameHidden.value = selectedOption.textContent.trim();
 
-        if (!isNaN(pricePerUnit) && !isNaN(quantityInput.value)) {
-            let cost = pricePerUnit * parseFloat(quantityInput.value);
+        // Výpočet ceny
+        let quantity = parseFloat(quantityInput.value) || 0;
+        if (!isNaN(pricePerUnit) && !isNaN(quantity) && quantity > 0) {
+            let cost = pricePerUnit * quantity;
             costSpan.textContent = cost.toFixed(2) + " €";
         } else {
             costSpan.textContent = "0.00 €";
@@ -189,7 +203,7 @@
 
         document.querySelectorAll("#ingredientList tr").forEach(row => {
             let select = row.querySelector("select");
-            // ★ Zajištění, že vybíráme správný input (množství) ★
+            // Zajištění, že vybíráme správný input (množství)
             let quantityInput = row.querySelector("input[name$='.Quantity']");
             let pricePerUnit = parseFloat(select.selectedOptions[0].dataset.price);
             let quantity = parseFloat(quantityInput.value) || 0;

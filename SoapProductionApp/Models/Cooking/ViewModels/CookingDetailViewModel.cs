@@ -9,10 +9,11 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public int Id { get; set; }
         public string RecipeName { get; set; }
         public int BatchSize { get; set; }
+        public bool BatchSizeWasChanged { get; set; }
         public DateTime CookingDate { get; set; }
         public DateTime CuringDate { get; set; }
         public decimal TotalCost { get; set; }
-        public decimal CostPerSoap { get; set; }
+        public decimal CostPerSoap => BatchSize > 0 ? TotalCost / BatchSize : 0;
         public DateTime? ExpirationDate { get; set; }
         public string? RecipeNotes { get; set; }
         public string? CookingNotes { get; set; }

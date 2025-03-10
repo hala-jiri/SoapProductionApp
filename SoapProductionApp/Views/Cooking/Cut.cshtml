@@ -1,0 +1,74 @@
+﻿@model SoapProductionApp.Models.Cooking.ViewModels.CookingDetailViewModel
+
+@{
+    ViewBag.Title = "Cut Cooking Batch";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-warning text-dark text-center">
+                    <h3 class="mb-0">Cut Cooking Batch</h3>
+                </div>
+                <div class="card-body">
+                    <h4>@Model.RecipeName</h4>
+                    <p><strong>Cooking Date:</strong> @Model.CookingDate.ToShortDateString()</p>
+                    <p><strong>Total Cost:</strong> @Model.TotalCost.ToString("0.00") €</p>
+                    <p><strong>Expiration Date:</strong> @(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToShortDateString() : "N/A")</p>
+
+                    <!-- Upozornění na změnu BatchSize -->
+                    <div id="batchSizeAlert" class="alert alert-info d-none">
+                        Batch size has been changed from the original value.
+                    </div>
+
+                    <form asp-action="CutConfirm" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="TotalCost" />
+                        <input type="hidden" id="originalBatchSize" value="@Model.BatchSize" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Batch Size</label>
+                            <input type="number" class="form-control" asp-for="BatchSize" id="batchSizeInput"
+                                   min="1" required oninput="checkBatchSizeChange()" />
+                        </div>
+
+                        <p><strong>Cost per Soap:</strong> <span id="costPerSoap">@Model.CostPerSoap.ToString("0.00")</span> €</p>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-success"><i class="fas fa-cut"></i> Cut it!</button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function checkBatchSizeChange() {
+        let batchSizeInput = document.getElementById("batchSizeInput");
+        let originalBatchSize = document.getElementById("originalBatchSize").value;
+        let batchSizeAlert = document.getElementById("batchSizeAlert");
+        let costPerSoapDisplay = document.getElementById("costPerSoap");
+
+        let batchSize = parseInt(batchSizeInput.value);
+        let totalCost = parseFloat("@Model.TotalCost"); // Celková cena z modelu
+
+        // Přepočet ceny za kus
+        if (batchSize > 0) {
+            let costPerSoap = totalCost / batchSize;
+            costPerSoapDisplay.textContent = costPerSoap.toFixed(2);
+        } else {
+            costPerSoapDisplay.textContent = "N/A";
+        }
+
+        // Zobrazení upozornění, pokud je hodnota jiná
+        if (batchSize !== parseInt(originalBatchSize)) {
+            batchSizeAlert.classList.remove("d-none");
+        } else {
+            batchSizeAlert.classList.add("d-none");
+        }
+    }
+</script>

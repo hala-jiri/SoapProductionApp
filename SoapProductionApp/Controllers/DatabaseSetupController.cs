@@ -4,6 +4,7 @@ using SoapProductionApp.Models.Recipe;
 using SoapProductionApp.Models.Warehouse;
 using SoapProductionApp.Models;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 
 namespace SoapProductionApp.Controllers
 {
@@ -219,43 +220,56 @@ namespace SoapProductionApp.Controllers
             _context.Batches.AddRange(batchesJanuary);
             _context.Batches.AddRange(batchesFebruary);
             await _context.SaveChangesAsync();
-            
+
+            var warehouseItemsForRecipe = await _context.WarehouseItems.ToListAsync();
+
             // Vytvoření receptů
             var recipes = new List<Recipe>
             {
                 new Recipe
                 {
                     Name = "MIDSUMMER",
+                    ImageUrl = "-",
                     BatchSize = 11,
                     DaysOfCure = 40,
-                    Note = "Classic lavender soap with soothing aroma",
+                    Note = "Classic MIDSUMMER aroma",
                     Ingredients = new List<RecipeIngredient>
                     {
-                        new RecipeIngredient { Quantity = 0.11m,    Unit = UnitMeasurement.UnitType.Kg,     WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Sodium Hydroxide")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 0.2m,     Unit = UnitMeasurement.UnitType.L,      WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Distilled water")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 0.400m,   Unit = UnitMeasurement.UnitType.L,      WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Olive Oil Extra Virgin")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 0.2m,     Unit = UnitMeasurement.UnitType.L,      WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Coconut Oil Butter")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 2, Unit = UnitMeasurement.UnitType.L, WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Sodium Hydroxide")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 2, Unit = UnitMeasurement.UnitType.L, WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Sodium Hydroxide")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 2, Unit = UnitMeasurement.UnitType.L, WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Sodium Hydroxide")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 2, Unit = UnitMeasurement.UnitType.L, WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Sodium Hydroxide")?.Id ?? 0},
-                        new RecipeIngredient { Quantity = 2, Unit = UnitMeasurement.UnitType.L, WarehouseItemId = _context.WarehouseItems.FirstOrDefault(w => w.Name == "Sodium Hydroxide")?.Id ?? 0},
-                    }
-                },
-                new Recipe
-                {
-                    Name = "WILDFLOWER",
-                    BatchSize = 11,
-                    DaysOfCure = 30,
-                    Note = "Charcoal-infused soap for deep cleansing",
-                    Ingredients = new List<RecipeIngredient>
-                    {
-                        new RecipeIngredient { WarehouseItemId = warehouseItems[0].Id, Quantity = 1.5m, Unit = UnitMeasurement.UnitType.L },
-                        new RecipeIngredient { WarehouseItemId = warehouseItems[2].Id, Quantity = 0.5m, Unit = UnitMeasurement.UnitType.Kg },
-                        new RecipeIngredient { WarehouseItemId = warehouseItems[4].Id, Quantity = 100, Unit = UnitMeasurement.UnitType.g }
-                    }
+                        new RecipeIngredient { Quantity = 0.11m,    Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Sodium Hydroxide") ?.Unit ?? UnitMeasurement.UnitType.L,      WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Sodium Hydroxide") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 0.2m,     Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Distilled water") ?.Unit ?? UnitMeasurement.UnitType.L,       WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Distilled water") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 0.400m,   Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Olive Oil Extra Virgin") ?.Unit ?? UnitMeasurement.UnitType.L,WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Olive Oil Extra Virgin") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 0.2m,     Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Coconut Oil Butter") ?.Unit ?? UnitMeasurement.UnitType.L,    WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Coconut Oil Butter") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 0.15m,    Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Shea Butter Organic") ?.Unit ?? UnitMeasurement.UnitType.L,   WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Shea Butter Organic") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 50,       Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Castor Oil Cold Pressed") ?.Unit ?? UnitMeasurement.UnitType.L,  WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Castor Oil Cold Pressed") ?.Id ?? 0},
+                        
+                        new RecipeIngredient { Quantity = 10,       Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Red Clay") ?.Unit ?? UnitMeasurement.UnitType.L,                      WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Red Clay") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 14,       Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Tangerine Essential Oil") ?.Unit ?? UnitMeasurement.UnitType.L,       WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Tangerine Essential Oil") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 2,        Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Clove Essential Oil") ?.Unit ?? UnitMeasurement.UnitType.L,           WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Clove Essential Oil") ?.Id ?? 0},
+                        new RecipeIngredient { Quantity = 8,        Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Frankincense Essential Oil") ?.Unit ?? UnitMeasurement.UnitType.L,    WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Frankincense Essential Oil") ?.Id ?? 0},
                 }
-            };
+            },
+            new Recipe
+            {
+                Name = "WILDFLOWER",
+                ImageUrl = "-",
+                BatchSize = 11,
+                DaysOfCure = 30,
+                Note = "Classic WILDFLOWER aroma",
+                Ingredients = new List<RecipeIngredient>
+                                    {
+                    new RecipeIngredient { Quantity = 0.11m,    Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Sodium Hydroxide") ?.Unit ?? UnitMeasurement.UnitType.L,      WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Sodium Hydroxide") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 0.2m,     Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Distilled water") ?.Unit ?? UnitMeasurement.UnitType.L,       WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Distilled water") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 0.400m,   Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Olive Oil Extra Virgin") ?.Unit ?? UnitMeasurement.UnitType.L,WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Olive Oil Extra Virgin") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 0.2m,     Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Coconut Oil Butter") ?.Unit ?? UnitMeasurement.UnitType.L,    WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Coconut Oil Butter") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 0.15m,    Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Shea Butter Organic") ?.Unit ?? UnitMeasurement.UnitType.L,   WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Shea Butter Organic") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 50,       Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Castor Oil Cold Pressed") ?.Unit ?? UnitMeasurement.UnitType.L,  WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Castor Oil Cold Pressed") ?.Id ?? 0},
+
+                    new RecipeIngredient { Quantity = 10,       Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Purple Clay") ?.Unit ?? UnitMeasurement.UnitType.L,               WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Purple Clay") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 10,       Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Lavender Essential Oil") ?.Unit ?? UnitMeasurement.UnitType.L,    WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Lavender Essential Oil") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 7,        Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Patchouli Essential Oil") ?.Unit ?? UnitMeasurement.UnitType.L,   WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Patchouli Essential Oil") ?.Id ?? 0},
+                    new RecipeIngredient { Quantity = 7,        Unit = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Pine Needle Essential Oil") ?.Unit ?? UnitMeasurement.UnitType.L,  WarehouseItemId = warehouseItemsForRecipe.FirstOrDefault(x => x.Name == "Pine Needle Essential Oil") ?.Id ?? 0},
+                }
+            }};
             _context.Recipes.AddRange(recipes);
             await _context.SaveChangesAsync();
             

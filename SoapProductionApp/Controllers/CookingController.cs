@@ -25,6 +25,7 @@ namespace SoapProductionApp.Controllers
         {
             var cookingList = await _context.Cookings
                 .Include(c => c.Recipe)
+                .Include(c => c.UsedIngredients)
                 .ToListAsync();
 
             return View(cookingList);
@@ -49,9 +50,9 @@ namespace SoapProductionApp.Controllers
                 CookingDate = cooking.CookingDate,
                 CuringDate = cooking.CuringDate,
                 TotalCost = cooking.TotalCost,
-                CostPerSoap = cooking.CostPerSoap,
                 ExpirationDate = cooking.ExpirationDate,
                 RecipeNotes = cooking.RecipeNotes,
+                CookingNotes = cooking.CookingNotes,
                 IsCut = cooking.IsCut,
                 IsReadyToBeSold = cooking.IsReadyToBeSold,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
@@ -59,8 +60,7 @@ namespace SoapProductionApp.Controllers
                     IngredientName = i.IngredientName,
                     QuantityUsed = i.QuantityUsed,
                     Unit = i.Unit,
-                    Cost = (i.QuantityUsed * _context.WarehouseItems
-                        .FirstOrDefault(w => w.Name == i.IngredientName)?.AveragePricePerUnitWithoutTax) ?? 0,
+                    Cost = i.Cost,
                     ExpirationDate = i.ExpirationDate
                 }).ToList()
             };
@@ -73,7 +73,11 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Create(int? selectedRecipeId)
         {
             var model = new CookingCreateViewModel();
-            model.Recipes = await _context.Recipes.ToListAsync();
+            model.Recipes = await _context.Recipes
+                    .Include(r => r.Ingredients)
+                    .ThenInclude(i => i.WarehouseItem)
+                    .ThenInclude(i => i.Batches)
+                    .ToListAsync();
 
             // Pokud uživatel v dropdownu nějaký recept vybral (a odeslal GET formulář)
             if (selectedRecipeId.HasValue)
@@ -81,6 +85,7 @@ namespace SoapProductionApp.Controllers
                 var recipe = await _context.Recipes
                     .Include(r => r.Ingredients)
                     .ThenInclude(i => i.WarehouseItem)
+                    .ThenInclude(i => i.Batches)
                     .FirstOrDefaultAsync(r => r.Id == selectedRecipeId.Value);
 
                 if (recipe != null)
@@ -240,10 +245,10 @@ namespace SoapProductionApp.Controllers
                 Id = cooking.Id,
                 RecipeName = cooking.Recipe.Name,
                 BatchSize = cooking.BatchSize,
+                BatchSizeWasChanged = cooking.BatchSizeWasChanged,
                 CookingDate = cooking.CookingDate,
                 CuringDate = cooking.CuringDate,
                 TotalCost = cooking.TotalCost,
-                CostPerSoap = cooking.CostPerSoap,
                 ExpirationDate = cooking.ExpirationDate,
                 RecipeNotes = cooking.RecipeNotes,
                 CookingNotes = cooking.CookingNotes,
@@ -288,7 +293,15 @@ namespace SoapProductionApp.Controllers
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Batch Size:").SemiBold();
-                                row.RelativeItem().AlignRight().Text($"{cookingDetailViewModel.BatchSize} pcs");
+                                row.RelativeItem().AlignRight().Text(txt =>
+                                {
+                                    txt.Span($"{cookingDetailViewModel.BatchSize} pcs").NormalWeight();
+
+                                    if (cookingDetailViewModel.BatchSizeWasChanged)
+                                    {
+                                        txt.Span(" (Modified)").FontSize(10).FontColor("#FF0000").Italic();
+                                    }
+                                });
                             });
 
                             col.Item().Row(row =>
@@ -379,6 +392,61 @@ namespace SoapProductionApp.Controllers
                 document.GeneratePdf(stream);
                 return File(stream.ToArray(), "application/pdf", "CookingDetails-"+ cookingDetailViewModel.Id + "-" + cookingDetailViewModel.RecipeName + "-"+ cookingDetailViewModel.CookingDate + ".pdf");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Cut(int id)
+        {
+            var cooking = await _context.Cookings
+                .Include(c => c.Recipe)
+                .Include(c => c.UsedIngredients)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (cooking == null) return NotFound();
+
+            var viewModel = new CookingDetailViewModel
+            {
+                Id = cooking.Id,
+                RecipeName = cooking.Recipe.Name,
+                BatchSize = cooking.BatchSize,
+                BatchSizeWasChanged = cooking.BatchSizeWasChanged,
+                CookingDate = cooking.CookingDate,
+                CuringDate = cooking.CuringDate,
+                ExpirationDate = cooking.ExpirationDate,
+                TotalCost = cooking.TotalCost,
+                RecipeNotes = cooking.RecipeNotes,
+                CookingNotes = cooking.CookingNotes,
+                IsCut = cooking.IsCut,
+                IsReadyToBeSold = cooking.IsReadyToBeSold,
+                UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
+                {
+                    IngredientName = i.IngredientName,
+                    QuantityUsed = i.QuantityUsed,
+                    Unit = i.Unit,
+                    Cost = i.Cost,
+                    ExpirationDate = i.ExpirationDate
+                }).ToList()
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CutConfirm(CookingDetailViewModel model)
+        {
+            var cooking = await _context.Cookings.FirstOrDefaultAsync(c => c.Id == model.Id);
+
+            if (cooking == null) return NotFound();
+
+            if (cooking.BatchSize != model.BatchSize)
+            {
+                cooking.BatchSize = model.BatchSize; // Uloží novou hodnotu
+                cooking.BatchSizeWasChanged = true;
+            }
+            cooking.IsCut = true; // Označí, že byl proveden "Cut"
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = cooking.Id }); // Přesměrování na detail
         }
     }
 }

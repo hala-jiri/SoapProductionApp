@@ -18,6 +18,8 @@ namespace SoapProductionApp.Models.Cooking
         [Required]
         public int BatchSize { get; set; }
 
+        public bool BatchSizeWasChanged { get; set; }
+
         public DateTime CookingDate { get; set; }
 
         public DateTime CuringDate { get; set; }
