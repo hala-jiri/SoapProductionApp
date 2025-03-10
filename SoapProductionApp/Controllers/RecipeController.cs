@@ -176,6 +176,11 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Edit(RecipeCreateEditViewModel model)
         {
             ModelState.Remove("AvailableWarehouseItems");
+            foreach (var ing in model.Ingredients) //Sadly need to remove ItemName as I cannot fill it in view :/
+            {
+                ModelState.Remove($"Ingredients[{model.Ingredients.IndexOf(ing)}].WarehouseItemName");
+            }
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
