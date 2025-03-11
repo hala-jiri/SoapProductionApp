@@ -48,7 +48,7 @@ namespace SoapProductionApp.Models.Warehouse
             .Where(s => !string.IsNullOrEmpty(s))
             .Distinct() ?? new List<string>());
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         public virtual List<Category> Categories { get; set; }
 
