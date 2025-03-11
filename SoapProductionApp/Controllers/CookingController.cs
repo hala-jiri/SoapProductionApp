@@ -8,6 +8,7 @@ using SoapProductionApp.Models.Recipe.ViewModels;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using SoapProductionApp.Models.Recipe;
 
 namespace SoapProductionApp.Controllers
 {
@@ -47,6 +48,7 @@ namespace SoapProductionApp.Controllers
                 Id = cooking.Id,
                 RecipeName = cooking.Recipe.Name,
                 BatchSize = cooking.BatchSize,
+                BatchSizeWasChanged = cooking.BatchSizeWasChanged,
                 CookingDate = cooking.CookingDate,
                 CuringDate = cooking.CuringDate,
                 TotalCost = cooking.TotalCost,
@@ -193,7 +195,16 @@ namespace SoapProductionApp.Controllers
         {
             if (id != cooking.Id) return NotFound();
 
-            _context.Update(cooking);
+            var cookingOldRecord = await _context.Cookings
+                .Include(c => c.Recipe)
+                .Include(c => c.UsedIngredients)
+                .FirstOrDefaultAsync(c => c.Id == cooking.Id);
+
+            if (cookingOldRecord == null) return NotFound();
+
+            cookingOldRecord.CookingNotes = cooking.CookingNotes;
+
+            _context.Update(cookingOldRecord);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

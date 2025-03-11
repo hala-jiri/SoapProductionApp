@@ -16,7 +16,14 @@
                             </tr>
                             <tr>
                                 <td><strong>Batch Size:</strong></td>
-                                <td class="text-end">@Model.BatchSize pcs</td>
+                                <td class="text-end">@Model.BatchSize pcs
+                                    @if (Model.BatchSizeWasChanged)
+                                    {
+                                        <span class="text-primary" data-bs-toggle="tooltip" title="Batch size has been modified.">
+                                            <i class="bi bi-info-circle"></i>
+                                        </span>
+                                    }
+                                </td>
                             </tr>
                             <tr>
                                 <td><strong>Cooking Date:</strong></td>
@@ -114,3 +121,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
