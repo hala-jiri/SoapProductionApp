@@ -1,38 +1,63 @@
 ﻿@model SoapProductionApp.Models.Warehouse.ViewModels.BatchCreateViewModel
 
-<h2>Edit Batch</h2>
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="WarehouseItemId" />
-    <div>
-        <label>Name</label>
-        <input asp-for="Name" />
-    </div>
-    <div>
-        <label>Supplier</label>
-        <input asp-for="Supplier" />
-    </div>
-    <div>
-        <label>Purchase Date</label>
-        <input asp-for="PurchaseDate" type="date" />
-    </div>
-    <div>
-        <label>Expiration Date</label>
-        <input asp-for="ExpirationDate" type="date" />
-    </div>
-    <div>
-        <label>Package Quantity (@ViewBag.Unit)</label>
-        <input asp-for="QuantityOfPackage" />
-    </div>
-    <div>
-        <label>Package Price (without tax)</label>
-        <input asp-for="PriceOfPackageWithoutTax" />
-    </div>
-    <div>
-        <label>Tax Percentage</label>
-        <input asp-for="TaxPercentage" />
-    </div>
-    <button type="submit">Save Changes</button>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Edit Batch</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="WarehouseItemId" />
 
-    <a asp-action="Details" asp-controller="Warehouse" asp-route-id="@Model.WarehouseItemId" class="btn btn-secondary">Zpět</a>
-</form>
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Name</label>
+                            <input asp-for="Name" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Supplier" class="form-label">Supplier</label>
+                            <input asp-for="Supplier" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
+                            <input asp-for="PurchaseDate" type="date" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ExpirationDate" class="form-label">Expiration Date</label>
+                            <input asp-for="ExpirationDate" type="date" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="QuantityOfPackage" class="form-label">Package Quantity (@ViewBag.Unit)</label>
+                            <input asp-for="QuantityOfPackage" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PriceOfPackageWithoutTax" class="form-label">Package Price (without tax)</label>
+                            <input asp-for="PriceOfPackageWithoutTax" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TaxPercentage" class="form-label">Tax Percentage (%)</label>
+                            <input asp-for="TaxPercentage" class="form-control" />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                            <a asp-action="Details" asp-controller="Warehouse" asp-route-id="@Model.WarehouseItemId" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

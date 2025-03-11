@@ -38,5 +38,16 @@ namespace SoapProductionApp.Models.Warehouse.ViewModels
         public WarehouseItemCreateEditViewModel()
         {
         }
+
+        public WarehouseItemCreateEditViewModel(WarehouseItem warehouseItem)
+        {
+            Id = warehouseItem.Id;
+            Name = warehouseItem.Name;
+            Unit = warehouseItem.Unit;
+            TaxPercentage = warehouseItem.TaxPercentage;
+            MinimumQuantityAlarm = warehouseItem.MinimumQuantityAlarm;
+            Notes = warehouseItem.Notes;
+
+        }
     }
 }

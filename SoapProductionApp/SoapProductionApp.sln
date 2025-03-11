@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoapProductionApp", "SoapProductionApp.csproj", "{724A4622-8160-4DC8-9CE9-20A94E818D10}"
 EndProject
@@ -17,6 +17,10 @@ Global
 		{724A4622-8160-4DC8-9CE9-20A94E818D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{724A4622-8160-4DC8-9CE9-20A94E818D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{724A4622-8160-4DC8-9CE9-20A94E818D10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C22BDEF-79BA-46D0-8A86-E6F83E0F0799}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C22BDEF-79BA-46D0-8A86-E6F83E0F0799}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C22BDEF-79BA-46D0-8A86-E6F83E0F0799}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C22BDEF-79BA-46D0-8A86-E6F83E0F0799}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

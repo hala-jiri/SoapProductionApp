@@ -27,13 +27,36 @@
             { UnitType.Pcs, 1m }    // 1 kus = 1 kus
         };
 
-        public static decimal ConvertToBaseUnit(UnitType unit, decimal quantity)
+        public static int ConvertToBaseUnit(UnitType unit, decimal quantity)
         {
             if (!ConversionFactors.ContainsKey(unit))
                 throw new InvalidOperationException($"Neznámá jednotka {unit}");
 
-            return quantity * ConversionFactors[unit];
+            return (int)(quantity * ConversionFactors[unit]);
         }
+
+        public static double ConvertFromBaseUnitToPreferedUnit(UnitType preferedUnit, int quantity)
+        {
+            if (!ConversionFactors.ContainsKey(preferedUnit))
+                throw new InvalidOperationException($"Neznámá jednotka {preferedUnit}");
+
+            return (double)(quantity / ConversionFactors[preferedUnit]);
+        }
+
+        public static UnitType GetBaseUnit(UnitType unit)
+        {
+            return unit switch
+            {
+                UnitType.L => UnitType.ml,    // Základní jednotka pro L je ml
+                UnitType.Kg => UnitType.g,    // Základní jednotka pro Kg je g
+                UnitType.ml => UnitType.ml,   // ml je již základní jednotka
+                UnitType.g => UnitType.g,     // g je již základní jednotka
+                UnitType.Pcs => UnitType.Pcs, // Pcs je již základní jednotka
+                _ => throw new ArgumentOutOfRangeException($"Neznámá jednotka {unit}")
+            };
+        }
+
+
 
         // Statická metoda pro získání kategorie na základě typu jednotky
         public static MeasurementCategory GetCategory(UnitType unit)
