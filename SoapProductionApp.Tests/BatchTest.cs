@@ -32,53 +32,23 @@ namespace SoapProductionApp.Tests
             // Arrange
             var dbContext = GetDatabaseContext();
 
-            var warehouseItem = new WarehouseItem()
-            {
-                Name = "Test warehouse Item",
-                Unit = Models.UnitMeasurement.UnitType.L,
-                TaxPercentage = 21,
-                MinimumQuantityAlarm = 1,
-                Notes = "Note for test warehouse Item"
-            };
+            var warehouseItem = new WarehouseItem() { Name = "Test warehouse Item", Unit = Models.UnitMeasurement.UnitType.L, TaxPercentage = 21, MinimumQuantityAlarm = 1, Notes = "Note for test warehouse Item" };
             dbContext.WarehouseItems.Add(warehouseItem);
             await dbContext.SaveChangesAsync();
 
-            var batch = new Batch()
-            {
-                Name = "Test Batch name",
-                PurchaseDate = DateTime.Now,
-                TaxPercentage = 21,
-                Supplier = "test supplier",
-                WarehouseItemId = warehouseItem.Id,
-                WarehouseItem = warehouseItem,
-
-                AvailableQuantity = 10,
-                UnitPriceWithoutTax = 5
-            };
-            
-            var batch2 = new Batch()
-            {
-                Name = "Test Batch name 2",
-                PurchaseDate = DateTime.Now,
-                TaxPercentage = 21,
-                Supplier = "test supplier 2",
-                WarehouseItemId = warehouseItem.Id,
-                WarehouseItem = warehouseItem,
-
-                AvailableQuantity = 20,
-                UnitPriceWithoutTax = 5
-            };
-            dbContext.Batches.Add(batch);
+            var batch1 = new Batch() { Name = "Test Batch name",    PurchaseDate = DateTime.Now, TaxPercentage = 21, Supplier = "test supplier",    WarehouseItemId = warehouseItem.Id,     WarehouseItem = warehouseItem,  AvailableQuantity = 10,     UnitPriceWithoutTax = 5 };
+            var batch2 = new Batch() { Name = "Test Batch name 2",  PurchaseDate = DateTime.Now, TaxPercentage = 21, Supplier = "test supplier 2",  WarehouseItemId = warehouseItem.Id,     WarehouseItem = warehouseItem,  AvailableQuantity = 20,     UnitPriceWithoutTax = 5 };
+            dbContext.Batches.Add(batch1);
             dbContext.Batches.Add(batch2);
             await dbContext.SaveChangesAsync();
 
 
             // Act
             var warehouseItemWithBatches = await dbContext.WarehouseItems.FindAsync(warehouseItem.Id);
-            var totalMaterialValueWithoutTax = batch.PriceOfAvailableStockQuantityWithoutTax + batch2.PriceOfAvailableStockQuantityWithoutTax;
-            var totalMaterialValueWithTax = batch.PriceOfAvailableStockQuantityWithTax + batch2.PriceOfAvailableStockQuantityWithTax;
-            var averagePricePerUnitWithoutTax = (batch.UnitPriceWithoutTax * batch.AvailableQuantity +
-                                                batch2.UnitPriceWithoutTax * batch2.AvailableQuantity) / (batch.AvailableQuantity + batch2.AvailableQuantity);
+            var totalMaterialValueWithoutTax = batch1.PriceOfAvailableStockQuantityWithoutTax + batch2.PriceOfAvailableStockQuantityWithoutTax;
+            var totalMaterialValueWithTax = batch1.PriceOfAvailableStockQuantityWithTax + batch2.PriceOfAvailableStockQuantityWithTax;
+            var averagePricePerUnitWithoutTax = (batch1.UnitPriceWithoutTax * batch1.AvailableQuantity +
+                                                batch2.UnitPriceWithoutTax * batch2.AvailableQuantity) / (batch1.AvailableQuantity + batch2.AvailableQuantity);
 
             // Assert
             Assert.Equal(30, warehouseItemWithBatches.TotalAvailableQuantity);
