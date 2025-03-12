@@ -6,8 +6,6 @@
 	- Edit: should have different view 
 		- should be able to set up CUT (or make extra action in Cooking/Index view
 		- problem with SaveChanges while editing, (some of the data are not loaded)
-	- Create:
-		- what will happen if user will push create new Recipe but we dont have enough stuff on stock?
 
 - Recipe:
 	- Unit should be related to WarehouseItem, dont want to mix units between recipe and warehouse. Keep it simple (one unit per WarehouseItem)

@@ -124,6 +124,10 @@ namespace SoapProductionApp.Controllers
 
             if (recipe == null) return NotFound();
 
+            // need to check stock value
+            if(!recipe.AreAllIngredientsInStock)
+                return RedirectToAction(nameof(Index));
+
             // Vytvoříme nový Cooking
             var cooking = new Cooking
             {
