@@ -1,8 +1,11 @@
 ﻿- write unit tests
 
 - Cooking:
-	- when I made Edit of cooking (amount of cuts), check what will happens with price (recalculated?)
 	- problem with not showing expiration! fix it....
+	- when we added pictures into Recipe and cooking, what will happen when we create cooking and it copy url of images from Recipe to Cooking. And when someone will decide to delete Recipe or delete picture/url in Recipe view? Will cooking lose pictures?		- how to solve it? 
+			- Create copy of picture? many same pictures on server.
+			- Link url from Recipe to Cooking? (when url in recipe change the url in cooking will change). But what if Recipe will be deleted?
+
 	- Edit: should have different view 
 		- should be able to set up CUT (or make extra action in Cooking/Index view
 		- problem with SaveChanges while editing, (some of the data are not loaded)
@@ -16,3 +19,7 @@
 
 - WarehouseItem
 	- for batches, make some function for "throw away" almost empty or expired batches of material.
+
+UnitTests:
+- CookingController
+	- Problem with Edit, when data should not be editable. Maybe need to go over ViewModels in this controller method.
