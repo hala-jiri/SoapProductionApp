@@ -11,7 +11,9 @@ namespace SoapProductionApp.Models.Recipe
         [Required]
         public string Name { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
+
+        public string? ThumbnailUrl { get; set; }
 
         [Required]
         public int BatchSize { get; set; }

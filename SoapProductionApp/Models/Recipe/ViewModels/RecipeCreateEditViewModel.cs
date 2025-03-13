@@ -9,7 +9,9 @@ namespace SoapProductionApp.Models.Recipe.ViewModels
 
         public string Name { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
+
+        public string? ThumbnailUrl { get; set; }
 
         [Required]
         public int BatchSize { get; set; }
@@ -17,11 +19,13 @@ namespace SoapProductionApp.Models.Recipe.ViewModels
         [Required]
         public int DaysOfCure { get; set; }
 
-        public List<RecipeIngredientViewModel> Ingredients { get; set; } = new List<RecipeIngredientViewModel>();
+        public string? Note { get; set; }
+
+        public List<RecipeIngredientViewModel> Ingredients { get; set; } = new();
 
         // Pro seznam skladových položek, aby si uživatel mohl vybírat ingredience
-        public List<WarehouseItem> AvailableWarehouseItems { get; set; }
+        public List<WarehouseItem> AvailableWarehouseItems { get; set; } = new();
 
-        public string? Note {  get; set; }
+        public IFormFile? ImageFile { get; set; } // for upload of image
     }
 }
