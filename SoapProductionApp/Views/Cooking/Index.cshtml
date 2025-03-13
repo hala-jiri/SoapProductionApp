@@ -49,10 +49,10 @@
                                                 </span>
                                             }
                                         </td>
-                                        <td>@cooking.CostPerSoap.ToString("0.00") €</td>
-                                        <td>@cooking.CookingDate.ToShortDateString()</td>
-                                        <td>@cooking.CuringDate.ToShortDateString()</td>
-                                        <td class="text-center">
+                                        <td class="align-middle">@cooking.CostPerSoap.ToString("0.00") €</td>
+                                        <td class="align-middle">@cooking.CookingDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="align-middle" >@cooking.CuringDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="text-center align-middle">
                                             @if (cooking.IsCut)
                                             {
                                                 <span class="text-success">✅</span>
@@ -62,7 +62,7 @@
                                                 <span class="text-danger">❌</span>
                                             }
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center align-middle">
                                             @if (cooking.IsReadyToBeSold)
                                             {
                                                 <span class="text-success">✅</span>
@@ -72,7 +72,7 @@
                                                 <span class="text-danger">❌</span>
                                             }
                                         </td>
-                                        <td>
+                                        <td class="align-middle">
                                             <a asp-action="Details" asp-route-id="@cooking.Id" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> View</a>
                                             <a asp-action="Edit" asp-route-id="@cooking.Id" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</a>
                                             <a asp-action="Cut" asp-route-id="@cooking.Id" class="btn btn-secondary btn-sm @(cooking.IsCut ? "disabled" : "")">

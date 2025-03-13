@@ -34,16 +34,16 @@
                             </tr>
                             <tr>
                                 <td><strong>Cooking Date:</strong></td>
-                                <td class="text-end">@Model.CookingDate.ToShortDateString()</td>
+                                <td class="text-end">@Model.CookingDate.ToString("dd/MM/yyyy")</td>
                             </tr>
                             <tr>
                                 <td><strong>Curing Date:</strong></td>
-                                <td class="text-end">@Model.CuringDate.ToShortDateString()</td>
+                                <td class="text-end">@Model.CuringDate.ToString("dd/MM/yyyy")</td>
                             </tr>
                             <tr>
                                 <td><strong>Expiration Date:</strong></td>
                                 <td class="text-end">
-                                    @(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToShortDateString() : "N/A")
+                                    @(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToString("dd/MM/yyyy") : "N/A")
                                 </td>
                             </tr>
                             <tr>
@@ -98,7 +98,7 @@
                                         <td>@ingredient.IngredientName</td>
                                         <td>@ingredient.QuantityUsed @ingredient.Unit</td>
                                         <td>@ingredient.Cost.ToString("0.00") €</td>
-                                        <td>@ingredient.ExpirationDate.ToShortDateString()</td>
+                                        <td>@ingredient.ExpirationDate.ToString("dd/MM/yyyy")</td>
                                     </tr>
                                 }
                             </tbody>

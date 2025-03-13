@@ -7,8 +7,8 @@
 <ul>
     <li><strong>Batch Name:</strong> @Model.Name</li>
     <li><strong>Supplier:</strong> @Model.Supplier</li>
-    <li><strong>Purchase Date:</strong> @Model.PurchaseDate.ToShortDateString()</li>
-    <li><strong>Expiration Date:</strong> @(Model.ExpirationDate?.ToShortDateString() ?? "No Expiration")</li>
+    <li><strong>Purchase Date:</strong> @Model.PurchaseDate.ToString("dd/MM/yyyy")</li>
+    <li><strong>Expiration Date:</strong> @(Model.ExpirationDate?.ToString("dd/MM/yyyy") ?? "No Expiration")</li>
     <li><strong>Package Quantity:</strong> @Model.QuantityOfPackage @Model.Unit</li>
     <li><strong>Available Quantity:</strong> @Model.AvailableQuantityOfPackage @Model.Unit</li>
     <li><strong>Price of package (without tax) </strong> @Model.PriceOfPackageWithoutTax €</li>

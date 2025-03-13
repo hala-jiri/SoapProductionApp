@@ -71,7 +71,7 @@
                                         <td>
                                             @if (ingredient.NearestExpirationDate.HasValue)
                                             {
-                                                @ingredient.NearestExpirationDate.Value.ToShortDateString()
+                                                @ingredient.NearestExpirationDate.Value.ToString("dd/MM/yyyy")
                                             }
                                             else
                                             {

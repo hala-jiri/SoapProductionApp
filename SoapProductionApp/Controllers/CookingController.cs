@@ -300,6 +300,8 @@ namespace SoapProductionApp.Controllers
                     page.Content()
                         .Column(col =>
                         {
+                            col.Item().PaddingBottom(10); // ✅ Přidává mezeru mezi nadpisem a "Recipe Name"
+
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Recipe Name:").SemiBold();
@@ -323,19 +325,19 @@ namespace SoapProductionApp.Controllers
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Cooking Date:").SemiBold();
-                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.CookingDate.ToShortDateString());
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.CookingDate.ToString("dd/MM/yyyy"));
                             });
 
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Curing Date:").SemiBold();
-                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.CuringDate.ToShortDateString());
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.CuringDate.ToString("dd/MM/yyyy"));
                             });
 
                             col.Item().Row(row =>
                             {
                                 row.RelativeItem().Text("Expiration Date:").SemiBold();
-                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.ExpirationDate.HasValue ? cookingDetailViewModel.ExpirationDate.Value.ToShortDateString() : "N/A");
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.ExpirationDate.HasValue ? cookingDetailViewModel.ExpirationDate.Value.ToString("dd/MM/yyyy") : "N/A");
                             });
 
                             col.Item().Row(row =>
@@ -383,7 +385,7 @@ namespace SoapProductionApp.Controllers
                                         table.Cell().Text(ingredient.IngredientName);
                                         table.Cell().Text($"{ingredient.QuantityUsed} {ingredient.Unit}");
                                         table.Cell().Text($"{ingredient.Cost:0.00} €");
-                                        table.Cell().Text(ingredient.ExpirationDate.ToShortDateString());
+                                        table.Cell().Text(ingredient.ExpirationDate.ToString("dd/MM/yyyy"));
                                     }
                                 });
                             }

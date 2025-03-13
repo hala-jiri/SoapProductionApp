@@ -13,9 +13,9 @@
                 </div>
                 <div class="card-body">
                     <h4>@Model.RecipeName</h4>
-                    <p><strong>Cooking Date:</strong> @Model.CookingDate.ToShortDateString()</p>
+                    <p><strong>Cooking Date:</strong> @Model.CookingDate.ToString("dd/MM/yyyy")</p>
                     <p><strong>Total Cost:</strong> @Model.TotalCost.ToString("0.00") €</p>
-                    <p><strong>Expiration Date:</strong> @(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToShortDateString() : "N/A")</p>
+                    <p><strong>Expiration Date:</strong> @(Model.ExpirationDate.HasValue ? Model.ExpirationDate.Value.ToString("dd/MM/yyyy") : "N/A")</p>
 
                     <!-- Upozornění na změnu BatchSize -->
                     <div id="batchSizeAlert" class="alert alert-info d-none">

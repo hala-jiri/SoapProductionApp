@@ -97,9 +97,9 @@
                                 {
                                     <tr>
                                         <td class="align-middle">@batch.Name</td>
-                                        <td class="align-middle nowrap">@batch.PurchaseDate.ToShortDateString()</td>
+                                        <td class="align-middle nowrap">@batch.PurchaseDate.ToString("dd/MM/yyyy")</td>
                                         <td class="align-middle nowrap">
-                                            @(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToShortDateString() : "No Expiry")
+                                            @(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToString("dd/MM/yyyy") : "No Expiry")
                                         </td>
                                         <td class="align-middle nowrap">@batch.AvailableQuantity.ToString("0.000") @batch.Unit</td>
                                         <td class="align-middle nowrap">@batch.UnitPriceWithoutTax.ToString("0.000") € / @batch.Unit</td>
