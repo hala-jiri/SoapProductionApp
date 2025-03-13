@@ -25,6 +25,8 @@
                                     foreach (var recipe in Model.Recipes)
                                     {
                                         <option value="@recipe.Id"
+                                                data-image="@recipe.ImageUrl"
+                                                data-thumbnail="@recipe.ThumbnailUrl"
                                                 selected="@((bool)(recipe.Id == Model.SelectedRecipeId))"
                                                 disabled="@(!recipe.AreAllIngredientsInStock ? "disabled" : null)"
                                                 class="@(!recipe.AreAllIngredientsInStock ? "text-muted" : "")">
@@ -36,6 +38,16 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Load Recipe Data</button>
                     </form>
+
+                    <div class="mb-3 text-center">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img id="recipeThumbnail" src="@Model.ImageUrl"
+                                 class="img-fluid rounded shadow-lg mb-3"
+                                 alt="Recipe image"
+                                 style="max-width: 2000px; max-height: 150px; object-fit: cover;">
+                        }
+                    </div>
 
                     <hr />
 

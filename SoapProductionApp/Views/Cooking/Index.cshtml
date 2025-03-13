@@ -27,8 +27,20 @@
                                 @foreach (var cooking in Model)
                                 {
                                     <tr>
-                                        <td>@cooking.Recipe.Name</td>
-                                        <td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <div style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border-radius: 5px; box-shadow: 0px 1px 3px rgba(0,0,0,0.1);">
+                                                    @if (!string.IsNullOrEmpty(@cooking.Recipe.ThumbnailUrl))
+                                                    {
+                                                        <img src="@cooking.Recipe.ThumbnailUrl" alt="Recipe Thumbnail"
+                                                             class="rounded"
+                                                             style="width: 50px; height: 50px; object-fit: cover;">
+                                                    }
+                                                </div>
+                                                <span class="ms-3">@cooking.Recipe.Name</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
                                             @cooking.BatchSize
                                             @if (cooking.BatchSizeWasChanged)
                                             {

@@ -17,6 +17,8 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public DateTime? ExpirationDate { get; set; }
         public string? RecipeNotes { get; set; }
         public string? CookingNotes { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? ThumbnailUrl { get; set; }
         public bool IsCut { get; set; }
         public bool IsReadyToBeSold => CuringDate <= DateTime.Today;
 

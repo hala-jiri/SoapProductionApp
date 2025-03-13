@@ -12,6 +12,8 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public int BatchSize { get; set; }
         public string? RecipeNotes { get; set; }
         public string? CookingNotes { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? ThumbnailUrl { get; set; }
 
         // V dropdownu nabídneme všechny recepty
         public List<Recipe.Recipe>? Recipes { get; set; }

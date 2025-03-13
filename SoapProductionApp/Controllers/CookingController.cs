@@ -3,12 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models.Cooking;
 using SoapProductionApp.Models.Cooking.ViewModels;
-using SoapProductionApp.Models.Recipe.ViewModels;
-
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using SoapProductionApp.Models.Recipe;
 
 namespace SoapProductionApp.Controllers
 {
@@ -55,6 +52,8 @@ namespace SoapProductionApp.Controllers
                 ExpirationDate = cooking.ExpirationDate,
                 RecipeNotes = cooking.RecipeNotes,
                 CookingNotes = cooking.CookingNotes,
+                ImageUrl = cooking.Recipe.ImageUrl,
+                ThumbnailUrl = cooking.Recipe.ThumbnailUrl,
                 IsCut = cooking.IsCut,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
                 {
@@ -91,11 +90,15 @@ namespace SoapProductionApp.Controllers
 
                 if (recipe != null)
                 {
+
                     // Uložíme si do modelu ID vybraného receptu
                     model.SelectedRecipeId = recipe.Id;
+
                     // Předvyplníme BatchSize a RecipeNotes
                     model.BatchSize = recipe.BatchSize;
                     model.RecipeNotes = recipe.Note;
+                    model.ImageUrl = recipe.ImageUrl;
+                    model.ThumbnailUrl = recipe.ThumbnailUrl;
                     // Připravíme si seznam ingrediencí k zobrazení
                     model.UsedIngredients = recipe.Ingredients
                         .Select(i => new CookingIngredientViewModel
@@ -429,6 +432,8 @@ namespace SoapProductionApp.Controllers
                 TotalCost = cooking.TotalCost,
                 RecipeNotes = cooking.RecipeNotes,
                 CookingNotes = cooking.CookingNotes,
+                ImageUrl = cooking.Recipe.ImageUrl,
+                ThumbnailUrl = cooking.Recipe.ThumbnailUrl,
                 IsCut = cooking.IsCut,
                 UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
                 {
