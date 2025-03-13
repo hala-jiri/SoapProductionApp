@@ -68,17 +68,19 @@
                                     <th>Ingredient</th>
                                     <th>Quantity</th>
                                     <th>Unit</th>
+                                    <th>Nearest Expiration</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.Ingredients != null)
+                                @if (Model.UsedIngredients != null)
                                 {
-                                    foreach (var ing in Model.Ingredients)
+                                    foreach (var ing in Model.UsedIngredients)
                                     {
                                         <tr>
-                                            <td>@ing.WarehouseItemName</td>
-                                            <td>@ing.Quantity</td>
+                                            <td>@ing.IngredientName</td>
+                                            <td>@ing.QuantityUsed</td>
                                             <td>@ing.Unit</td>
+                                            <td>@ing.ExpirationDate.ToShortDateString()</td>
                                         </tr>
                                     }
                                 }

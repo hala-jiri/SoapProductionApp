@@ -16,7 +16,7 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         // V dropdownu nabídneme všechny recepty
         public List<Recipe.Recipe>? Recipes { get; set; }
 
-        // Sem si můžeme uložit ingredience, abychom je zobrazili
-        public List<RecipeIngredientViewModel>? Ingredients { get; set; }
+        // Seznam použitých ingrediencí
+        public List<CookingIngredientViewModel> UsedIngredients { get; set; } = new List<CookingIngredientViewModel>();
     }
 }

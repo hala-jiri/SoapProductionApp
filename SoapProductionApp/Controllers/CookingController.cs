@@ -97,12 +97,13 @@ namespace SoapProductionApp.Controllers
                     model.BatchSize = recipe.BatchSize;
                     model.RecipeNotes = recipe.Note;
                     // Připravíme si seznam ingrediencí k zobrazení
-                    model.Ingredients = recipe.Ingredients
-                        .Select(i => new RecipeIngredientViewModel
+                    model.UsedIngredients = recipe.Ingredients
+                        .Select(i => new CookingIngredientViewModel
                         {
-                            WarehouseItemName = i.WarehouseItem.Name,
-                            Quantity = i.Quantity,
-                            Unit = i.Unit.ToString()
+                            IngredientName = i.WarehouseItem.Name,
+                            QuantityUsed = i.Quantity,
+                            Unit = i.Unit.ToString(),
+                            ExpirationDate = i.NearestExpirationDate.Value
                         })
                         .ToList();
                 }
