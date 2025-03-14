@@ -31,6 +31,7 @@ namespace SoapProductionApp.Controllers
             _context.WarehouseItems.RemoveRange(_context.WarehouseItems);
             _context.Categories.RemoveRange(_context.Categories);
             await _context.SaveChangesAsync();
+            DeleteImagesInUploadFolder();
 
             // Vytvoření kategorií
             var categoryData = new Dictionary<string, (string Background, string Text)>
@@ -274,6 +275,30 @@ namespace SoapProductionApp.Controllers
             await _context.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
+        }
+
+        private void DeleteImagesInUploadFolder()
+        {
+            // Cesta ke složce "uploads"
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            var thumbnailsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads/thumbnails");
+            DeleteFilesInFolder(uploadsPath);
+            DeleteFilesInFolder(thumbnailsPath);
+        }
+
+        private void DeleteFilesInFolder(string folder)
+        {
+            if (Directory.Exists(folder))
+            {
+                foreach (var file in Directory.GetFiles(folder))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(file);
+                    }
+                    catch { }
+                }
+            }
         }
     }
 }

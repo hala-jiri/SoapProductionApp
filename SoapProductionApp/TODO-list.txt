@@ -27,8 +27,6 @@
 	- when I delete Recipe, it delete also Cooking which is related to that recipe! Thats not good.
 	- When I delete warehouseItem, it is removed from recipe and price is also reduces as it should be.
 		- we should create some warning before deleting (show where it is connected and used)
-Pictures:
-	- when deleting and generating data to DB (templates data) it dont delete uploaded pictures, so it can pile up
 
 UnitTests:
 - CookingController
