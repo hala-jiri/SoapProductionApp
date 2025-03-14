@@ -99,6 +99,7 @@ namespace SoapProductionApp.Controllers
                     model.RecipeNotes = recipe.Note;
                     model.ImageUrl = recipe.ImageUrl;
                     model.ThumbnailUrl = recipe.ThumbnailUrl;
+                    model.TotalCost = recipe.CostPerBatch;
                     // Připravíme si seznam ingrediencí k zobrazení
                     model.UsedIngredients = recipe.Ingredients
                         .Select(i => new CookingIngredientViewModel

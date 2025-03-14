@@ -1,7 +1,6 @@
 ﻿- write unit tests
 
 - Cooking:
-	- In Create we should show not just ingredients but at least total costs of recipe to cook (counting with price of batches)
 	- problem with not showing expiration! fix it....
 	- when we added pictures into Recipe and cooking, what will happen when we create cooking and it copy url of images from Recipe to Cooking. And when someone will decide to delete Recipe or delete picture/url in Recipe view? Will cooking lose pictures?		- how to solve it? 
 			- Create copy of picture? many same pictures on server.

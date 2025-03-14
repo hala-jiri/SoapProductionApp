@@ -14,6 +14,7 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public string? CookingNotes { get; set; }
         public string? ImageUrl { get; set; }
         public string? ThumbnailUrl { get; set; }
+        public Decimal? TotalCost { get; set; }
 
         // V dropdownu nabídneme všechny recepty
         public List<Recipe.Recipe>? Recipes { get; set; }
