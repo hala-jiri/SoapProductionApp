@@ -35,10 +35,12 @@
         <span asp-validation-for="PriceOfPackageWithoutTax" class="text-danger"></span>
     </div>
     <div>
-        <label asp-for="TaxPercentage" class="control-label">Tax</label>
-        <input asp-for="TaxPercentage" class="form-control" />
-        <span asp-validation-for="TaxPercentage" class="text-danger"></span>
+        <label class="control-label">Tax</label>
+        <input class="form-control" value="@ViewBag.Tax %" readonly />
     </div>
+
+    <hr />
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Create</button>
         <a asp-controller="Warehouse" asp-action="Details" asp-route-id="@ViewBag.WarehouseItemId" class="btn btn-secondary">Zpět</a>

@@ -28,6 +28,7 @@ namespace SoapProductionApp.Controllers
             ViewBag.Unit = warehouseItem.Unit;
             ViewBag.WarehouseItemName = warehouseItem.Name;
             ViewBag.WarehouseItemId = warehouseItem.Id;
+            ViewBag.Tax = warehouseItem.TaxPercentage;
 
             var batchCreateViewModel = new BatchCreateViewModel() { };
             return View(batchCreateViewModel);
@@ -49,6 +50,7 @@ namespace SoapProductionApp.Controllers
 
                 batchCreateViewModel.WarehouseItem = warehouseItem;
                 batchCreateViewModel.Unit = warehouseItem.Unit;
+                batchCreateViewModel.TaxPercentage = warehouseItem.TaxPercentage;
                 var batch = new Batch(batchCreateViewModel, warehouseItem) { };
 
                 _context.Batches.Add(batch);

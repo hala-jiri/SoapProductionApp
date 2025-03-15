@@ -23,7 +23,6 @@
 
 - WarehouseItem
 	- for batches, make some function for "throw away" almost empty or expired batches of material.
-	- in creating batches (tax should be prefilled from WarehouseItem)
 
 !DB consistency:
 	- when I delete Recipe, it delete also Cooking which is related to that recipe! Thats not good.
