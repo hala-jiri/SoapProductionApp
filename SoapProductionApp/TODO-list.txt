@@ -1,6 +1,7 @@
 ﻿- write unit tests
 
 - Cooking:
+	- during creating cooking, I should see list of ingrediences (include batches - 2 batches from one item if there is not enough material). Also price should be already more precies, and not just approx.
 	- problem with not showing expiration! fix it....
 	- when we added pictures into Recipe and cooking, what will happen when we create cooking and it copy url of images from Recipe to Cooking. And when someone will decide to delete Recipe or delete picture/url in Recipe view? Will cooking lose pictures?		- how to solve it? 
 			- Create copy of picture? many same pictures on server.
@@ -11,6 +12,7 @@
 		- problem with SaveChanges while editing, (some of the data are not loaded)
 
 - Recipe:
+	- in create (curing date should be allowed to be 0 for immediate use)
 	- Unit should be related to WarehouseItem, dont want to mix units between recipe and warehouse. Keep it simple (one unit per WarehouseItem)
 		- it will be linked/related to WarehouseItem (Unit)
 	- Need to check how price was calculated (if over average price per unit or by batches...., 
@@ -21,6 +23,7 @@
 
 - WarehouseItem
 	- for batches, make some function for "throw away" almost empty or expired batches of material.
+	- in creating batches (tax should be prefilled from WarehouseItem)
 
 !DB consistency:
 	- when I delete Recipe, it delete also Cooking which is related to that recipe! Thats not good.
