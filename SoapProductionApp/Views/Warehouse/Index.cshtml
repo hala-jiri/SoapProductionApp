@@ -1,38 +1,73 @@
 ﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.WarehouseItem>
+@{
+    var categories = ViewData["Categories"] as List<SoapProductionApp.Models.Warehouse.Category>;
+    var selectedCategories = Context.Request.Query["categoryIds"].ToList();
+}
 
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-11 col-lg-11">
+    <div class="row">
+        <div class="col-md-12">
             <div class="card shadow-lg rounded-4">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Warehouse Items</h3>
-                    <a asp-action="Create" class="btn btn-light btn-lg action-btn">
-                        ➕ Add New Warehouse Item
-                    </a>
+                    <a asp-action="Create" class="btn btn-light btn-lg action-btn">➕ Add New Warehouse Item</a>
                 </div>
                 <div class="card-body">
+
+                    <!-- Filtrační formulář -->
+                    <form method="get" class="mb-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <!-- Textové vyhledávání -->
+                            <input type="text" name="searchString" value="@ViewData["SearchString"]" class="form-control w-25" placeholder="Search by name...">
+
+                            <!-- Kategorie - rozbalovací sekce -->
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    Filter by Categories
+                                </button>
+                                <ul class="dropdown-menu p-2">
+                                    @foreach (var category in categories)
+                                    {
+                                        <li>
+                                            <label class="dropdown-item">
+                                                <input type="checkbox" name="categoryIds" value="@category.Id"
+                                                @(selectedCategories.Contains(category.Id.ToString()) ? "checked" : "")>
+                                                @category.Name
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <!-- Tlačítko pro odeslání filtru -->
+                            <button type="submit" class="btn btn-success">Apply Filter</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+                        </div>
+                    </form>
+
+                    <!-- Tabulka skladových položek -->
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped wide-table">
                             <thead class="bg-light">
                                 <tr>
-                                    <th style="width: 20%;">
+                                    <th>
                                         <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]" class="text-dark text-decoration-none">
                                             Name
                                             @if (ViewData["NameSortParam"] as string == "name_desc")
                                             {
-                                                <i class="bi bi-sort-alpha-down-alt sort-icon"></i>
+                                                <i class="bi bi-sort-alpha-down-alt"></i>
                                             }
                                             else
                                             {
-                                                <i class="bi bi-sort-alpha-down sort-icon"></i>
+                                                <i class="bi bi-sort-alpha-down"></i>
                                             }
                                         </a>
                                     </th>
-                                    <th style="width: 10%;" class="text-center">Total Quantity</th>
-                                    <th style="width: 15%;" class="text-center">Price (without Tax)</th>
-                                    <th style="width: 10%;" class="text-center">Total Value</th>
-                                    <th style="width: 25%;">Categories</th>
-                                    <th style="width: 20%;" class="text-center">Actions</th>
+                                    <th class="text-center">Total Quantity</th>
+                                    <th class="text-center">Price (without Tax)</th>
+                                    <th class="text-center">Total Value</th>
+                                    <th>Categories</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -66,68 +101,25 @@
                                         </td>
                                         <td class="align-middle text-center">
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-md d-flex align-items-center action-btn">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-md action-btn">
                                                     <i class="bi bi-eye-fill me-1"></i> View
                                                 </a>
-                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-md d-flex align-items-center action-btn">
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-md action-btn">
                                                     <i class="bi bi-pencil-fill me-1"></i> Edit
                                                 </a>
-                                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-md d-flex align-items-center action-btn">
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-md action-btn">
                                                     <i class="bi bi-trash-fill me-1"></i> Delete
                                                 </a>
                                             </div>
                                         </td>
-
-
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .low-stock-indicator {
-        color: red;
-        font-weight: bold;
-        margin-left: 5px;
-        font-size: 18px;
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 5px 10px;
-        font-size: 14px;
-        font-weight: bold;
-        border-radius: 5px;
-        margin-right: 5px;
-    }
-
-    .wide-table {
-        table-layout: fixed;
-        width: 100%;
-    }
-
-    .btn-lg {
-        font-size: 1rem;
-        padding: 10px 15px;
-    }
-
-    .sort-icon {
-        font-size: 1rem; /* Můžeš změnit na větší hodnotu podle potřeby */
-        width: auto;
-        height: auto;
-        display: inline-block; /* Zajistí, že ikona není skrytá */
-    }
-
-    .action-btn {
-        font-size: 0.85rem; /* Stejná velikost jako Add Recipe */
-        padding: 6px 10px; /* Upravíme padding pro menší vzhled */
-        height: auto; /* Tlačítko se nebude přizpůsobovat */
-        line-height: 1.2; /* Lepší vertikální zarovnání */
-    }
-</style>

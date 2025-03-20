@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SoapProductionApp.Data;
@@ -20,26 +21,33 @@ namespace SoapProductionApp.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, List<int> categoryIds)
         {
             ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["SearchString"] = searchString;
 
+            // Načteme všechny dostupné kategorie pro zobrazení ve filtru
+            var categories = await _context.Categories.OrderBy(c => c.Name).ToListAsync();
+            ViewData["Categories"] = categories;
 
             var warehouseItems = _context.WarehouseItems
                 .Include(i => i.Batches)
                 .Include(i => i.Categories)
                 .AsQueryable();
 
+            // Filtrování podle názvu (pokud existuje searchString)
+            if (!string.IsNullOrEmpty(searchString))
+                warehouseItems = warehouseItems.Where(w => w.Name.Contains(searchString));
+
+            // Filtrování podle kategorií (pokud jsou vybrané nějaké kategorie)
+            if (categoryIds != null && categoryIds.Any())
+                warehouseItems = warehouseItems.Where(w => w.Categories.Any(c => categoryIds.Contains(c.Id)));
+
             // Řazení podle názvu (ASC nebo DESC)
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    warehouseItems = warehouseItems.OrderByDescending(i => i.Name);
-                    break;
-                default:
-                    warehouseItems = warehouseItems.OrderBy(i => i.Name);
-                    break;
-            }
+            warehouseItems = sortOrder == "name_desc"
+                ? warehouseItems.OrderByDescending(i => i.Name)
+                : warehouseItems.OrderBy(i => i.Name);
+            
             return View(await warehouseItems.ToListAsync());
         }
 
