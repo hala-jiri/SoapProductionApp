@@ -24,6 +24,15 @@ Cooking:
 	- Edit: should have different view 
 		- should be able to set up CUT (or make extra action in Cooking/Index view
 		- problem with SaveChanges while editing, (some of the data are not loaded)
+
+Stock Overview:
+	- add better icon for main menu
+	- put filter (sorting) on index page and make that tahble less wide
+	- check how is calculated price! if recipe change prices, cooking will too? and stock overview too?
+	- Details:
+		- table should be smaller (less wide),
+		- when selling, it should save the date of sell and also show it in table
+		- make maybe function (storno sell, in case that something will not be fully processed or it will be canceled from custromer side)
 ------------------------------------------------------------------------------------------------------------
 Features:
 - Inventory function
