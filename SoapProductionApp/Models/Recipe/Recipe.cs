@@ -21,6 +21,9 @@ namespace SoapProductionApp.Models.Recipe
         [Required]
         public int DaysOfCure { get; set; }
 
+        [Required]
+        public ProductType ProductType { get; set; } = ProductType.Soap;
+
         public virtual List<RecipeIngredient> Ingredients { get; set; } = new();
 
         [NotMapped]
@@ -43,9 +46,17 @@ namespace SoapProductionApp.Models.Recipe
             ImageUrl = model.ImageUrl;
             BatchSize = model.BatchSize;
             DaysOfCure = model.DaysOfCure;
+            ProductType = model.ProductType;
             Note = model.Note ?? string.Empty;
             Ingredients = ingredients;
         }
+    }
+
+    public enum ProductType
+    {
+        Soap,
+        Cream,
+        BeardOil
     }
 
 }

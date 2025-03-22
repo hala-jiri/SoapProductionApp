@@ -58,6 +58,13 @@
 
                         <!-- Zobrazení předvyplněných údajů -->
                         <div class="mb-3">
+                            <label class="form-label">Product Type</label>
+                            <input type="text" class="form-control"
+                                   value="@(Model.SelectedRecipeId != null ? Model.ProductType.ToString() : "")"
+                                   disabled />
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label">Batch Size</label>
                             <input type="number" class="form-control" value="@Model.BatchSize" disabled />
                         </div>

@@ -124,6 +124,7 @@ namespace SoapProductionApp.Controllers
                 Name = recipe.Name,
                 BatchSize = recipe.BatchSize,
                 DaysOfCure = recipe.DaysOfCure,
+                ProductType = recipe.ProductType,
                 ImageUrl = recipe.ImageUrl,
                 ThumbnailUrl = recipe.ThumbnailUrl,
                 Note = recipe.Note,
@@ -173,6 +174,7 @@ namespace SoapProductionApp.Controllers
                 ThumbnailUrl = recipe.ThumbnailUrl,
                 BatchSize = recipe.BatchSize,
                 DaysOfCure = recipe.DaysOfCure,
+                ProductType = recipe.ProductType,
                 Ingredients = recipe.Ingredients.Select(i => new RecipeIngredientViewModel
                 {
                     WarehouseItemId = i.WarehouseItemId,
@@ -216,6 +218,7 @@ namespace SoapProductionApp.Controllers
                 recipe.Note = model.Note;
                 recipe.BatchSize = model.BatchSize;
                 recipe.DaysOfCure = model.DaysOfCure;
+                recipe.ProductType = model.ProductType;
 
                 // Aktualizace ingrediencí
                 recipe.Ingredients.Clear();

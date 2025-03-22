@@ -15,6 +15,10 @@
                     <table class="table table-borderless">
                         <tbody>
                             <tr>
+                                <td><strong>Product Type:</strong></td>
+                                <td class="text-end">@Model.ProductType</td>
+                            </tr>
+                            <tr>
                                 <td><strong>Batch Size:</strong></td>
                                 <td class="text-end">@Model.BatchSize pcs</td>
                             </tr>
@@ -22,6 +26,7 @@
                                 <td><strong>Days to Cure:</strong></td>
                                 <td class="text-end">@Model.DaysOfCure days</td>
                             </tr>
+
                             <tr>
                                 <td><strong>Total Cost per Batch:</strong></td>
                                 <td class="text-end">@Model.CostPerBatch.ToString("0.00") €</td>

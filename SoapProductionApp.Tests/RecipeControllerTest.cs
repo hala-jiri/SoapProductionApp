@@ -41,7 +41,8 @@ namespace SoapProductionApp.Tests
                 Name = "Test",
                 Note = "Test note",
                 BatchSize = 11,
-                DaysOfCure = 60
+                DaysOfCure = 60,
+                ProductType = ProductType.Soap
             };
 
             // Act
@@ -66,6 +67,7 @@ namespace SoapProductionApp.Tests
                 Name = "Test",
                 BatchSize = 11,
                 DaysOfCure = 60,
+                ProductType = ProductType.Soap,
                 ImageUrl = "-",
             };
                
@@ -96,6 +98,7 @@ namespace SoapProductionApp.Tests
                 Name = "Test",
                 BatchSize = 11,
                 DaysOfCure = 60,
+                ProductType = ProductType.Soap,
                 ImageUrl = "-",
             };
 
@@ -107,6 +110,7 @@ namespace SoapProductionApp.Tests
                 Id = recipe.Id,
                 Name = "Test 2",
                 BatchSize = 20,
+                ProductType = ProductType.Soap,
                 ImageUrl = "TestUrl",
                 DaysOfCure = 30
             };

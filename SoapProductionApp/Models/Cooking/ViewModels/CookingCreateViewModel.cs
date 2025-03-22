@@ -9,6 +9,7 @@ namespace SoapProductionApp.Models.Cooking.ViewModels
         public int? SelectedRecipeId { get; set; }
 
         // Tyto údaje vyplníme z vybraného receptu
+        public ProductType ProductType { get; set; }
         public int BatchSize { get; set; }
         public string? RecipeNotes { get; set; }
         public string? CookingNotes { get; set; }

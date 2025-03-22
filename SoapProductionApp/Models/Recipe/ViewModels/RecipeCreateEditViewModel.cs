@@ -19,6 +19,9 @@ namespace SoapProductionApp.Models.Recipe.ViewModels
         [Required]
         public int DaysOfCure { get; set; }
 
+        [Required]
+        public ProductType ProductType { get; set; } = ProductType.Soap;
+
         public string? Note { get; set; }
 
         public List<RecipeIngredientViewModel> Ingredients { get; set; } = new();

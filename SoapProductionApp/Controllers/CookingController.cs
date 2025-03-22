@@ -48,6 +48,7 @@ namespace SoapProductionApp.Controllers
                 BatchSizeWasChanged = cooking.BatchSizeWasChanged,
                 CookingDate = cooking.CookingDate,
                 CuringDate = cooking.CuringDate,
+                RecipeProductType = cooking.Recipe.ProductType,
                 TotalCost = cooking.TotalCost,
                 ExpirationDate = cooking.ExpirationDate,
                 RecipeNotes = cooking.RecipeNotes,
@@ -95,6 +96,7 @@ namespace SoapProductionApp.Controllers
                     model.SelectedRecipeId = recipe.Id;
 
                     // Předvyplníme BatchSize a RecipeNotes
+                    model.ProductType = recipe.ProductType;
                     model.BatchSize = recipe.BatchSize;
                     model.RecipeNotes = recipe.Note;
                     model.ImageUrl = recipe.ImageUrl;
@@ -265,6 +267,7 @@ namespace SoapProductionApp.Controllers
                 BatchSize = cooking.BatchSize,
                 BatchSizeWasChanged = cooking.BatchSizeWasChanged,
                 CookingDate = cooking.CookingDate,
+                RecipeProductType = cooking.Recipe.ProductType,
                 CuringDate = cooking.CuringDate,
                 TotalCost = cooking.TotalCost,
                 ExpirationDate = cooking.ExpirationDate,
@@ -307,6 +310,12 @@ namespace SoapProductionApp.Controllers
                             {
                                 row.RelativeItem().Text("Recipe Name:").SemiBold();
                                 row.RelativeItem().AlignRight().Text(cookingDetailViewModel.RecipeName);
+                            });
+
+                            col.Item().Row(row =>
+                            {
+                                row.RelativeItem().Text("Product Type:").SemiBold();
+                                row.RelativeItem().AlignRight().Text(cookingDetailViewModel.RecipeProductType.ToString());
                             });
 
                             col.Item().Row(row =>

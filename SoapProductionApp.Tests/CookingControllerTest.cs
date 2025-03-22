@@ -61,7 +61,7 @@ namespace SoapProductionApp.Tests
             await dbContext.SaveChangesAsync();
 
             // prepare recipe
-            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 };
+            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60, ProductType = ProductType.Soap };
             var recipe = new Recipe(recipeVM, new List<RecipeIngredient>());
             dbContext.Recipes.Add(recipe);
             await dbContext.SaveChangesAsync();
@@ -117,7 +117,7 @@ namespace SoapProductionApp.Tests
             await dbContext.SaveChangesAsync();
 
             // prepare recipe
-            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 };
+            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60, ProductType = ProductType.Soap };
             var recipe = new Recipe(recipeVM, new List<RecipeIngredient>());
             dbContext.Recipes.Add(recipe);
             await dbContext.SaveChangesAsync();
@@ -171,7 +171,7 @@ namespace SoapProductionApp.Tests
             await dbContext.SaveChangesAsync();
 
             // prepare recipe
-            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 };
+            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 , ProductType = ProductType.Soap };
             var recipe = new Recipe(recipeVM, new List<RecipeIngredient>());
             dbContext.Recipes.Add(recipe);
             await dbContext.SaveChangesAsync();
@@ -225,7 +225,7 @@ namespace SoapProductionApp.Tests
             await dbContext.SaveChangesAsync();
 
             // prepare recipe
-            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 };
+            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 , ProductType = ProductType.Soap };
             var recipe = new Recipe(recipeVM, new List<RecipeIngredient>());
             dbContext.Recipes.Add(recipe);
             await dbContext.SaveChangesAsync();
@@ -278,7 +278,7 @@ namespace SoapProductionApp.Tests
             await dbContext.SaveChangesAsync();
 
             // prepare recipe
-            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 };
+            var recipeVM = new RecipeCreateEditViewModel() { ImageUrl = "-", Name = "Test", Note = "Test note", BatchSize = 11, DaysOfCure = 60 , ProductType = ProductType.Soap };
             var recipe = new Recipe(recipeVM, new List<RecipeIngredient>());
             dbContext.Recipes.Add(recipe);
             await dbContext.SaveChangesAsync();

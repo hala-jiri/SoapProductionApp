@@ -233,6 +233,7 @@ namespace SoapProductionApp.Controllers
                     ImageUrl = "-",
                     BatchSize = 11,
                     DaysOfCure = 40,
+                    ProductType = ProductType.Soap,
                     Note = "Classic MIDSUMMER aroma",
                     Ingredients = new List<RecipeIngredient>
                     {
@@ -255,6 +256,7 @@ namespace SoapProductionApp.Controllers
                 ImageUrl = "-",
                 BatchSize = 11,
                 DaysOfCure = 30,
+                ProductType = ProductType.Soap,
                 Note = "Classic WILDFLOWER aroma",
                 Ingredients = new List<RecipeIngredient>
                                     {
