@@ -1,55 +1,60 @@
 ﻿@model SoapProductionApp.Models.Warehouse.ViewModels.BatchCreateViewModel
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-primary text-white text-center">
-                    <h3 class="mb-0">Edit Batch</h3>
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-primary text-white text-center py-2">
+                    <h6 class="mb-0">Edit Batch</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body small p-3">
                     <form asp-action="Edit" method="post">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="WarehouseItemId" />
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="Name" class="form-label">Name</label>
-                            <input asp-for="Name" class="form-control" />
+                            <input asp-for="Name" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="Supplier" class="form-label">Supplier</label>
-                            <input asp-for="Supplier" class="form-control" />
+                            <input asp-for="Supplier" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
-                            <input asp-for="PurchaseDate" type="date" class="form-control" />
+                            <input asp-for="PurchaseDate" type="date" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="ExpirationDate" class="form-label">Expiration Date</label>
-                            <input asp-for="ExpirationDate" type="date" class="form-control" />
+                            <input asp-for="ExpirationDate" type="date" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="QuantityOfPackage" class="form-label">Package Quantity (@ViewBag.Unit)</label>
-                            <input asp-for="QuantityOfPackage" class="form-control" />
+                        <div class="mb-2">
+                            <label asp-for="QuantityOfPackage" class="form-label">
+                                Package Quantity (@ViewBag.Unit)
+                            </label>
+                            <input asp-for="QuantityOfPackage" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="PriceOfPackageWithoutTax" class="form-label">Package Price (without tax)</label>
-                            <input asp-for="PriceOfPackageWithoutTax" class="form-control" />
+                            <input asp-for="PriceOfPackageWithoutTax" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="TaxPercentage" class="form-label">Tax Percentage (%)</label>
-                            <input asp-for="TaxPercentage" class="form-control" />
+                            <input asp-for="TaxPercentage" class="form-control form-control-sm" />
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">Save Changes</button>
-                            <a asp-action="Details" asp-controller="Warehouse" asp-route-id="@Model.WarehouseItemId" class="btn btn-outline-secondary">Cancel</a>
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-success btn-sm">Save Changes</button>
+                            <a asp-action="Details"
+                               asp-controller="Warehouse"
+                               asp-route-id="@Model.WarehouseItemId"
+                               class="btn btn-outline-secondary btn-sm">Cancel</a>
                         </div>
                     </form>
                 </div>

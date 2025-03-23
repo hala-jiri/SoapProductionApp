@@ -1,36 +1,56 @@
 ﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.ViewModels.BatchViewModel>
 
-<h2>Batches</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Batch Name</th>
-            <th>Supplier</th>
-            <th>Purchase Date</th>
-            <th>Expiration Date</th>
-            <th>Available Quantity</th>
-            <th>Quantity</th>
-            <th>Price per unit</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var batch in Model)
-        {
-            <tr>
-                <td>@batch.Name</td>
-                <td>@batch.Supplier</td>
-                <td>@batch.PurchaseDate.ToString("yyyy-MM-dd")</td>
-                <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
-                <td>@batch.AvailableQuantityOfPackage @batch.Unit</td>
-                <td>@batch.QuantityOfPackage @batch.Unit</td>
-
-                <td>@batch.PricePerUnitWithoutTax €/@batch.Unit (@batch.PricePerUnitWithTax €/@batch.Unit) </td>
-                <td>
-                    <a href="@Url.Action("Edit", "Batch", new { id = batch.Id })">Edit</a> |
-                    <a href="@Url.Action("Delete", "Batch", new { id = batch.Id })">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-secondary text-white py-2 px-3">
+                    <h6 class="mb-0">Batches</h6>
+                </div>
+                <div class="card-body small p-3">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Batch Name</th>
+                                    <th>Supplier</th>
+                                    <th>Purchase</th>
+                                    <th>Expires</th>
+                                    <th>Available</th>
+                                    <th>Total</th>
+                                    <th>Price / Unit</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var batch in Model)
+                                {
+                                    <tr>
+                                        <td class="align-middle">@batch.Name</td>
+                                        <td class="align-middle">@batch.Supplier</td>
+                                        <td class="align-middle">@batch.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="align-middle">
+                                            @(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToString("yyyy-MM-dd") : "N/A")
+                                        </td>
+                                        <td class="align-middle">@batch.AvailableQuantityOfPackage @batch.Unit</td>
+                                        <td class="align-middle">@batch.QuantityOfPackage @batch.Unit</td>
+                                        <td class="align-middle">
+                                            @batch.PricePerUnitWithoutTax €/@batch.Unit
+                                            <span class="text-muted">(@batch.PricePerUnitWithTax €)</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="@Url.Action("Edit", "Batch", new { id = batch.Id })" class="btn btn-warning">✏️</a>
+                                                <a href="@Url.Action("Delete", "Batch", new { id = batch.Id })" class="btn btn-danger">🗑️</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
