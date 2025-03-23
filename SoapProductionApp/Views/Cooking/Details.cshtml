@@ -1,21 +1,23 @@
 ﻿@model SoapProductionApp.Models.Cooking.ViewModels.CookingDetailViewModel
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-info text-white text-center  mb-4">
-                    <h3 class="mb-0">Cooking Details</h3>
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-info text-white text-center py-2 mb-3">
+                    <h5 class="mb-0">Cooking Details</h5>
                 </div>
 
-                <div class="text-center">
-                    <img src="@Model.ImageUrl" class="img-fluid rounded shadow-lg mb-3"
+                <div class="text-center mb-3">
+                    <img src="@Model.ImageUrl"
+                         class="img-fluid rounded shadow-sm"
                          alt="Recipe Image"
-                         style="max-width: 300px; max-height: 200px; object-fit: cover;">
+                         style="max-width: 250px; max-height: 150px; object-fit: cover;">
                 </div>
 
-                <div class="card-body">
-                    <table class="table table-borderless">
+                <div class="card-body small p-3">
+
+                    <table class="table table-borderless table-sm mb-3">
                         <tbody>
                             <tr>
                                 <td><strong>Recipe Name:</strong></td>
@@ -27,7 +29,8 @@
                             </tr>
                             <tr>
                                 <td><strong>Batch Size:</strong></td>
-                                <td class="text-end">@Model.BatchSize pcs
+                                <td class="text-end">
+                                    @Model.BatchSize pcs
                                     @if (Model.BatchSizeWasChanged)
                                     {
                                         <span class="text-primary" data-bs-toggle="tooltip" title="Batch size has been modified.">
@@ -60,39 +63,35 @@
                             </tr>
                             <tr>
                                 <td><strong>Is Cut?</strong></td>
-                                <td class="text-end">
-                                    @(Model.IsCut ? "✅ Yes" : "❌ No")
-                                </td>
+                                <td class="text-end">@(Model.IsCut ? "✅ Yes" : "❌ No")</td>
                             </tr>
                             <tr>
                                 <td><strong>Ready to Sell?</strong></td>
-                                <td class="text-end">
-                                    @(Model.IsReadyToBeSold ? "✅ Yes" : "❌ No")
-                                </td>
+                                <td class="text-end">@(Model.IsReadyToBeSold ? "✅ Yes" : "❌ No")</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <strong>Recipe Notes:</strong>
-                        <p>@Model.RecipeNotes</p>
+                        <p class="mb-1">@Model.RecipeNotes</p>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <strong>Cooking Notes:</strong>
-                        <p>@Model.CookingNotes</p>
+                        <p class="mb-1">@Model.CookingNotes</p>
                     </div>
 
-                    <h4>Used Ingredients</h4>
+                    <h6 class="mt-3">Used Ingredients</h6>
                     @if (Model.UsedIngredients.Any())
                     {
-                        <table class="table table-striped">
-                            <thead>
+                        <table class="table table-sm table-striped mb-3">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Ingredient</th>
                                     <th>Quantity</th>
                                     <th>Cost</th>
-                                    <th>Expiration Date</th>
+                                    <th>Expiration</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,20 +111,16 @@
                     {
                         <p class="text-muted">No ingredients used.</p>
                     }
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="@Url.Action("ExportToPdf", "Cooking", new { id = Model.Id })" class="btn btn-secondary">
-                            Download PDF
-                        </a>
-                    </div>
-                    <div class="d-grid gap-2 mt-3">
-                        <a href="@Url.Action("Cut", "Cooking", new { id = Model.Id })"
-                           class="btn btn-secondary @(Model.IsCut ? "disabled" : "")">
-                            <i class="fas fa-cut"></i> Cut soap
-                        </a>
-                    </div>
 
                     <div class="d-grid gap-2 mt-3">
-                        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                        <a href="@Url.Action("ExportToPdf", "Cooking", new { id = Model.Id })" class="btn btn-secondary btn-sm">
+                            🧾 Download PDF
+                        </a>
+                        <a href="@Url.Action("Cut", "Cooking", new { id = Model.Id })"
+                           class="btn btn-secondary btn-sm @(Model.IsCut ? "disabled" : "")">
+                            ✂️ Cut soap
+                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
                     </div>
                 </div>
             </div>
@@ -136,8 +131,6 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
     });
 </script>

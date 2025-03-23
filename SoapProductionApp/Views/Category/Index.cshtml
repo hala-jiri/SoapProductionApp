@@ -1,31 +1,48 @@
 ﻿@model List<SoapProductionApp.Models.Warehouse.Category>
 
-<h2>Správa kategorií</h2>
-<a href="@Url.Action("Create")" class="btn btn-success">Přidat novou kategorii</a>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Colors</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var category in Model)
-        {
-            <tr>
-                <td>@category.Name</td>
-                <td>
-                    <div style="width: 100px; height: 50px; background-color: @category.ColorBackground; color: @category.ColorText; display: flex; align-items: center; justify-content: center;">
-                        Text example
-                    </div>
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center py-2 px-3">
+                    <h5 class="mb-0">Category Management</h5>
+                    <a href="@Url.Action("Create")" class="btn btn-light btn-sm">➕ Add</a>
+                </div>
+                <div class="card-body small p-3">
+                    <table class="table table-sm table-bordered table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40%;">Name</th>
+                                <th style="width: 30%;">Colors</th>
+                                <th style="width: 30%;" class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model)
+                            {
+                                <tr>
+                                    <td class="align-middle">@category.Name</td>
+                                    <td class="align-middle">
+                                        <div style="height: 40px; border-radius: 4px; background-color: @category.ColorBackground; color: @category.ColorText; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                                            Text example
+                                        </div>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="d-flex justify-content-center flex-wrap">
+                                            <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning btn-sm action-btn">
+                                                <i class="bi bi-pencil-fill"></i> Edit
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-danger btn-sm action-btn">
+                                                <i class="bi bi-trash-fill"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

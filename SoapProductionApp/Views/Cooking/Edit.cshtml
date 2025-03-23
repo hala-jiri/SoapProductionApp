@@ -1,39 +1,39 @@
 ﻿@model SoapProductionApp.Models.Cooking.Cooking
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-warning text-white text-center">
-                    <h3 class="mb-0">Edit Cooking</h3>
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-warning text-white text-center py-2">
+                    <h5 class="mb-0">Edit Cooking</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body small p-3">
                     <form asp-action="Edit" method="post">
                         <input type="hidden" asp-for="Id" />
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label class="form-label">Recipe</label>
-                            <input class="form-control" value="@Model.Recipe.Name" disabled />
+                            <input class="form-control form-control-sm" value="@Model.Recipe.Name" disabled />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="BatchSize" class="form-label">Batch Size</label>
-                            <input asp-for="BatchSize" class="form-control" disabled type="number" min="1" />
+                            <input asp-for="BatchSize" class="form-control form-control-sm" disabled type="number" min="1" />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="RecipeNotes" class="form-label">Recipe Notes</label>
-                            <textarea asp-for="RecipeNotes" class="form-control" disabled></textarea>
+                            <textarea asp-for="RecipeNotes" class="form-control form-control-sm" disabled rows="2"></textarea>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label asp-for="CookingNotes" class="form-label">Cooking Notes</label>
-                            <textarea asp-for="CookingNotes" class="form-control"></textarea>
+                            <textarea asp-for="CookingNotes" class="form-control form-control-sm" rows="3"></textarea>
                         </div>
 
                         <div class="d-grid gap-2 mt-3">
-                            <button type="submit" class="btn btn-warning">Save Changes</button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-warning btn-sm">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Cancel</a>
                         </div>
                     </form>
                 </div>

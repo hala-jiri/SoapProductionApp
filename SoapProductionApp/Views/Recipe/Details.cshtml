@@ -1,18 +1,21 @@
 ﻿@model SoapProductionApp.Models.Recipe.Recipe
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-primary text-white text-center">
-                    <h3 class="mb-0">@Model.Name</h3>
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-primary text-white text-center py-2">
+                    <h5 class="mb-0">@Model.Name</h5>
                 </div>
-                <div class="card-body">
-                    <div class="text-center">
-                        <img src="@Model.ImageUrl" class="img-fluid rounded shadow-lg mb-3" alt="Recipe Image" style="max-width: 300px; max-height: 200px; object-fit: cover;">
+                <div class="card-body small p-3">
+                    <div class="text-center mb-3">
+                        <img src="@Model.ImageUrl"
+                             class="img-fluid rounded shadow-sm"
+                             alt="Recipe Image"
+                             style="max-width: 250px; max-height: 150px; object-fit: cover;" />
                     </div>
 
-                    <table class="table table-borderless">
+                    <table class="table table-borderless table-sm mb-3">
                         <tbody>
                             <tr>
                                 <td><strong>Product Type:</strong></td>
@@ -26,7 +29,6 @@
                                 <td><strong>Days to Cure:</strong></td>
                                 <td class="text-end">@Model.DaysOfCure days</td>
                             </tr>
-
                             <tr>
                                 <td><strong>Total Cost per Batch:</strong></td>
                                 <td class="text-end">@Model.CostPerBatch.ToString("0.00") €</td>
@@ -40,20 +42,20 @@
 
                     <div class="mb-3">
                         <strong>Note:</strong>
-                        <p>@Model.Note</p>
+                        <p class="mb-1">@Model.Note</p>
                     </div>
 
-                    <h4>Ingredients</h4>
+                    <h6>Ingredients</h6>
                     @if (Model.Ingredients.Any())
                     {
-                        <table class="table table-striped">
-                            <thead>
+                        <table class="table table-sm table-striped mb-3">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Name</th>
                                     <th>Quantity</th>
                                     <th>Cost</th>
                                     <th>In Stock</th>
-                                    <th>Nearest Expiration</th>
+                                    <th>Expiration</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,24 +66,12 @@
                                         <td>@ingredient.Quantity @ingredient.Unit</td>
                                         <td>@ingredient.CostPerIngredient.ToString("0.00") €</td>
                                         <td>
-                                            @if (ingredient.IsInStock)
-                                            {
-                                                <span class="text-success">✅ Yes</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-danger">❌ No</span>
-                                            }
+                                            @Html.Raw(ingredient.IsInStock
+                                                     ? "<span class=\"text-success\">✅ Yes</span>"
+                                                     : "<span class=\"text-danger\">❌ No</span>")
                                         </td>
                                         <td>
-                                            @if (ingredient.NearestExpirationDate.HasValue)
-                                            {
-                                                @ingredient.NearestExpirationDate.Value.ToString("dd/MM/yyyy")
-                                            }
-                                            else
-                                            {
-                                                <span>-</span>
-                                            }
+                                            @(ingredient.NearestExpirationDate?.ToString("dd/MM/yyyy") ?? "-")
                                         </td>
                                     </tr>
                                 }
@@ -99,8 +89,8 @@
                     }
 
                     <div class="d-grid gap-2 mt-3">
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-                        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
                     </div>
                 </div>
             </div>

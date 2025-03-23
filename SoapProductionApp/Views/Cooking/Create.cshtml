@@ -4,20 +4,21 @@
     ViewBag.Title = "Start New Cooking";
 }
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-success text-white text-center">
-                    <h3 class="mb-0">Start New Cooking</h3>
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-success text-white text-center py-2">
+                    <h5 class="mb-0">Start New Cooking</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body small p-3">
 
-                    <!-- FORM 1: GET na tutéž akci ( načte vybraný recept ) -->
-                    <form method="get">
-                        <div class="mb-3">
+                    <!-- FORM 1: GET -->
+                    <form method="get" class="mb-3">
+                        <div class="mb-2">
                             <label for="recipeSelect" class="form-label">Select Recipe</label>
-                            <select name="selectedRecipeId" id="recipeSelect" class="form-select"
+                            <select name="selectedRecipeId" id="recipeSelect"
+                                    class="form-select form-select-sm"
                                     onchange="this.form.submit()">
                                 <option value="">-- Choose a recipe --</option>
                                 @if (Model.Recipes != null)
@@ -36,58 +37,56 @@
                                 }
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Load Recipe Data</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Load Recipe Data</button>
                     </form>
 
-                    <div class="mb-3 text-center">
+                    <!-- Náhled obrázku -->
+                    <div class="text-center mb-3">
                         @if (!string.IsNullOrEmpty(Model.ImageUrl))
                         {
                             <img id="recipeThumbnail" src="@Model.ImageUrl"
-                                 class="img-fluid rounded shadow-lg mb-3"
+                                 class="img-fluid rounded shadow-sm"
                                  alt="Recipe image"
-                                 style="max-width: 2000px; max-height: 150px; object-fit: cover;">
+                                 style="max-width: 100%; max-height: 120px; object-fit: cover;">
                         }
                     </div>
 
-                    <hr />
+                    <hr class="my-3" />
 
-                    <!-- FORM 2: POST formulář pro vytvoření Cooking -->
+                    <!-- FORM 2: POST -->
                     <form asp-action="Create" method="post">
                         <input type="hidden" name="selectedRecipeId" value="@Model.SelectedRecipeId" />
                         <input type="hidden" name="batchSize" value="@Model.BatchSize" />
 
-                        <!-- Zobrazení předvyplněných údajů -->
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label class="form-label">Product Type</label>
-                            <input type="text" class="form-control"
-                                   value="@(Model.SelectedRecipeId != null ? Model.ProductType.ToString() : "")"
-                                   disabled />
+                            <input type="text" class="form-control form-control-sm"
+                                   value="@(Model.SelectedRecipeId != null ? Model.ProductType.ToString() : "")" disabled />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label class="form-label">Batch Size</label>
-                            <input type="number" class="form-control" value="@Model.BatchSize" disabled />
+                            <input type="number" class="form-control form-control-sm" value="@Model.BatchSize" disabled />
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label class="form-label">Recipe Notes</label>
-                            <textarea class="form-control" disabled>@Model.RecipeNotes</textarea>
+                            <textarea class="form-control form-control-sm" rows="2" disabled>@Model.RecipeNotes</textarea>
                         </div>
 
-                        <!-- Cooking Notes je nyní součástí formuláře! -->
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <label class="form-label">Cooking Notes</label>
-                            <textarea class="form-control" name="CookingNotes">@Model.CookingNotes</textarea>
+                            <textarea class="form-control form-control-sm" name="CookingNotes" rows="3">@Model.CookingNotes</textarea>
                         </div>
 
-                        <h5>Ingredients</h5>
-                        <table class="table">
-                            <thead>
+                        <h6 class="mt-3 mb-2">Ingredients</h6>
+                        <table class="table table-sm table-striped mb-3">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Ingredient</th>
                                     <th>Quantity</th>
                                     <th>Unit</th>
-                                    <th>Nearest Expiration</th>
+                                    <th>Expiration</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,22 +105,19 @@
                             </tbody>
                         </table>
 
-
-                        <div class="mt-3 border-top pt-3 text-center">
-                            <span class="fw-bold fs-5">Total Cost: @Model.TotalCost.GetValueOrDefault().ToString("0.00") €</span>
+                        <div class="mt-3 border-top pt-2 text-center">
+                            <span class="fw-bold">Total Cost: @Model.TotalCost.GetValueOrDefault().ToString("0.00") €</span>
                         </div>
 
-                        <hr />
+                        <hr class="my-3" />
 
-                        <div class="d-grid gap-2 mt-3">
-                            <button type="submit" class="btn btn-success"
-                            @(Model.SelectedRecipeId == null ? "disabled" : "")>
-                                Start Cooking
+                        <div class="d-grid gap-2 mt-2">
+                            <button type="submit" class="btn btn-success btn-sm"
+                            @(Model.SelectedRecipeId == null ? "disabled" : "")>Start Cooking
                             </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Cancel</a>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>

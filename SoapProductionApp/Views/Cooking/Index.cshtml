@@ -1,43 +1,42 @@
 ﻿@model IEnumerable<SoapProductionApp.Models.Cooking.Cooking>
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-xl-12 col-lg-12 col-md-12">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">Cooking Processes</h3>
+        <div class="col-lg-10 col-md-12">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-primary text-white py-2 px-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cooking Processes</h5>
                     <a asp-action="Create" class="btn btn-light btn-sm">➕ Start Cooking</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body small p-3">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead class="bg-light">
+                        <table class="table table-sm table-bordered table-striped wide-table">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Recipe Name</th>
-                                    <th>Batch Size</th>
-                                    <th>Cost per Soap (€)</th>
-                                    <th>Cooking Date</th>
-                                    <th>Curing Date</th>
-                                    <th>Cut</th>
-                                    <th>Ready to Sell</th>
-                                    <th>Actions</th>
+                                    <th style="width: 22%;">Recipe Name</th>
+                                    <th style="width: 10%;">Batch Size</th>
+                                    <th style="width: 8%;">Cost/Soap</th>
+                                    <th style="width: 10%;">Cooking Date</th>
+                                    <th style="width: 10%;">Curing Date</th>
+                                    <th style="width: 6%;" class="text-center">Cut</th>
+                                    <th style="width: 6%;" class="text-center">Ready</th>
+                                    <th style="width: 28%;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var cooking in Model)
                                 {
                                     <tr>
-                                        <td class="align-middle">
+                                        <td class="align-middle text-truncate" title="@cooking.Recipe.Name">
                                             <div class="d-flex align-items-center">
-                                                <div style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border-radius: 5px; box-shadow: 0px 1px 3px rgba(0,0,0,0.1);">
-                                                    @if (!string.IsNullOrEmpty(@cooking.Recipe.ThumbnailUrl))
-                                                    {
-                                                        <img src="@cooking.Recipe.ThumbnailUrl" alt="Recipe Thumbnail"
-                                                             class="rounded"
-                                                             style="width: 50px; height: 50px; object-fit: cover;">
-                                                    }
-                                                </div>
-                                                <span class="ms-3">@cooking.Recipe.Name</span>
+                                                @if (!string.IsNullOrEmpty(cooking.Recipe.ThumbnailUrl))
+                                                {
+                                                    <img src="@cooking.Recipe.ThumbnailUrl"
+                                                         alt="Recipe Thumbnail"
+                                                         class="rounded"
+                                                         style="width: 36px; height: 36px; object-fit: cover; border: 1px solid #ddd;">
+                                                }
+                                                <span class="ms-2">@cooking.Recipe.Name</span>
                                             </div>
                                         </td>
                                         <td class="align-middle">
@@ -51,34 +50,29 @@
                                         </td>
                                         <td class="align-middle">@cooking.CostPerSoap.ToString("0.00") €</td>
                                         <td class="align-middle">@cooking.CookingDate.ToString("dd/MM/yyyy")</td>
-                                        <td class="align-middle" >@cooking.CuringDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="align-middle">@cooking.CuringDate.ToString("dd/MM/yyyy")</td>
                                         <td class="text-center align-middle">
-                                            @if (cooking.IsCut)
-                                            {
-                                                <span class="text-success">✅</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-danger">❌</span>
-                                            }
+                                            @(cooking.IsCut ? "✅" : "❌")
                                         </td>
                                         <td class="text-center align-middle">
-                                            @if (cooking.IsReadyToBeSold)
-                                            {
-                                                <span class="text-success">✅</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-danger">❌</span>
-                                            }
+                                            @(cooking.IsReadyToBeSold ? "✅" : "❌")
                                         </td>
-                                        <td class="align-middle">
-                                            <a asp-action="Details" asp-route-id="@cooking.Id" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> View</a>
-                                            <a asp-action="Edit" asp-route-id="@cooking.Id" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</a>
-                                            <a asp-action="Cut" asp-route-id="@cooking.Id" class="btn btn-secondary btn-sm @(cooking.IsCut ? "disabled" : "")">
-                                                <i class="fas fa-cut"></i> Cut
-                                            </a>
-                                            <a asp-action="Delete" asp-route-id="@cooking.Id" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Delete</a>
+
+                                        <td class="text-center align-middle">
+                                            <div class="d-flex justify-content-center flex-wrap">
+                                                <a asp-action="Details" asp-route-id="@cooking.Id" class="btn btn-info btn-sm action-btn">
+                                                    <i class="bi bi-eye-fill"></i> Detail
+                                                </a>
+                                                <a asp-action="Edit" asp-route-id="@cooking.Id" class="btn btn-warning btn-sm action-btn">
+                                                    <i class="bi bi-pencil-fill"></i> Edit
+                                                </a>
+                                                <a asp-action="Cut" asp-route-id="@cooking.Id" class="btn btn-warning btn-sm action-btn">
+                                                    <i class="fas fa-cutl"></i> Cut
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@cooking.Id" class="btn btn-danger btn-sm action-btn">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -94,8 +88,8 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
+        tooltipTriggerList.forEach(function (el) {
+            new bootstrap.Tooltip(el);
         });
     });
 </script>

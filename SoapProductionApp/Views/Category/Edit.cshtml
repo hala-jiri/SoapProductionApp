@@ -4,29 +4,42 @@
     ViewData["Title"] = "Edit Category";
 }
 
-<h2>Edit Category</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-warning text-dark text-center py-2">
+                    <h6 class="mb-0">Edit Category</h6>
+                </div>
+                <div class="card-body small p-3">
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="Id" />
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
+                        <div class="mb-2">
+                            <label asp-for="Name" class="form-label">Category Name</label>
+                            <input asp-for="Name" class="form-control form-control-sm" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
 
-    <div class="form-group">
-        <label asp-for="Name">Category Name</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                        <div class="mb-2">
+                            <label asp-for="ColorBackground" class="form-label">Background Color</label>
+                            <input asp-for="ColorBackground" type="color" class="form-control form-control-sm" />
+                            <span asp-validation-for="ColorBackground" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label asp-for="ColorText" class="form-label">Text Color</label>
+                            <input asp-for="ColorText" type="color" class="form-control form-control-sm" />
+                            <span asp-validation-for="ColorText" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-warning btn-sm">Save Changes</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="ColorBackground">Background Color</label>
-        <input asp-for="ColorBackground" type="color" class="form-control" />
-        <span asp-validation-for="ColorBackground" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ColorText">Text Color</label>
-        <input asp-for="ColorText" type="color" class="form-control" />
-        <span asp-validation-for="ColorText" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
+</div>
