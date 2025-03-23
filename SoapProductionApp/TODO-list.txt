@@ -3,8 +3,13 @@
 						TODO list with bug reporting or features planning
 
 ------------------------------------------------------------------------------------------------------------
+Category:
+	- missing Delete page!
+	- edit (color of background) cause exception
+------------------------------------------------------------------------------------------------------------
 WarehouseItem
 	- for batches, make some function for "throw away" almost empty or expired batches of material.
+	- Edit warehouse Item need to have filled Notes, thats wrong, fix it that we are able to edit warehouse item without filling notes
 
 ------------------------------------------------------------------------------------------------------------
 Recipe:
@@ -12,7 +17,7 @@ Recipe:
 		- it will be linked/related to WarehouseItem (Unit)
 	- Need to check how price was calculated (if over average price per unit or by batches...., 
 		if its by average price per unit - we need to inform user about that, that price is approx.)
-
+	- on Index when some soap is already CUT, the button CUT should be dissable
 ------------------------------------------------------------------------------------------------------------
 Cooking:
 	- during creating cooking, I should see list of ingrediences (include batches - 2 batches from one item if there is not enough material). Also price should be already more precies, and not just approx.
@@ -24,7 +29,7 @@ Cooking:
 	- Edit: should have different view 
 		- should be able to set up CUT (or make extra action in Cooking/Index view
 		- problem with SaveChanges while editing, (some of the data are not loaded)
-
+	- DELETE: after click on delete button, there is no view (or maybe even controller)
 Stock Overview:
 	- put filter (sorting) on index page and make that tahble less wide
 	- check how is calculated price! if recipe change prices, cooking will too? and stock overview too?
@@ -32,12 +37,12 @@ Stock Overview:
 		- table should be smaller (less wide),
 		- when selling, it should save the date of sell and also show it in table
 		- make maybe function (storno sell, in case that something will not be fully processed or it will be canceled from custromer side)
+
 ------------------------------------------------------------------------------------------------------------
 Features:
 - Inventory function
 	- create inventory function
 	- main goal is to make list of all storage stuff with theoretical stock amount and write real amount. Show the differences in table after and update original theoretical amounts in stock.
-
 
 ------------------------------------------------------------------------------------------------------------
 Others:
