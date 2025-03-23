@@ -26,7 +26,6 @@ Cooking:
 		- problem with SaveChanges while editing, (some of the data are not loaded)
 
 Stock Overview:
-	- add better icon for main menu
 	- put filter (sorting) on index page and make that tahble less wide
 	- check how is calculated price! if recipe change prices, cooking will too? and stock overview too?
 	- Details:
