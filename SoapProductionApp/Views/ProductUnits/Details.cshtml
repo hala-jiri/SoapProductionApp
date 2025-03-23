@@ -1,0 +1,67 @@
+﻿@using SoapProductionApp.Models.ProductUnit.ViewModels
+@model ProductUnitDetailViewModel
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-info text-white py-2 px-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@Model.RecipeName - Cooking #@Model.CookingId</h5>
+                </div>
+                <div class="card-body small p-3">
+
+                    <p class="mb-2"><strong>Product Type:</strong> @Model.ProductType</p>
+
+                    <div class="mb-2">
+                        <strong>Total:</strong> @Model.TotalUnits |
+                        <strong>Sold:</strong> @Model.SoldUnits |
+                        <strong>In stock:</strong> @Model.UnsoldUnits
+                    </div>
+
+                    <form asp-action="Sell" method="post" class="mb-3">
+                        <input type="hidden" name="cookingId" value="@Model.CookingId" />
+                        <div class="row gx-2 align-items-center">
+                            <div class="col-auto">
+                                <label for="count" class="col-form-label small">Sell how many?</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" name="count" min="1" max="@Model.UnsoldUnits" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success btn-sm">💸 Sell</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 10%;">#</th>
+                                    <th style="width: 45%;">Cost</th>
+                                    <th style="width: 45%;">Sold?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var unit in Model.Units)
+                                {
+                                    <tr class="@(unit.IsSold ? "table-secondary" : "")">
+                                        <td class="align-middle">@unit.Id</td>
+                                        <td class="align-middle">@unit.Cost.ToString("0.00") €</td>
+                                        <td class="align-middle">
+                                            @(unit.IsSold ? "✅ Yes" : "❌ No")
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

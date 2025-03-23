@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using SoapProductionApp.Models.Recipe;
+using SoapProductionApp.Models.ProductUnit;  
 
 namespace SoapProductionApp.Models.Cooking
 { 
@@ -47,5 +47,31 @@ namespace SoapProductionApp.Models.Cooking
 
         public List<CookingIngredient> UsedIngredients { get; set; } = new List<CookingIngredient>();
 
+        public List<ProductUnit.ProductUnit> ProductUnits { get; set; } = new();
+
+        [NotMapped]
+        public int TotalUnits => ProductUnits.Count;
+
+        [NotMapped]
+        public int UnsoldUnits => ProductUnits.Count(p => !p.IsSold);
+
+        public void CutIntoUnits()
+        {
+            if (IsCut || ProductUnits.Any())
+                return;
+
+            for (int i = 0; i < BatchSize; i++)
+            {
+                ProductUnits.Add(new ProductUnit.ProductUnit
+                {
+                    CookingId = this.Id,
+                    Cost = this.CostPerSoap,
+                    ExpirationDate = this.ExpirationDate ?? this.CuringDate.AddMonths(12),
+                    ProductType = this.Recipe.ProductType
+                });
+            }
+
+            this.IsCut = true;
+        }
     }
 }
