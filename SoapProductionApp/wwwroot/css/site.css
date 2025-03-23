@@ -27,6 +27,9 @@ body {
 }
 
 /* --- BUTTONS Detail, Edit, Delete buttons --- */
+.btn-danger.btn-sm {
+    font-size: 0.85rem;
+}
 
 .btn-sm {
     font-size: 0.85rem;
@@ -75,7 +78,7 @@ body {
     font-size: 0.8rem;
 }
 
-.form-control-sm {
+.form-control-sm, .form-select-sm, .table-sm {
     font-size: 0.85rem;
     padding: 4px 8px;
 }
@@ -102,9 +105,24 @@ body {
 }
 
 .wide-table {
-    table-layout: fixed;
+    table-layout: auto;
+    font-size: 0.85rem;
     width: 100%;
 }
+
+.wide-table td, .wide-table th {
+    padding: 6px 8px;
+    vertical-align: middle;
+}
+
+
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 
 
 .text-success {
@@ -115,4 +133,25 @@ body {
 
 .nowrap {
     white-space: nowrap;
+}
+
+.alert-info {
+    font-size: 0.85rem;
+}
+
+/* Images */
+.img-thumbnail {
+    max-width: 100px;
+    object-fit: cover;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.responsive-narrow-table-wrapper {
+    min-width: 500px;
+    width: auto;
+    display: inline-block;
 }
