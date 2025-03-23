@@ -46,6 +46,9 @@ Others:
 	- when I delete Recipe, it delete also Cooking which is related to that recipe! Thats not good.
 	- When I delete warehouseItem, it is removed from recipe and price is also reduces as it should be.
 		- we should create some warning before deleting (show where it is connected and used)
+
+- as free plan for DB, we need to be sure that when DB is not "running" we need to be able to show page with some note for user. Not just show error that db is not connected.
+
 ------------------------------------------------------------------------------------------------------------
 UnitTests:
 - Write more unitTests!
