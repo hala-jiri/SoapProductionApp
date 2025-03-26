@@ -73,7 +73,6 @@ Others:
 - BACK UP:
 	- be able to make function (automtic or manual) for making back up of warehouse items, batches, cooking, and etc. (similar as I used on beehives logs)
 		- check if its possible to run it automaticaly on some CRON
-- check if the Categories and all stuff which are just for admin are really accesible just from admin role and not over url
 
 ------------------------------------------------------------------------------------------------------------
 UnitTests:
