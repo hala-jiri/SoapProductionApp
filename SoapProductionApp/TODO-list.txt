@@ -17,11 +17,12 @@ Recipe:
 		- it will be linked/related to WarehouseItem (Unit)
 	- Need to check how price was calculated (if over average price per unit or by batches...., 
 		if its by average price per unit - we need to inform user about that, that price is approx.)
-	- on Index when some soap is already CUT, the button CUT should be dissable
+
 ------------------------------------------------------------------------------------------------------------
 Cooking:
 	- during creating cooking, I should see list of ingrediences (include batches - 2 batches from one item if there is not enough material). Also price should be already more precies, and not just approx.
 	- problem with not showing expiration! fix it....
+	- on Index when some soap is already CUT, the button CUT should be dissable
 	- when we added pictures into Recipe and cooking, what will happen when we create cooking and it copy url of images from Recipe to Cooking. And when someone will decide to delete Recipe or delete picture/url in Recipe view? Will cooking lose pictures?		- how to solve it? 
 			- Create copy of picture? many same pictures on server.
 			- Link url from Recipe to Cooking? (when url in recipe change the url in cooking will change). But what if Recipe will be deleted?
@@ -30,9 +31,26 @@ Cooking:
 		- should be able to set up CUT (or make extra action in Cooking/Index view
 		- problem with SaveChanges while editing, (some of the data are not loaded)
 	- DELETE: after click on delete button, there is no view (or maybe even controller)
+
+------------------------------------------------------------------------------------------------------------
 Stock Overview:
 	- put filter (sorting) on index page and make that tahble less wide
 	- check how is calculated price! if recipe change prices, cooking will too? and stock overview too?
+	- make alarm for minimum pieces to have on stock (similar as warehosue and batches)
+	- need to re-evaluate the model of Stock part (check part of set-up selling price), There should be overview over soaps and other stuff on stock with expiration. 
+			and button to "make a sale" where you can choose multiple products, it should choose the earliest expiration products, you should be able to put warehouseitems which are in category "packing" and "labels". 
+			this can be achived by "sections" where in first step you choose products, in next step you choose package (multiple packages items, boxes, filler, labels).
+
+	- be able to see overview over all sales (as per recipes, as per dates)
+		- two sections 
+			- one will be list of recipes, pieces on warehouse which are: curing, ready to be sold, or sold.
+			- second part will be list of sales per date (desc - new dates will be up on table)
+
+	- set-up Selling price:
+		- be able to set up price per each bar from cooking (selling price)
+		- make calculations for how many we sold and how much it worth
+		- there should be possibility to add cointainers (for creams), or package boxes for sending
+		
 	- Details:
 		- table should be smaller (less wide),
 		- when selling, it should save the date of sell and also show it in table
@@ -52,6 +70,10 @@ Others:
 		- we should create some warning before deleting (show where it is connected and used)
 
 - as free plan for DB, we need to be sure that when DB is not "running" we need to be able to show page with some note for user. Not just show error that db is not connected.
+- BACK UP:
+	- be able to make function (automtic or manual) for making back up of warehouse items, batches, cooking, and etc. (similar as I used on beehives logs)
+		- check if its possible to run it automaticaly on some CRON
+- check if the Categories and all stuff which are just for admin are really accesible just from admin role and not over url
 
 ------------------------------------------------------------------------------------------------------------
 UnitTests:
