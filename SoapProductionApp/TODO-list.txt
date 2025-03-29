@@ -73,7 +73,7 @@ Others:
 - BACK UP:
 	- be able to make function (automtic or manual) for making back up of warehouse items, batches, cooking, and etc. (similar as I used on beehives logs)
 		- check if its possible to run it automaticaly on some CRON
-
+- Create section for accounting (bills and quartal taxes)
 ------------------------------------------------------------------------------------------------------------
 UnitTests:
 - Write more unitTests!
