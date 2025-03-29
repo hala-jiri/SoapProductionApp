@@ -18,6 +18,8 @@ namespace SoapProductionApp.Models.ProductUnit
 
         public decimal Cost { get; set; }
 
+        public DateTime SoldDate { get; set; }
+
         public DateTime ExpirationDate { get; set; }
 
         public ProductType ProductType { get; set; }

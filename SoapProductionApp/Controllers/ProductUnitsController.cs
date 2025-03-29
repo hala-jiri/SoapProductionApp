@@ -75,6 +75,7 @@ namespace SoapProductionApp.Controllers
             foreach (var unit in units)
             {
                 unit.IsSold = true;
+                unit.SoldDate = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();
