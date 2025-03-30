@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing;
 using NuGet.Packaging;
-using SoapProductionApp.Models.Warehouse;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

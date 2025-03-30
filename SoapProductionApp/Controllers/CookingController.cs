@@ -426,37 +426,18 @@ namespace SoapProductionApp.Controllers
         public async Task<IActionResult> Cut(int id)
         {
             var cooking = await _context.Cookings
+                .Include(c => c.ProductUnits)
                 .Include(c => c.Recipe)
                 .Include(c => c.UsedIngredients)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (cooking == null) return NotFound();
 
-            var viewModel = new CookingDetailViewModel
-            {
-                Id = cooking.Id,
-                RecipeName = cooking.Recipe.Name,
-                BatchSize = cooking.BatchSize,
-                BatchSizeWasChanged = cooking.BatchSizeWasChanged,
-                CookingDate = cooking.CookingDate,
-                CuringDate = cooking.CuringDate,
-                ExpirationDate = cooking.ExpirationDate,
-                TotalCost = cooking.TotalCost,
-                RecipeNotes = cooking.RecipeNotes,
-                CookingNotes = cooking.CookingNotes,
-                ImageUrl = cooking.Recipe.ImageUrl,
-                ThumbnailUrl = cooking.Recipe.ThumbnailUrl,
-                IsCut = cooking.IsCut,
-                UsedIngredients = cooking.UsedIngredients.Select(i => new CookingIngredientViewModel
-                {
-                    IngredientName = i.IngredientName,
-                    QuantityUsed = i.QuantityUsed,
-                    Unit = i.Unit,
-                    Cost = i.Cost,
-                    ExpirationDate = i.ExpirationDate
-                }).ToList()
-            };
-            return View(viewModel);
+            cooking.CutIntoUnits();
+            _context.Update(cooking);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id });
         }
 
         [HttpPost]

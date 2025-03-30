@@ -17,6 +17,10 @@ namespace SoapProductionApp.Models.Warehouse
         private const string DefaultBackgroundColor = "#ffffff";
         private const string DefaultTextColor = "#000000";
 
+        public Category()
+        {
+        }
+
         public Category(string name)
         {
             Name = name;

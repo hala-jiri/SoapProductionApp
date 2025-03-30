@@ -1,6 +1,7 @@
-﻿@model IEnumerable<SoapProductionApp.Models.Warehouse.WarehouseItem>
+﻿@using SoapProductionApp.Models.Warehouse
+@model IEnumerable<SoapProductionApp.Models.Warehouse.WarehouseItem>
 @{
-    var categories = ViewData["Categories"] as List<SoapProductionApp.Models.Warehouse.Category>;
+    var categories = ViewData["Categories"] as List<Category>;
     var selectedCategories = Context.Request.Query["categoryIds"].ToList();
 }
 
