@@ -73,6 +73,7 @@ Others:
 - BACK UP:
 	- be able to make function (automtic or manual) for making back up of warehouse items, batches, cooking, and etc. (similar as I used on beehives logs)
 		- check if its possible to run it automaticaly on some CRON
+	- prepade some DTO format for exporting entities into Json (now it has cyclicity reference)
 - Create section for accounting (bills and quartal taxes)
 ------------------------------------------------------------------------------------------------------------
 UnitTests:

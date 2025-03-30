@@ -48,6 +48,33 @@ namespace SoapProductionApp.Controllers
                 Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Images")
             };
 
+            var memoryStreams = new List<(string FileName, MemoryStream Stream)>();
+
+            // Export JSON: WarehouseItems
+            var warehouseItems = _context.WarehouseItems//.Include(w => w.Categories).Include(w => w.Batches) // TODO: fix cyclicity reference, maybe create DTO format
+                                                   .ToList();
+            var json = System.Text.Json.JsonSerializer.Serialize(warehouseItems, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            var jsonStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
+            memoryStreams.Add(("WarehouseItem.json", jsonStream));
+
+            // Export JSON: Batches
+            var batches = _context.Batches.ToList();
+            json = System.Text.Json.JsonSerializer.Serialize(batches, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            jsonStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
+            memoryStreams.Add(("Batch.json", jsonStream));
+
+            // Export JSON: Recipe
+            var recipes = _context.Recipes.ToList();
+            json = System.Text.Json.JsonSerializer.Serialize(recipes, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            jsonStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
+            memoryStreams.Add(("Recipe.json", jsonStream));
+
+            // Export JSON: Cooking
+            var cooking = _context.Cookings.ToList();
+            json = System.Text.Json.JsonSerializer.Serialize(cooking, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            jsonStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
+            memoryStreams.Add(("Cooking.json", jsonStream));
+
             using (var archive = ZipFile.Open(fullPath, ZipArchiveMode.Create))
             {
                 foreach (var folder in foldersToZip)
@@ -60,13 +87,21 @@ namespace SoapProductionApp.Controllers
                         await _auditService.LogAsync("Add", "BackUp", null, null, relativePath);
                     }
                 }
-            }
 
+                // Přidání exportovaných dat (CSV/JSON)
+                foreach (var (exportFileName, stream) in memoryStreams)
+                {
+                    stream.Position = 0;
+                    var entry = archive.CreateEntry($"data/{exportFileName}");
+                    using var entryStream = entry.Open();
+                    stream.CopyTo(entryStream);
+                }
+            }
             return RedirectToAction("Index");
         }
 
         private List<BackupInfo> GetBackupList(string backupFolderPath)
-{
+        {
             if (!Directory.Exists(backupFolderPath))
                 return new List<BackupInfo>();
 
@@ -78,10 +113,27 @@ namespace SoapProductionApp.Controllers
                 {
                     BackupDate = file.LastWriteTime,
                     SizeInBytes = file.Length,
-                    FullPath = file.FullName
+                    FullPath = file.FullName,
+                    FileName = file.Name
                 })
                 .OrderByDescending(b => b.BackupDate)
                 .ToList();
+        }
+
+        public IActionResult DownloadBackup(string fileName)
+        {
+            if(fileName.IsNullOrEmpty())
+                return RedirectToAction("Index");
+
+            var backupFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "backups");
+            var fullPath = Path.Combine(backupFolder, fileName);
+
+            if (!System.IO.File.Exists(fullPath))
+                return RedirectToAction("Index");
+
+
+            var fileBytes = System.IO.File.ReadAllBytes(fullPath);
+            return File(fileBytes, "application/zip", fileName);
         }
     }
 }
