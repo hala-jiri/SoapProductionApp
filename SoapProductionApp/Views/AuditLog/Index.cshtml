@@ -1,0 +1,82 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<SoapProductionApp.Models.AuditLog>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-12 col-lg-12 col-md-12">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-header bg-primary text-white py-2 px-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Audit Log Overview</h5>
+                </div>
+                <div class="card-body small p-3">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered table-striped mb-0 wide-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 10%;">Date</th>
+                                    <th style="width: 13%;">User</th>
+                                    <th style="width: 7%;">Action</th>
+                                    <th style="width: 10%;">Entity</th>
+                                    <th style="width: 8%;">Entity ID</th>
+                                    <th style="width: 26%;">Before</th>
+                                    <th style="width: 26%;">After</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var log in Model.OrderByDescending(l => l.Timestamp))
+                                {
+                                    <tr>
+                                        <td class="align-middle">@log.Timestamp.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td class="align-middle">@log.UserName</td>
+                                        <td class="align-middle">@log.ActionType</td>
+                                        <td class="align-middle">@log.EntityName</td>
+                                        <td class="align-middle">@log.EntityId</td>
+
+                                        <!-- Before -->
+                                        <td class="align-middle">
+                                            @if (!string.IsNullOrWhiteSpace(log.BeforeJson))
+                                            {
+                                                <pre class="json-preview">@Html.Raw(log.BeforeJson)</pre>
+                                            }
+                                        </td>
+
+                                        <!-- After -->
+                                        <td class="align-middle">
+                                            @if (!string.IsNullOrWhiteSpace(log.AfterJson))
+                                            {
+                                                <pre class="json-preview">@Html.Raw(log.AfterJson)</pre>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm">← Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .wide-table {
+        table-layout: auto;
+        font-size: 0.85rem;
+        width: 100%;
+        min-width: 1000px;
+    }
+
+    .json-preview {
+        font-size: 0.7rem;
+        font-family: monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background-color: #f8f9fa;
+        padding: 4px;
+        border-radius: 4px;
+    }
+</style>

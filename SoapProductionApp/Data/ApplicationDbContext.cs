@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SoapProductionApp.Models;
 using SoapProductionApp.Models.Cooking;
 using SoapProductionApp.Models.ProductUnit;
 using SoapProductionApp.Models.Recipe;
@@ -25,6 +26,7 @@ namespace SoapProductionApp.Data
         public DbSet<Cooking> Cookings { get; set; }
         public DbSet<CookingIngredient> CookingIngredients { get; set; }
         public DbSet<ProductUnit> ProductUnits { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

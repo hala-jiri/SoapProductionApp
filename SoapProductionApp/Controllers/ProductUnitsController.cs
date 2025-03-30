@@ -1,17 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
+using SoapProductionApp.Extensions;
 using SoapProductionApp.Models.ProductUnit.ViewModels;
+using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Services;
 
 namespace SoapProductionApp.Controllers
 {
     public class ProductUnitsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public ProductUnitsController(ApplicationDbContext context)
+        public ProductUnitsController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         public async Task<IActionResult> Index()
@@ -77,8 +82,10 @@ namespace SoapProductionApp.Controllers
                 unit.IsSold = true;
                 unit.SoldDate = DateTime.Now;
             }
+            var unitsAfterJson = units.ToSafeJson();
 
             await _context.SaveChangesAsync();
+            await _auditService.LogAsync("Sell", "ProductionUnit", cookingId, unitsAfterJson, null);
             return RedirectToAction("Details", new { cookingId });
         }
     }

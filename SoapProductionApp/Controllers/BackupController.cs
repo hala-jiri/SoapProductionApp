@@ -1,18 +1,25 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models.Backup;
+using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Services;
 using System.IO.Compression;
 
 namespace SoapProductionApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BackupController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public BackupController(ApplicationDbContext context)
+        public BackupController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         [AllowAnonymous]
@@ -24,9 +31,8 @@ namespace SoapProductionApp.Controllers
             return View(backupList);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult CreateBackup() 
+        public async Task<IActionResult> CreateBackup() 
         {
             var backupFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "backups");
             if (!Directory.Exists(backupFolder))
@@ -51,6 +57,7 @@ namespace SoapProductionApp.Controllers
                     {
                         var relativePath = Path.GetRelativePath(folder, file);
                         archive.CreateEntryFromFile(file, Path.Combine(Path.GetFileName(folder), relativePath));
+                        await _auditService.LogAsync("Add", "BackUp", null, null, relativePath);
                     }
                 }
             }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using SoapProductionApp.Controllers;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,17 +27,23 @@ namespace SoapProductionApp.Tests
             return dbContext;
         }
 
+        private CategoryController GetController(ApplicationDbContext context)
+        {
+            var mockAudit = new Mock<IAuditService>();
+            return new CategoryController(context, mockAudit.Object);
+        }
+
         [Fact]
-        public void Create_AddsCategoryAndRedirectsToIndex()
+        public async Task Create_AddsCategoryAndRedirectsToIndex()
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new CategoryController(dbContext);
+            var controller = GetController(dbContext);
             var category = new Category("Test Category") { ColorBackground = "#FFF", ColorText = "#000" };
 
             // Act
             var beforeCount = dbContext.Categories.Count();
-            var result = controller.Create(category) as RedirectToActionResult;
+            var result = await controller.Create(category) as RedirectToActionResult;
             var afterCount = dbContext.Categories.Count();
 
             // Assert
@@ -44,11 +52,11 @@ namespace SoapProductionApp.Tests
         }
 
         [Fact]
-        public void Delete_RemovesCategoryFromDatabase()
+        public async Task Delete_RemovesCategoryFromDatabase()
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new CategoryController(dbContext);
+            var controller = GetController(dbContext);
 
             var category = new Category("To Delete") { ColorBackground = "#FFF", ColorText = "#000" };
             dbContext.Categories.Add(category);
@@ -57,7 +65,7 @@ namespace SoapProductionApp.Tests
             var beforeCount = dbContext.Categories.Count();
 
             // Act
-            var result = controller.DeleteConfirmed(category.Id) as RedirectToActionResult;
+            var result = await controller.DeleteConfirmed(category.Id) as RedirectToActionResult;
             var afterCount = dbContext.Categories.Count();
 
             // Assert
@@ -71,7 +79,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new CategoryController(dbContext);
+            var controller = GetController(dbContext);
 
             var category = new Category("Old Name") { ColorBackground = "#FFF", ColorText = "#000" };
             dbContext.Categories.Add(category);

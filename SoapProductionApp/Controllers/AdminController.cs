@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SoapProductionApp.Extensions;
 using SoapProductionApp.Models;
+using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Services;
 
 namespace SoapProductionApp.Controllers
 {
@@ -10,11 +13,13 @@ namespace SoapProductionApp.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuditService _auditService;
 
-        public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IAuditService auditService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _auditService = auditService;
         }
 
         public async Task<IActionResult> Index()
@@ -61,8 +66,13 @@ namespace SoapProductionApp.Controllers
             if (user == null) return NotFound();
 
             var userRoles = await _userManager.GetRolesAsync(user);
+            var userRolesBeforeJson = userRoles.ToSafeJson();
             await _userManager.RemoveFromRolesAsync(user, userRoles);
+
             await _userManager.AddToRolesAsync(user, model.SelectedRoles);
+
+            var userRolesAfterJson = model.SelectedRoles.ToSafeJson();
+            await _auditService.LogAsync("Update", "User", null, userRolesBeforeJson, userRolesAfterJson);
 
             return RedirectToAction(nameof(Index));
         }

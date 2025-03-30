@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Moq;
+using SoapProductionApp.Services;
 
 namespace SoapProductionApp.Tests
 {
@@ -26,12 +28,18 @@ namespace SoapProductionApp.Tests
             return dbContext;
         }
 
+        private BatchController GetController(ApplicationDbContext context)
+        {
+            var mockAudit = new Mock<IAuditService>();
+            return new BatchController(context, mockAudit.Object);
+        }
+
         [Fact]
         public async Task Create_AddsWarehouseItemBatchAndRedirectsToIndex()
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new BatchController(dbContext);
+            var controller = GetController(dbContext);
 
             var warehouseItem = new WarehouseItem()
             {
@@ -73,7 +81,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new BatchController(dbContext);
+            var controller = GetController(dbContext);
 
             var warehouseItem = new WarehouseItem()
             {
@@ -118,7 +126,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new BatchController(dbContext);
+            var controller = GetController(dbContext);
 
             var warehouseItem = new WarehouseItem()
             {

@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SoapProductionApp.Models.Recipe.ViewModels;
 using SoapProductionApp.Models.Recipe;
+using Moq;
+using SoapProductionApp.Services;
 
 namespace SoapProductionApp.Tests
 {
@@ -28,12 +30,18 @@ namespace SoapProductionApp.Tests
             return dbContext;
         }
 
+        private RecipeController GetController(ApplicationDbContext context)
+        {
+            var mockAudit = new Mock<IAuditService>();
+            return new RecipeController(context, mockAudit.Object);
+        }
+
         [Fact]
         public async Task Create_AddsEnmptyRecipeAndRedirectsToIndex()
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new RecipeController(dbContext);
+            var controller = GetController(dbContext);
 
             var recipe = new RecipeCreateEditViewModel()
             {
@@ -60,7 +68,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new RecipeController(dbContext);
+            var controller = GetController(dbContext);
 
             var recipe = new Recipe()
             {
@@ -91,7 +99,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new RecipeController(dbContext);
+            var controller = GetController(dbContext);
 
             var recipe = new Recipe()
             {

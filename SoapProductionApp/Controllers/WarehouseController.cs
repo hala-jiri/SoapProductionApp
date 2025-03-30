@@ -4,9 +4,11 @@ using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SoapProductionApp.Data;
+using SoapProductionApp.Extensions;
 using SoapProductionApp.Models;
 using SoapProductionApp.Models.Warehouse;
 using SoapProductionApp.Models.Warehouse.ViewModels;
+using SoapProductionApp.Services;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,10 +17,12 @@ namespace SoapProductionApp.Controllers
     public class WarehouseController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public WarehouseController(ApplicationDbContext context)
+        public WarehouseController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         public async Task<IActionResult> Index(string sortOrder, string searchString, List<int> categoryIds)
@@ -85,6 +89,7 @@ namespace SoapProductionApp.Controllers
                 _context.WarehouseItems.Add(warehouseItem);
                 await _context.SaveChangesAsync();
 
+                await _auditService.LogAsync("Add", "WarehouseItem", warehouseItem.Id, null, warehouseItem.ToSafeJson());
                 return RedirectToAction(nameof(Index));
             }
 
@@ -134,6 +139,7 @@ namespace SoapProductionApp.Controllers
 
             if (warehouseItem == null) return NotFound();
 
+            var warehouseItemBeforeJson = warehouseItem.ToSafeJson();
             if (ModelState.IsValid)
             {
                 warehouseItem.Name = viewModel.Name;
@@ -147,6 +153,8 @@ namespace SoapProductionApp.Controllers
 
                 _context.Update(warehouseItem);
                 await _context.SaveChangesAsync();
+                
+                await _auditService.LogAsync("Update", "WarehouseItem", warehouseItem.Id, warehouseItemBeforeJson, warehouseItem.ToSafeJson());
 
                 return RedirectToAction(nameof(Index));
             }
@@ -195,6 +203,9 @@ namespace SoapProductionApp.Controllers
 
             if (warehouseItem == null) return NotFound();
 
+
+            var warehouseItemJson = warehouseItem.ToSafeJson();
+
             // Odstraníme kategorie a šarže
             warehouseItem.Categories.Clear();
             _context.Batches.RemoveRange(warehouseItem.Batches);
@@ -203,6 +214,7 @@ namespace SoapProductionApp.Controllers
             _context.WarehouseItems.Remove(warehouseItem);
             await _context.SaveChangesAsync();
 
+            await _auditService.LogAsync("Remove", "WarehouseItem", warehouseItem.Id, warehouseItemJson, null);
             return RedirectToAction(nameof(Index));
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
+using SoapProductionApp.Services;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,10 +23,16 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender, EmailSender>();
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// my services
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IAuditService, AuditService>();
+// part for logging
+builder.Services.AddScoped<AuditService>();
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 app.UseStaticFiles();
 
@@ -79,18 +86,25 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // create admin user
-    string adminEmail = "admin@example.com";
-    string adminPassword = "Admin@123"; // Change for production env.!
+    // Definujeme admin uživatele
+    string adminEmail = "gabca@soapmate.eu";
+    string adminPassword = "Admin@123"; // Změň pro produkční prostředí!
 
-    if (await userManager.FindByEmailAsync(adminEmail) == null)
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
     {
-        var adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-        var result = await userManager.CreateAsync(adminUser, adminPassword);
-        if (result.Succeeded)
-        {
+        adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+        var createUserResult = await userManager.CreateAsync(adminUser, adminPassword);
+
+        if (createUserResult.Succeeded)
             await userManager.AddToRoleAsync(adminUser, "Admin");
-        }
+    }
+    else
+    {
+        var roles = await userManager.GetRolesAsync(adminUser);
+        if (!roles.Contains("Admin"))
+            await userManager.AddToRoleAsync(adminUser, "Admin");
     }
 }
 

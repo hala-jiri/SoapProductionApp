@@ -7,16 +7,21 @@ using SoapProductionApp.Models.Recipe.ViewModels;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats;
+using SoapProductionApp.Services;
+using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Extensions;
 
 namespace SoapProductionApp.Controllers
 {
     public class RecipeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public RecipeController(ApplicationDbContext context)
+        public RecipeController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         // Zobrazí seznam receptů
@@ -92,6 +97,7 @@ namespace SoapProductionApp.Controllers
 
                 _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
+                await _auditService.LogAsync("Add", "Recipe", recipe.Id, recipe.ToSafeJson(), null);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -148,8 +154,13 @@ namespace SoapProductionApp.Controllers
             if (recipe != null)
             {
                 DeleteImage(recipe.ImageUrl, recipe.ThumbnailUrl);
+                await _auditService.LogAsync("Remove", "Image", recipe.Id, "Remove image: " + recipe.ImageUrl + " ; Thumbnail: " + recipe.ThumbnailUrl, null);
+                var recipeJson = recipe.ToSafeJson();
+                var recipeId = recipe.Id;
                 _context.Recipes.Remove(recipe);
                 await _context.SaveChangesAsync();
+
+                await _auditService.LogAsync("Remove", "Recipe", recipeId, recipeJson, null);
             }
             return RedirectToAction(nameof(Index));
         }
@@ -214,6 +225,7 @@ namespace SoapProductionApp.Controllers
 
                 if (recipe == null) return NotFound();
 
+                var recipeBeforeJson = recipe.ToSafeJson();
                 recipe.Name = model.Name;
                 recipe.Note = model.Note;
                 recipe.BatchSize = model.BatchSize;
@@ -240,8 +252,9 @@ namespace SoapProductionApp.Controllers
                     recipe.ImageUrl = imagePath;
                     recipe.ThumbnailUrl = thumbPath;
                 }
-
+                var recipeAfterJson = recipe.ToSafeJson();
                 await _context.SaveChangesAsync();
+                await _auditService.LogAsync("Update", "Recipe", recipe.Id, recipeBeforeJson, recipeAfterJson);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -256,12 +269,16 @@ namespace SoapProductionApp.Controllers
             if (recipe == null) return NotFound();
 
             DeleteImage(recipe.ImageUrl, recipe.ThumbnailUrl);
+            var recipeBeforeJson = recipe.ToSafeJson();
 
+            await _auditService.LogAsync("Remove", "Image", recipe.Id, "Remove image: " + recipe.ImageUrl + " ; Thumbnail: " + recipe.ThumbnailUrl, null);
             // Odstraníme URL z databáze
             recipe.ImageUrl = null;
             recipe.ThumbnailUrl = null;
             await _context.SaveChangesAsync();
+            var recipeAfterJson = recipe.ToSafeJson();
 
+            await _auditService.LogAsync("Update", "Recipe", recipe.Id, recipeBeforeJson, recipeAfterJson);
             return RedirectToAction(nameof(Edit), new { id });
         }
 

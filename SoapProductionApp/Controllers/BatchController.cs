@@ -1,18 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
+using SoapProductionApp.Extensions;
 using SoapProductionApp.Models.Warehouse;
 using SoapProductionApp.Models.Warehouse.ViewModels;
+using SoapProductionApp.Services;
 
 namespace SoapProductionApp.Controllers
 {
     public class BatchController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public BatchController(ApplicationDbContext context)
+        public BatchController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         // GET: Batch/Create
@@ -52,9 +56,12 @@ namespace SoapProductionApp.Controllers
                 batchCreateViewModel.Unit = warehouseItem.Unit;
                 batchCreateViewModel.TaxPercentage = warehouseItem.TaxPercentage;
                 var batch = new Batch(batchCreateViewModel, warehouseItem) { };
+                var batchInJson = batch.ToSafeJson();
 
                 _context.Batches.Add(batch);
                 await _context.SaveChangesAsync();
+                await _auditService.LogAsync("Add", "Batch", batch.Id, null, batchInJson);
+
                 return RedirectToAction("Details", "Warehouse", new { id = batch.WarehouseItemId });
             }
             return View(batchCreateViewModel);
@@ -84,6 +91,7 @@ namespace SoapProductionApp.Controllers
             {
                 var batch = await _context.Batches.FirstOrDefaultAsync(i => i.Id == id);
                 if (batch == null) return NotFound();
+                var batchBeforeJson = batch.ToSafeJson();
 
                 batch.Name = batchCreateViewModel.Name;
                 batch.Supplier = batchCreateViewModel.Supplier;
@@ -95,6 +103,9 @@ namespace SoapProductionApp.Controllers
 
                 _context.Batches.Update(batch);
                 await _context.SaveChangesAsync();
+                
+                var batchAfterJson = batch.ToSafeJson();
+                await _auditService.LogAsync("Update", "Batch", batch.Id, batchBeforeJson, batchAfterJson);
 
                 return RedirectToAction("Details", "Warehouse", new { id = batchCreateViewModel.WarehouseItemId });
             }
@@ -123,11 +134,13 @@ namespace SoapProductionApp.Controllers
                 .FirstOrDefaultAsync(b => b.Id == id);
             if (batch == null) return NotFound();
 
+            var batchBeforeJson = batch.ToSafeJson();
             int warehouseItemId = batch.WarehouseItemId;
 
             _context.Batches.Remove(batch);
             await _context.SaveChangesAsync();
 
+            await _auditService.LogAsync("Remove", "Batch", batch.Id, batchBeforeJson, null);
             return RedirectToAction("Details", "Warehouse", new { id = warehouseItemId });
         }
     }

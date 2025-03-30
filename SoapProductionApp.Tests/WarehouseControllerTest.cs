@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using SoapProductionApp.Controllers;
 using SoapProductionApp.Data;
 using SoapProductionApp.Models.Warehouse;
 using SoapProductionApp.Models.Warehouse.ViewModels;
+using SoapProductionApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,12 +28,18 @@ namespace SoapProductionApp.Tests
             return dbContext;
         }
 
+        private WarehouseController GetController(ApplicationDbContext context)
+        {
+            var mockAudit = new Mock<IAuditService>();
+            return new WarehouseController(context, mockAudit.Object);
+        }
+
         [Fact]
         public async Task Create_AddsWarehouseItemWithoutBatchAndRedirectsToIndex()
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new WarehouseController(dbContext);
+            var controller = GetController(dbContext);
             var warehouseItemCreateEditViewModel = new WarehouseItemCreateEditViewModel() {
                 Name = "Test warehouse Item",
                 Unit = Models.UnitMeasurement.UnitType.L,
@@ -55,7 +63,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new WarehouseController(dbContext);
+            var controller = GetController(dbContext);
             var warehouseItem = new WarehouseItem() {
                 Name = "Test warehouse Item",
                 Unit = Models.UnitMeasurement.UnitType.L
@@ -80,7 +88,7 @@ namespace SoapProductionApp.Tests
         {
             // Arrange
             var dbContext = GetDatabaseContext();
-            var controller = new WarehouseController(dbContext);
+            var controller = GetController(dbContext);
 
             var warehouseItem = new WarehouseItem()
             {

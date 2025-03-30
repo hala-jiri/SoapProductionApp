@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoapProductionApp.Data;
+using SoapProductionApp.Extensions;
 using SoapProductionApp.Models.Warehouse;
+using SoapProductionApp.Services;
 
 namespace SoapProductionApp.Controllers
 {
@@ -10,10 +12,12 @@ namespace SoapProductionApp.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuditService _auditService;
 
-        public CategoryController(ApplicationDbContext context)
+        public CategoryController(ApplicationDbContext context, IAuditService auditService)
         {
             _context = context;
+            _auditService = auditService;
         }
 
         public IActionResult Index()
@@ -28,12 +32,14 @@ namespace SoapProductionApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category)
         {
             if (ModelState.IsValid)
             {
                 _context.Categories.Add(category);
                 _context.SaveChanges();
+
+                await _auditService.LogAsync("Add", "Category", category.Id, null, category.ToSafeJson());
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -63,8 +69,19 @@ namespace SoapProductionApp.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    var existingCategory = await _context.Categories.FindAsync(id);
+                    if (existingCategory == null) return NotFound();
+
+                    var existingCategoryJson = existingCategory.ToSafeJson();
+
+                    existingCategory.Name = category.Name;
+                    existingCategory.ColorBackground = category.ColorBackground;
+                    existingCategory.ColorText = category.ColorText;
+
                     await _context.SaveChangesAsync();
+
+                    var afterChangeCategoryJson = category.ToSafeJson();
+                    await _auditService.LogAsync("Update", "Category", id, existingCategoryJson, afterChangeCategoryJson);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -90,13 +107,17 @@ namespace SoapProductionApp.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = _context.Categories.Find(id);
             if (category != null)
             {
+                var beforeJson = category.ToSafeJson();
+
                 _context.Categories.Remove(category);
                 _context.SaveChanges();
+
+                await _auditService.LogAsync("Remove", "Category", id, category.ToSafeJson(), null);
             }
             return RedirectToAction("Index");
         }
