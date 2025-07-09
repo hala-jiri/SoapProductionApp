@@ -1,6 +1,6 @@
 
 ## 🛠 Tech Stack
-- .NET (8.0, version from November 2023, LTS) backend in Visual Studio 2022
+- .NET 8.0 (LTS, released in November 2023) backend, developed in Visual Studio 2022
 - Razor Pages with JavaScript (AI-assisted)
 - UnitTests (XUnit, Moq, Microsoft.EntityFrameworkCore.InMemory)
 - Azure SQL and Azure App Service hosting
