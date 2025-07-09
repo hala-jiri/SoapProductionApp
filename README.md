@@ -68,3 +68,45 @@ SoapMate is a comprehensive system for managing cosmetics production, covering e
 7. A production PDF is created and saved.
 
 ## 🖼 Screenshots
+### 📦 Warehouse
+
+- **Warehouse Item List**  
+  ![Warehouse Items](Screenshots/SoapProductionApp-warehouse.png)
+
+- **Warehouse Filters & Category Select**  
+  ![Warehouse Filter](Screenshots/SoapProductionApp-warehouse-filter.png)
+
+- **Item Detail & Batch View**  
+  ![Warehouse Item Detail](Screenshots/SoapProductionApp-warehouse-DetailOfProduct.png)
+
+---
+
+### 🧪 Recipes
+
+- **Recipes Overview**  
+  ![Recipes List](Screenshots/SoapProductionApp-recipes.png)
+
+- **Recipe Detail with Availability Check**  
+  ![Recipe Detail](Screenshots/SoapProductionApp-recipes-detail.png)
+
+---
+
+### 🍳 Cooking (Production)
+
+- **Cooking Process List**  
+  ![Cooking Overview](Screenshots/SoapProductionApp-cooking.png)
+
+- **Start New Cooking (Select Recipe)**  
+  ![Choose Recipe](Screenshots/SoapProductionApp-cooking-chooserecipe.png)
+
+- **New Cooking Form with Cost Estimation**  
+  ![Start Cooking](Screenshots/SoapProductionApp-cooking-startCooking.png)
+
+- **Cooking Batch Detail**  
+  ![Cooking Done](Screenshots/SoapProductionApp-cooking-CookingDone.png)
+
+- **PDF Generated After Cooking**  
+  ![PDF Output](Screenshots/SoapProductionApp-cooking-pdfFile.png)
+
+- **Cooking Overview with Multiple Batches**  
+  ![Cooking Overview](Screenshots/SoapProductionApp-cooking-Overview.png)
