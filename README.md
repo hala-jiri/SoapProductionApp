@@ -2,6 +2,7 @@
 ## 🛠 Tech Stack
 - .NET backend in Visual Studio 2022
 - Razor Pages with JavaScript (AI-assisted)
+- UnitTests (XUnit, Moq, Microsoft.EntityFrameworkCore.InMemory)
 - Azure SQL and Azure App Service hosting
 
 #  🧼 SoapMate – Soap & Cosmetics Production System
